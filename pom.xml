@@ -8,8 +8,8 @@
 		<version>3.4.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.utility</groupId>
-	<artifactId>formGeneratorXml</artifactId>
+	<groupId>com.utility.xmlUtility</groupId>
+	<artifactId>xmlProcessor</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>formGeneratorXml</name>
 	<description>Utility For XML Form Generator</description>

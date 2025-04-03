@@ -1,10 +1,10 @@
-package com.utility.formGeneratorXml;
+package com.utility.xmlUtility;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class FormGeneratorXmlApplicationTests {
+class xmlProcessor {
 
 	@Test
 	void contextLoads() {

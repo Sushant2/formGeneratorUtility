@@ -12,7 +12,7 @@ import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Set;
 
-public class xmlUtil {
+public class XmlUtil {
     public static String elementToString(Element element) {
         try {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -56,7 +56,7 @@ public class xmlUtil {
         }
         return "";
     }
-    
+
     public static Element findHeaderByName(Document doc, String headerName) {
         NodeList headers = doc.getElementsByTagName("header");
     

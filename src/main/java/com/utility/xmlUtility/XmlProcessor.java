@@ -6,13 +6,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SpringBootApplication
-public class xmlProcessor implements CommandLineRunner {
+public class XmlProcessor implements CommandLineRunner {
 
     @Autowired
-    private xmlService xmlService;
+    private XmlService xmlService;
 
     public static void main(String[] args) {
-        SpringApplication.run(xmlProcessor.class, args);
+        SpringApplication.run(XmlProcessor.class, args);
     }
 
     @Override
