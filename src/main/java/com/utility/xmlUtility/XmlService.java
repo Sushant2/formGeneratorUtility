@@ -47,67 +47,61 @@ public class XmlService {
         }
     }
  
-    private boolean processMissingElements(NodeList sourceElements, Set<String> targetElements, Document sourceDoc, Document targetDoc, Document missingDoc, String elementTag, String attribute, Element targetParent) {
-
-
+    private boolean processMissingElements(NodeList sourceElements, Set<String> targetElements, Document sourceDoc, Document targetDoc,
+    Document missingDoc, String elementTag, String attribute, Element targetParent) {
         boolean changesMade = false;
- 
+
         Element missingRoot = missingDoc.getDocumentElement();
- 
+
         for (int i = 0; i < sourceElements.getLength(); i++) {
             Element element = (Element) sourceElements.item(i);
- 
-            // we'll clonedEle into targetDoc
-            Element clonedElement = (Element) element.cloneNode(true); // Clone the element
- 
             String elementValue = XmlUtil.getElementAttributeOrText(element, attribute);
- 
+
             if (attribute.equals("db-field")) {
                 elementValue = XmlUtil.extractDbFieldValue(element).trim().toUpperCase();
             }
- 
+
             if (!targetElements.contains(elementValue)) {
- 
+
                 System.out.println("Element value -->" + elementValue);
- 
+
                 // Extract header-name and section number for db-field attributes
                 if (attribute.equals("db-field")) {
-                    String sectionValue = XmlUtil.getSection(clonedElement);
-                    // first get headerName from sourceDoc
+                    String sectionValue = XmlUtil.getSection(element);
+                    //first get headerName from sourceDoc
                     String headerName = XmlUtil.getHeaderNameBySection(targetDoc, sectionValue);
-                    if (headerName.isEmpty()) {
+                    if(headerName.isEmpty()){
                         headerName = XmlUtil.getHeaderNameBySection(sourceDoc, sectionValue);
                     }
- 
+                    
                     System.out.println("🔹 Extracted headerName: " + headerName + ", sectionValue: " + sectionValue);
- 
+
+
                     // Find existing section in target XML
                     Element existingHeader = XmlUtil.findHeaderByName(targetDoc, headerName);
- 
+
                     if (existingHeader != null) {
                         // Fetch the correct section number from target XML
                         String targetSectionValue = XmlUtil.getSection(existingHeader);
                         System.out.println("✅ Updating section from " + sectionValue + " → " + targetSectionValue);
- 
+
                         // Update section and order-by
+                        element.setAttribute("section", targetSectionValue);
                         int lastOrderBy = XmlUtil.getLastOrderBy(existingHeader);
-                        clonedElement.setAttribute("section", targetSectionValue);
-                        clonedElement.setAttribute("order-by", String.valueOf(lastOrderBy + 1));
+                        element.setAttribute("order-by", String.valueOf(lastOrderBy + 1));
                     } else {
                         System.out.println("⚠️ Warning: No header found for name " + headerName);
                     }
                 }
- 
-                Element elementToImport = attribute.equals("db-field") ? clonedElement : element;
- 
+
                 // Append to correct parent in target XML
-                Node importedNodeTarget = targetDoc.importNode(elementToImport, true);
+                Node importedNodeTarget = targetDoc.importNode(element, true);
                 targetParent.appendChild(importedNodeTarget);
- 
+
                 // Append to missing elements XML
-                Node importedNodeMissing = missingDoc.importNode(elementToImport, true);
+                Node importedNodeMissing = missingDoc.importNode(element, true);
                 missingRoot.appendChild(importedNodeMissing);
- 
+
                 System.out.println("Added missing " + elementTag + ": " + elementValue);
                 changesMade = true;
             }
