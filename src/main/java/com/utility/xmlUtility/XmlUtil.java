@@ -71,23 +71,100 @@ public class XmlUtil {
     
 
     // Get the last order-by value in a section
-    public static int getLastOrderBy(Element section) {
-        if (section == null) {
-            System.out.println("⚠️ Warning: getLastOrderBy() received a null section.");
-            return 0; // Default order-by value
-        }
-    
-        NodeList fields = section.getElementsByTagName("field");
+    /*public static int getLastOrderBy(Document doc, String sectionValue) {
+        NodeList fields = doc.getElementsByTagName("field");
         int maxOrderBy = 0;
     
         for (int i = 0; i < fields.getLength(); i++) {
             Element field = (Element) fields.item(i);
-            if (field.hasAttribute("order-by")) {
-                maxOrderBy = Math.max(maxOrderBy, Integer.parseInt(field.getAttribute("order-by")));
+    
+            // Match section inside the <field>
+            NodeList sectionNodes = field.getElementsByTagName("section");
+            if (sectionNodes.getLength() > 0) {
+                String sectionText = sectionNodes.item(0).getTextContent().trim();
+    
+                if (sectionValue.equals(sectionText)) {
+                    // Look for order-by inside the field
+                    NodeList orderByNodes = field.getElementsByTagName("order-by");
+                    if (orderByNodes.getLength() > 0) {
+                        try {
+                            int orderByValue = Integer.parseInt(orderByNodes.item(0).getTextContent().trim());
+                            maxOrderBy = Math.max(maxOrderBy, orderByValue);
+                        } catch (NumberFormatException e) {
+                            System.out.println("⚠️ Skipping invalid order-by value.");
+                        }
+                    }
+                }
             }
         }
+    
         return maxOrderBy;
-    }    
+    }*/
+
+    public static int getLastOrderBy(Document doc, String sectionValue) {
+        NodeList fields = doc.getElementsByTagName("field");
+        int maxOrderBy = 0;
+    
+        System.out.println("🔍 Looking for highest order-by in section: " + sectionValue);
+        System.out.println("Total <field> elements found: " + fields.getLength());
+    
+        for (int i = 0; i < fields.getLength(); i++) {
+            Element field = (Element) fields.item(i);
+            System.out.println(elementToString(field));
+            
+            NodeList sectionNodes = field.getElementsByTagName("section");
+            if (sectionNodes.getLength() > 0) {
+                String sectionText = sectionNodes.item(0).getTextContent().trim();
+                System.out.println("➡️ Found <section>: " + sectionText);
+    
+                if (sectionValue.equals(sectionText)) {
+                    NodeList orderByNodes = field.getElementsByTagName("order-by");
+                    if (orderByNodes.getLength() > 0) {
+                        String orderText = orderByNodes.item(0).getTextContent().trim();
+                        System.out.println("   🧮 Found <order-by>: " + orderText);
+    
+                        try {
+                            int orderByValue = Integer.parseInt(orderText);
+                            if (orderByValue > maxOrderBy) {
+                                System.out.println("   ✅ Updating maxOrderBy: " + maxOrderBy + " → " + orderByValue);
+                                maxOrderBy = orderByValue;
+                            }
+                        } catch (NumberFormatException e) {
+                            System.out.println("⚠️ Skipping invalid order-by value: " + orderText);
+                        }
+                    } else {
+                        System.out.println("⚠️ No <order-by> inside matching <field> with section: " + sectionText);
+                    }
+                }
+            } else {
+                System.out.println("⚠️ <field> element has no <section>.");
+            }
+        }
+    
+        System.out.println("🔚 Final maxOrderBy for section " + sectionValue + ": " + maxOrderBy);
+        return maxOrderBy;
+    }
+    
+    
+
+    public static String nodeToString(Node node) {
+        if (node == null) {
+            return "⚠️ Warning: nodeToString() received a null node.";
+        }
+
+        try {
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+            StringWriter writer = new StringWriter();
+            transformer.transform(new DOMSource(node), new StreamResult(writer));
+            return writer.toString();
+        } catch (TransformerException e) {
+            return "⚠️ Error converting node to string: " + e.getMessage();
+        }
+    }
+    
 
     public static String extractDbFieldValue(Element element) {
         NodeList dbFieldNodes = element.getElementsByTagName("db-field");
