@@ -56,6 +56,7 @@ public class XmlService {
     Document missingDoc, String elementTag, String attribute, Element targetParent) {
         
         boolean changesMade = false;
+        boolean isHeaderInSource = true;
         Element missingRoot = missingDoc.getDocumentElement();
 
         //store the last order-by value for each section
@@ -90,7 +91,12 @@ public class XmlService {
 
                     // First get headerName from sourceDoc
                     String headerName = XmlUtil.getHeaderNameBySection(sourceDoc, sectionValue);
-                    System.out.println("Extracted headerName: " + headerName);
+                    if(headerName == null) {
+                        isHeaderInSource = false;
+                        System.out.println("⚠️ Warning: No header found for section " + sectionValue);
+                    } else {
+                        System.out.println("Extracted headerName from SourceEle: " + headerName);
+                    }
 
                     // Find existing section in target XML
                     Element existingHeader = XmlUtil.findHeaderByName(targetDoc, headerName);
@@ -102,7 +108,7 @@ public class XmlService {
 
                         int nextOrderBy = sectionOrderMap.compute(targetSectionValue, (sec, currentVal) -> {
                             if (currentVal == null) {
-                                return XmlUtil.getLastOrderBy(targetDoc, sec) + 1;
+                                return XmlUtil.getLastOrderBy(targetDoc, sec);
                             } else {
                                 return currentVal + 1;
                             }
@@ -132,17 +138,20 @@ public class XmlService {
                     }
                 }
 
-                // Append to correct parent in target XML
-                Node importedNodeTarget = targetDoc.importNode(element, true);
-                targetParent.appendChild(importedNodeTarget);
-                System.out.println("✅ Added element to target XML: " + XmlUtil.nodeToString(importedNodeTarget));
+                // Append to correct parent in target XML only if the header is present in source XML
+                if(isHeaderInSource) {
+                    Node importedNodeTarget = targetDoc.importNode(element, true);
+                    targetParent.appendChild(importedNodeTarget);
+                    System.out.println("✅ Added element to target XML: " + XmlUtil.nodeToString(importedNodeTarget));
+    
+                    // Append to missing elements XML
+                    Node importedNodeMissing = missingDoc.importNode(element, true);
+                    missingRoot.appendChild(importedNodeMissing);
+                    System.out.println("✅ Added element to missing XML: " + XmlUtil.nodeToString(importedNodeMissing));
+    
+                    changesMade = true;
+                }
 
-                // Append to missing elements XML
-                Node importedNodeMissing = missingDoc.importNode(element, true);
-                missingRoot.appendChild(importedNodeMissing);
-                System.out.println("✅ Added element to missing XML: " + XmlUtil.nodeToString(importedNodeMissing));
-
-                changesMade = true;
             }
         }
         System.out.println("Changes made: " + changesMade);
