@@ -39,6 +39,8 @@ public class XmlService {
             }
             boolean fieldsUpdated = processMissingElements(sourceFields, targetDbFields, sourceDoc, targetDoc, missingFieldsDoc, "field", "db-field", targetDoc.getDocumentElement());
             if (fieldsUpdated) {
+                 //fix order-by values in target XML
+                XmlUtil.fixOrderByPerSection(targetDoc);
                 XmlUtil.saveXmlDocument(targetDoc, targetPath);
             }
             

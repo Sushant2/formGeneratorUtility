@@ -9,7 +9,11 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class XmlUtil {
@@ -246,6 +250,69 @@ public class XmlUtil {
             } else if (child.getNodeType() == Node.ELEMENT_NODE) {
                 removeEmptyTextNodes(child);
             }
+        }
+    }
+
+    public static void fixOrderByPerSection(Document targetDoc) {
+        Map<String, List<Element>> sectionFieldsMap = new HashMap<>();
+        NodeList allFields = targetDoc.getElementsByTagName("field");
+    
+        // Group all <field> elements by their <section> value
+        for (int i = 0; i < allFields.getLength(); i++) {
+            Element field = (Element) allFields.item(i);
+            String section = XmlUtil.getSection(field);
+    
+            if (section != null && !section.isEmpty()) {
+                sectionFieldsMap.computeIfAbsent(section, k -> new ArrayList<>()).add(field);
+            }
+        }
+    
+        // Now reassign <order-by> starting from 0 within each section
+        for (Map.Entry<String, List<Element>> entry : sectionFieldsMap.entrySet()) {
+            String section = entry.getKey();
+            List<Element> fields = entry.getValue();
+    
+            System.out.println("Reassigning <order-by> for section " + section);
+
+            List<Element> activeFields = new ArrayList<>();
+            List<Element> inactiveFields = new ArrayList<>();
+    
+            for (Element field : fields) {
+                NodeList isActiveNodes = field.getElementsByTagName("is-active");
+                boolean isActive = true;
+    
+                if (isActiveNodes.getLength() > 0) {
+                    String isActiveValue = isActiveNodes.item(0).getTextContent().trim().toLowerCase();
+                    isActive = !isActiveValue.equals("no");
+                }
+    
+                if (isActive) {
+                    activeFields.add(field);
+                } else {
+                    inactiveFields.add(field);
+                }
+            }
+
+            int order = 0;
+
+            // First assign to active fields
+            for (Element field : activeFields) {
+                XmlUtil.setOrderBy(field, order++);
+            }
+    
+            // Then assign to inactive fields
+            for (Element field : inactiveFields) {
+                XmlUtil.setOrderBy(field, order++);
+            }
+        }
+    
+        System.out.println("All <order-by> values normalized per section.");
+    }
+
+    public static void setOrderBy(Element field, int value) {
+        NodeList orderByNodes = field.getElementsByTagName("order-by");
+        if (orderByNodes.getLength() > 0) {
+            orderByNodes.item(0).setTextContent(String.valueOf(value));
         }
     }
 }
