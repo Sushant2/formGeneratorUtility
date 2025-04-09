@@ -9,7 +9,7 @@ import java.util.Set;
  
 @Service
 public class XmlService {
-    public void processXmlFiles(String sourcePath, String targetPath, String missingFieldsPath, String missingHeadersPath, String missingForeignTablesPath) {
+    public void processXmlFiles(String sourcePath, String targetPath) {
 
         try {
             Document sourceDoc = XmlUtil.loadXmlDocument(sourcePath);
@@ -32,20 +32,17 @@ public class XmlService {
             boolean headersUpdated = processMissingElements(sourceHeaders, targetHeaders, sourceDoc, targetDoc, missingHeadersDoc, "header", "name", XmlUtil.findOrCreateParent(targetDoc, "table-header-map"));
             if(headersUpdated) {
                 XmlUtil.saveXmlDocument(targetDoc, targetPath);
-                XmlUtil.saveXmlDocument(missingHeadersDoc, missingHeadersPath);
             }
             boolean foreignTablesUpdated = processMissingElements(sourceForeignTables, targetForeignTables, sourceDoc, targetDoc, missingForeignTablesDoc, "foreign-table", "name", XmlUtil.findOrCreateParent(targetDoc, "foreign-tables"));
             if (foreignTablesUpdated) {
                 XmlUtil.saveXmlDocument(targetDoc, targetPath);
-                XmlUtil.saveXmlDocument(missingForeignTablesDoc, missingForeignTablesPath);
             }
             boolean fieldsUpdated = processMissingElements(sourceFields, targetDbFields, sourceDoc, targetDoc, missingFieldsDoc, "field", "db-field", targetDoc.getDocumentElement());
             if (fieldsUpdated) {
                 XmlUtil.saveXmlDocument(targetDoc, targetPath);
-                XmlUtil.saveXmlDocument(missingFieldsDoc, missingFieldsPath);
             }
             
-            System.out.println("✅ Processing completed. Missing elements saved in both target XML and separate files.");
+            System.out.println("Processing completed. Missing elements saved in both target XML and separate files.");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -81,7 +78,7 @@ public class XmlService {
             }
 
             if (!targetElements.contains(elementValue)) {
-                System.out.println("❗ Element missing in targetElements: " + elementValue);
+                System.out.println("Element missing in targetElements: " + elementValue);
 
                 // Extract header-name and section number for db-field attributes
                 if (attribute.equals("db-field")) {
@@ -93,7 +90,7 @@ public class XmlService {
                     String headerName = XmlUtil.getHeaderNameBySection(sourceDoc, sectionValue);
                     if(headerName == null) {
                         isHeaderInSource = false;
-                        System.out.println("⚠️ Warning: No header found for section " + sectionValue);
+                        System.out.println("Warning: No header found for section " + sectionValue);
                     } else {
                         System.out.println("Extracted headerName from SourceEle: " + headerName);
                     }
@@ -122,7 +119,7 @@ public class XmlService {
                             if (sectionNode.getLength() > 0) {
                                 Element sectionElement = (Element) sectionNode.item(0);
                                 sectionElement.setTextContent(String.valueOf(targetSectionValue));
-                                System.out.println("✅ <section> element updated to: " + targetSectionValue);
+                                System.out.println("<section> element updated to: " + targetSectionValue);
                             }
                         }
                         // Update order-by
@@ -130,11 +127,11 @@ public class XmlService {
                         if (orderByNode.getLength() > 0) {
                             Element orderByElement = (Element) orderByNode.item(0);
                             orderByElement.setTextContent(String.valueOf(nextOrderBy));
-                            System.out.println("✅ <order-by> element updated to: " + nextOrderBy);
+                            System.out.println("<order-by> element updated to: " + nextOrderBy);
                         }
                         System.out.println(XmlUtil.elementToString(element));
                     } else {
-                        System.out.println("⚠️ Warning: No header found for name " + headerName);
+                        System.out.println("Warning: No header found for name " + headerName);
                     }
                 }
 
@@ -142,12 +139,12 @@ public class XmlService {
                 if(isHeaderInSource) {
                     Node importedNodeTarget = targetDoc.importNode(element, true);
                     targetParent.appendChild(importedNodeTarget);
-                    System.out.println("✅ Added element to target XML: " + XmlUtil.nodeToString(importedNodeTarget));
+                    System.out.println("Added element to target XML: " + XmlUtil.nodeToString(importedNodeTarget));
     
                     // Append to missing elements XML
                     Node importedNodeMissing = missingDoc.importNode(element, true);
                     missingRoot.appendChild(importedNodeMissing);
-                    System.out.println("✅ Added element to missing XML: " + XmlUtil.nodeToString(importedNodeMissing));
+                    System.out.println("Added element to missing XML: " + XmlUtil.nodeToString(importedNodeMissing));
     
                     changesMade = true;
                 }

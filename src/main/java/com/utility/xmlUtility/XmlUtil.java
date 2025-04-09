@@ -24,7 +24,7 @@ public class XmlUtil {
 
             return writer.toString();
         } catch (Exception e) {
-            return "⚠️ Error converting element to string: " + e.getMessage();
+            return "Error converting element to string: " + e.getMessage();
         }
     }
 
@@ -91,7 +91,7 @@ public class XmlUtil {
                             int orderByValue = Integer.parseInt(orderByNodes.item(0).getTextContent().trim());
                             maxOrderBy = Math.max(maxOrderBy, orderByValue);
                         } catch (NumberFormatException e) {
-                            System.out.println("⚠️ Skipping invalid order-by value.");
+                            System.out.println("Skipping invalid order-by value.");
                         }
                     }
                 }
@@ -105,7 +105,7 @@ public class XmlUtil {
         NodeList fields = doc.getElementsByTagName("field");
         int maxOrderBy = 0;
     
-        System.out.println("🔍 Looking for highest order-by in section: " + sectionValue);
+        System.out.println("Looking for highest order-by in section: " + sectionValue);
         System.out.println("Total <field> elements found: " + fields.getLength());
     
         for (int i = 0; i < fields.getLength(); i++) {
@@ -115,7 +115,7 @@ public class XmlUtil {
             NodeList sectionNodes = field.getElementsByTagName("section");
             if (sectionNodes.getLength() > 0) {
                 String sectionText = sectionNodes.item(0).getTextContent().trim();
-                System.out.println("➡️ Found <section>: " + sectionText);
+                System.out.println("Found <section>: " + sectionText);
     
                 if (sectionValue.equals(sectionText)) {
                     NodeList orderByNodes = field.getElementsByTagName("order-by");
@@ -126,22 +126,22 @@ public class XmlUtil {
                         try {
                             int orderByValue = Integer.parseInt(orderText);
                             if (orderByValue > maxOrderBy) {
-                                System.out.println("   ✅ Updating maxOrderBy: " + maxOrderBy + " → " + orderByValue);
+                                System.out.println("Updating maxOrderBy: " + maxOrderBy + " → " + orderByValue);
                                 maxOrderBy = orderByValue;
                             }
                         } catch (NumberFormatException e) {
-                            System.out.println("⚠️ Skipping invalid order-by value: " + orderText);
+                            System.out.println("Skipping invalid order-by value: " + orderText);
                         }
                     } else {
-                        System.out.println("⚠️ No <order-by> inside matching <field> with section: " + sectionText);
+                        System.out.println("No <order-by> inside matching <field> with section: " + sectionText);
                     }
                 }
             } else {
-                System.out.println("⚠️ <field> element has no <section>.");
+                System.out.println("<field> element has no <section>.");
             }
         }
     
-        System.out.println("🔚 Final maxOrderBy for section " + sectionValue + ": " + maxOrderBy);
+        System.out.println("Final maxOrderBy for section " + sectionValue + ": " + maxOrderBy);
         return maxOrderBy;
     }
     
@@ -149,7 +149,7 @@ public class XmlUtil {
 
     public static String nodeToString(Node node) {
         if (node == null) {
-            return "⚠️ Warning: nodeToString() received a null node.";
+            return "Warning: nodeToString() received a null node.";
         }
 
         try {
@@ -161,7 +161,7 @@ public class XmlUtil {
             transformer.transform(new DOMSource(node), new StreamResult(writer));
             return writer.toString();
         } catch (TransformerException e) {
-            return "⚠️ Error converting node to string: " + e.getMessage();
+            return "Error converting node to string: " + e.getMessage();
         }
     }
     
