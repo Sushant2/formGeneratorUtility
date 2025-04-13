@@ -61,7 +61,7 @@ public class XmlProcessor implements CommandLineRunner {
     public void run(String... args) {
         try {
 
-            List<String> insertQueries = new ArrayList<>();
+            /*List<String> insertQueries = new ArrayList<>();
 
             String sourcePath = BASE_PATH + "tablemappings.xml" + "/";
             String targetPath = TARGET_BASE + "tablemappings.xml" + "/";
@@ -128,8 +128,8 @@ public class XmlProcessor implements CommandLineRunner {
                     System.err.println("Error writing to file: " + e.getMessage());
                 }
                 
-            }
-            // xmlService.processXmlFiles("src/main/resources/franchiseembe.xml", "src/main/resources/franchiseesky.xml");
+            }*/
+            xmlService.processXmlFiles("src/main/resources/franchiseembe.xml", "src/main/resources/franchiseesky.xml");
 
         } catch (Exception e) {
             System.err.println("Error processing xml files");

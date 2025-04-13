@@ -1,13 +1,7 @@
 package com.utility.xmlUtility;
 
-import org.w3c.dom.*;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.File;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +9,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 public class XmlUtil {
     public static String elementToString(Element element) {
@@ -125,7 +134,7 @@ public class XmlUtil {
                     NodeList orderByNodes = field.getElementsByTagName("order-by");
                     if (orderByNodes.getLength() > 0) {
                         String orderText = orderByNodes.item(0).getTextContent().trim();
-                        System.out.println("   🧮 Found <order-by>: " + orderText);
+                        System.out.println("Found <order-by>: " + orderText);
     
                         try {
                             int orderByValue = Integer.parseInt(orderText);
@@ -315,4 +324,68 @@ public class XmlUtil {
             orderByNodes.item(0).setTextContent(String.valueOf(value));
         }
     }
+    public static Element stringToElement(String xmlString) throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setIgnoringElementContentWhitespace(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(new InputSource(new StringReader(xmlString)));
+
+        // Return the first element (inside the document root)
+        return doc.getDocumentElement();
+    }
+
+    public static String getDisplayType(Element fieldElement) {
+        NodeList nodes = fieldElement.getElementsByTagName("display-type");
+        if (nodes.getLength() > 0) {
+            return nodes.item(0).getTextContent().trim();
+        }
+        return "";
+    }
+
+    public static Boolean isMultiSelect(Element fieldElement) {
+        NodeList nodes = fieldElement.getElementsByTagName("is-multiselect-fimSearch");
+        if (nodes.getLength() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public static String getValue(Element element, String tagName) {
+        NodeList nodes = element.getElementsByTagName(tagName);
+        if (nodes.getLength() > 0) {
+            return nodes.item(0).getTextContent().trim();
+        }
+        return "";
+    }
+    
+    public static void replaceChildValue(Element parent, String tagName, String newValue) {
+        NodeList nodes = parent.getElementsByTagName(tagName);
+        if (nodes.getLength() > 0) {
+            nodes.item(0).setTextContent(newValue);
+        }
+    }
+    
+    public static void replaceOrInsertChild(Element parent, String tagName, String value) {
+        NodeList nodes = parent.getElementsByTagName(tagName);
+        if (nodes.getLength() > 0) {
+            nodes.item(0).setTextContent(value);
+        } else {
+            Element newElement = parent.getOwnerDocument().createElement(tagName);
+            newElement.setTextContent(value);
+            parent.appendChild(newElement);
+        }
+    }
+
+    public static Element getDirectChildNode(Element parent, String tagName) {
+        NodeList childNodes = parent.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node node = childNodes.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE && tagName.equals(node.getNodeName())) {
+                return (Element) node;
+            }
+        }
+        return null; // No direct child with the given tagName found
+    }
+    
+    
 }

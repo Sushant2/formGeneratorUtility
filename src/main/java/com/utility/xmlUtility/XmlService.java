@@ -1,12 +1,15 @@
 package com.utility.xmlUtility;
- 
-import org.springframework.stereotype.Service;
-import org.w3c.dom.*;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
- 
+
+import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 @Service
 public class XmlService {
     public void processXmlFiles(String sourcePath, String targetPath) {
@@ -23,140 +26,151 @@ public class XmlService {
             NodeList sourceHeaders = sourceDoc.getElementsByTagName("header");
             NodeList sourceForeignTables = sourceDoc.getElementsByTagName("foreign-table");
             NodeList sourceFields = sourceDoc.getElementsByTagName("field");
-            
-            // Create separate XML documents for missing fields, headers, and foreign tables
-            Document missingHeadersDoc = XmlUtil.createNewXmlDocument("missingHeaders");
-            Document missingForeignTablesDoc = XmlUtil.createNewXmlDocument("missingForeignTables");
-            Document missingFieldsDoc = XmlUtil.createNewXmlDocument("missingFields");
 
-            boolean headersUpdated = processMissingElements(sourceHeaders, targetHeaders, sourceDoc, targetDoc, missingHeadersDoc, "header", "name", XmlUtil.findOrCreateParent(targetDoc, "table-header-map"));
-            if(headersUpdated) {
+            boolean headersUpdated = processMissingElements(sourceHeaders, targetHeaders, sourceDoc, targetDoc, "header", "name", XmlUtil.findOrCreateParent(targetDoc, "table-header-map"));
+            if (headersUpdated) {
                 XmlUtil.saveXmlDocument(targetDoc, targetPath);
             }
-            boolean foreignTablesUpdated = processMissingElements(sourceForeignTables, targetForeignTables, sourceDoc, targetDoc, missingForeignTablesDoc, "foreign-table", "name", XmlUtil.findOrCreateParent(targetDoc, "foreign-tables"));
+            boolean foreignTablesUpdated = processMissingElements(sourceForeignTables, targetForeignTables, sourceDoc,
+                    targetDoc, "foreign-table", "name", XmlUtil.findOrCreateParent(targetDoc, "foreign-tables"));
             if (foreignTablesUpdated) {
                 XmlUtil.saveXmlDocument(targetDoc, targetPath);
             }
-            boolean fieldsUpdated = processMissingElements(sourceFields, targetDbFields, sourceDoc, targetDoc, missingFieldsDoc, "field", "db-field", targetDoc.getDocumentElement());
+            boolean fieldsUpdated = processMissingElements(sourceFields, targetDbFields, sourceDoc, targetDoc, "field", "db-field", targetDoc.getDocumentElement());
             if (fieldsUpdated) {
-                 //fix order-by values in target XML
+                // fix order-by values in target XML
                 XmlUtil.fixOrderByPerSection(targetDoc);
                 XmlUtil.saveXmlDocument(targetDoc, targetPath);
             }
-            
-            System.out.println("Processing completed. Missing elements saved in both target XML and separate files.");
+
+            System.out.println("Processing completed. Missing elements saved in target XML.");
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
- 
-    private boolean processMissingElements(NodeList sourceElements, Set<String> targetElements, Document sourceDoc, Document targetDoc,
-    Document missingDoc, String elementTag, String attribute, Element targetParent) {
-        
-        boolean changesMade = false;
-        boolean isHeaderInSource = true;
-        Element missingRoot = missingDoc.getDocumentElement();
 
-        //store the last order-by value for each section
+    private boolean processMissingElements(NodeList sourceElements, Set<String> targetElements, Document sourceDoc, Document targetDoc, String elementTag, String attribute, Element targetParent) {
+
+        boolean changesMade = false;
         Map<String, Integer> sectionOrderMap = new HashMap<>();
-        
-        System.out.println("Initial values:");
-        System.out.println("elementTag: " + elementTag);
-        System.out.println("attribute: " + attribute);
-        System.out.println("targetElements: " + targetElements);
 
         for (int i = 0; i < sourceElements.getLength(); i++) {
-            Element element = (Element) sourceElements.item(i);
-            System.out.println("\nProcessing element " + (i + 1) + "/" + sourceElements.getLength());
-            System.out.println("Element: " + XmlUtil.nodeToString(element));
+            Element sourceField = (Element) sourceElements.item(i);
 
-            String elementValue = XmlUtil.getElementAttributeOrText(element, attribute);
-            // System.out.println("Extracted elementValue: " + elementValue);
-
+            String elementValue = XmlUtil.getElementAttributeOrText(sourceField, attribute);
             if (attribute.equals("db-field")) {
-                elementValue = XmlUtil.extractDbFieldValue(element).trim().toUpperCase();
-                System.out.println("Transformed db-field elementValue: " + elementValue);
+                elementValue = XmlUtil.extractDbFieldValue(sourceField).trim().toUpperCase();
             }
 
             if (!targetElements.contains(elementValue)) {
-                System.out.println("Element missing in targetElements: " + elementValue);
+                System.out.println("Missing field found: " + elementValue);
 
-                // Extract header-name and section number for db-field attributes
                 if (attribute.equals("db-field")) {
-                    //element is from sourceDoc
-                    String sectionValue = XmlUtil.getSection(element);
-                    System.out.println("Extracted sectionValue from SourceEle: " + sectionValue);
 
-                    // First get headerName from sourceDoc
+                    String sectionValue = XmlUtil.getSection(sourceField);
                     String headerName = XmlUtil.getHeaderNameBySection(sourceDoc, sectionValue);
-                    if(headerName == null) {
-                        isHeaderInSource = false;
-                        System.out.println("Warning: No header found for section " + sectionValue);
-                    } else {
-                        System.out.println("Extracted headerName from SourceEle: " + headerName);
+                    Element headerInTarget = XmlUtil.findHeaderByName(targetDoc, headerName);
+
+                    if (headerInTarget == null) {
+                        System.out.println("Skipping: Header not found in target for section: " + sectionValue);
+                        continue;
                     }
 
-                    // Find existing section in target XML
-                    Element existingHeader = XmlUtil.findHeaderByName(targetDoc, headerName);
-                    System.out.println("Existing header in targetDoc: " + (existingHeader != null ? XmlUtil.nodeToString(existingHeader) : "null"));
+                    // Get correct section from target
+                    String targetSectionValue = XmlUtil.getSection(headerInTarget);
 
-                    if (existingHeader != null) {
-                        // Fetch the correct section number from target XML
-                        String targetSectionValue = XmlUtil.getSection(existingHeader);
-
-                        int nextOrderBy = sectionOrderMap.compute(targetSectionValue, (sec, currentVal) -> {
-                            if (currentVal == null) {
-                                return XmlUtil.getLastOrderBy(targetDoc, sec);
-                            } else {
-                                return currentVal + 1;
-                            }
-                        });
-                        System.out.println("Next order-by value for section " + targetSectionValue + ": " + nextOrderBy);
-
-                        // Update section
-                        if(!targetSectionValue.equals(sectionValue)){
-                            //get the section Node from the element
-                            NodeList sectionNode = element.getElementsByTagName("section");
-                            if (sectionNode.getLength() > 0) {
-                                Element sectionElement = (Element) sectionNode.item(0);
-                                sectionElement.setTextContent(String.valueOf(targetSectionValue));
-                                System.out.println("<section> element updated to: " + targetSectionValue);
-                            }
+                    // Update section
+                    if(!targetSectionValue.equals(sectionValue)){
+                        //get the section Node from the element
+                        NodeList sectionNode = sourceField.getElementsByTagName("section");
+                        if (sectionNode.getLength() > 0) {
+                            Element sectionElement = (Element) sectionNode.item(0);
+                            sectionElement.setTextContent(String.valueOf(targetSectionValue));
+                            System.out.println("<section> element updated to: " + targetSectionValue);
                         }
-                        // Update order-by
-                        NodeList orderByNode = element.getElementsByTagName("order-by");
-                        if (orderByNode.getLength() > 0) {
-                            Element orderByElement = (Element) orderByNode.item(0);
-                            orderByElement.setTextContent(String.valueOf(nextOrderBy));
-                            System.out.println("<order-by> element updated to: " + nextOrderBy);
-                        }
-                        System.out.println(XmlUtil.elementToString(element));
-                    } else {
-                        System.out.println("Warning: No header found for name " + headerName);
                     }
-                }
 
-                // Append to correct parent in target XML only if the header is present in source XML
-                if(isHeaderInSource) {
-                    Node importedNodeTarget = targetDoc.importNode(element, true);
-                    targetParent.appendChild(importedNodeTarget);
-                    System.out.println("Added element to target XML: " + XmlUtil.nodeToString(importedNodeTarget));
-    
-                    // Append to missing elements XML
-                    Node importedNodeMissing = missingDoc.importNode(element, true);
-                    missingRoot.appendChild(importedNodeMissing);
-                    System.out.println("Added element to missing XML: " + XmlUtil.nodeToString(importedNodeMissing));
-    
+                    // Compute next order-by for this section
+                    int nextOrderBy = sectionOrderMap.compute(targetSectionValue, (sec, curr) -> {
+                        return (curr == null) ? XmlUtil.getLastOrderBy(targetDoc, sec) + 1 : curr + 1;
+                    });
+
+                    // Use template based on display-type
+                    String displayType = XmlUtil.getDisplayType(sourceField);
+                    boolean isMultiSelect = XmlUtil.isMultiSelect(sourceField);
+
+                    Element template = XmlNodeTemplate.getTemplateByType(displayType, isMultiSelect);
+                    if (template == null) {
+                        System.out.println("Skipping: No template found for display-type: " + displayType);
+                        continue;
+                    }
+
+                    // Clone and modify template
+                    Element newField = updateXMLNode(sourceField, displayType, isMultiSelect, nextOrderBy, targetDoc, template, targetParent);
+
+                    // Add to target XML
+                    if (newField != null) {
+                        targetParent.appendChild(targetDoc.importNode(newField, true));
+                        System.out.println("Added missing field to target: " + elementValue);
+                        changesMade = true;
+                    }else{
+                        System.out.println("Failed to create new field from template.");
+                    }
+                }else{
+                    // For other elements(sections, headers), just import them directly
+                    targetParent.appendChild(targetDoc.importNode(sourceField, true));
                     changesMade = true;
+                    System.out.println("Added missing element to target: " + elementValue);
                 }
-
             }
         }
-        System.out.println("Changes made: " + changesMade);
+
         return changesMade;
     }
 
+    public static Element updateXMLNode(Element sourceField, String displayType,boolean isMultiSelect, int nextOrderBy,
+            Document targetDoc, Element template, Element targetParent) { 
+        try {
+
+            if (template != null) {
+
+                // No need to deep clone the template again
+                // Element clonedTemplate = template;
+
+                Element clonedTemplate = (Element) targetDoc.importNode(template, true);
+
+                // Replace key attributes
+                XmlUtil.replaceChildValue(clonedTemplate, "field-name", XmlUtil.getValue(sourceField, "field-name"));
+                XmlUtil.replaceChildValue(clonedTemplate, "display-name", XmlUtil.getValue(sourceField, "display-name"));
+                XmlUtil.replaceChildValue(clonedTemplate, "db-field", XmlUtil.getValue(sourceField, "db-field"));
+                XmlUtil.replaceChildValue(clonedTemplate, "data-type", XmlUtil.getValue(sourceField, "data-type"));
+                XmlUtil.replaceChildValue(clonedTemplate, "section", XmlUtil.getValue(sourceField, "section"));
+                XmlUtil.replaceChildValue(clonedTemplate, "order-by", String.valueOf(nextOrderBy));
+
+                // Special handling for Combo display-type
+                if (isMultiSelect) {
+                    XmlUtil.replaceOrInsertChild(clonedTemplate, "is-multiselect", "true");
+                }
+
+                // If sourcField has mail merge node, import it to clonedTemplate
+                Node mailMergeNode = XmlUtil.getDirectChildNode(sourceField, "mailmerge");
+                if (mailMergeNode != null) {
+                    Node importedMailMerge = targetDoc.importNode(mailMergeNode, true);
+                    clonedTemplate.appendChild(importedMailMerge);
+                }
+
+                System.out.println("Field modified from template: " + XmlUtil.getValue(sourceField, "db-field"));
+
+                return clonedTemplate; // Return newly created Element
+            } else {
+                System.out.println("No template found for display-type: " + displayType);
+                return null;
+            }
+        } catch (Exception e) {
+            System.err.println("Error updating XML node from template: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
- 
- 
