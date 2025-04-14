@@ -3,6 +3,9 @@ package com.utility.xmlUtility;
 import java.io.File;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -387,5 +390,46 @@ public class XmlUtil {
         return null; // No direct child with the given tagName found
     }
     
+    public static String generateInsertQuery(String targetKeyPath, String filePath){
+
+        String xmlFilename = new File(targetKeyPath).getName();           // e.g. "franchiseesky.xml"
+        String module = "";
+        String data = "";
+        try{
+            data = new String(Files.readAllBytes(Paths.get(targetKeyPath)), StandardCharsets.UTF_8).replace("'", "''"); // escape single quotes for SQL
+        }catch(Exception e){
+            System.out.println("Error reading file: " + e.getMessage());
+            return null;
+        }
+
+        int tablesIndex = filePath.indexOf("tables/");
+        if (tablesIndex != -1) {
+            String afterTables = filePath.substring(tablesIndex + 7); // skip "tables/"
+            int slashIndex = afterTables.indexOf("/");
+            if (slashIndex != -1) {
+                module = afterTables.substring(0, slashIndex);
+            }
+        }
+
+        // Extract XML_KEY from the filename (remove .xml)
+        String xmlKey = xmlFilename.replace(".xml", "");
+
+
+        StringBuilder insertQuery = new StringBuilder();
+        insertQuery.append("DELETE FROM CLIENT_XMLS WHERE XML_KEY = '").append(xmlKey).append("';");
+        insertQuery.append(System.lineSeparator());
+        insertQuery.append("INSERT INTO CLIENT_XMLS(ID, NAME, XML_KEY, MODULE, FILE_PATH, DATA, LAST_MODIFIED) VALUES (");
+        insertQuery.append("NULL, ");
+        insertQuery.append("'").append(xmlFilename).append("', ");
+        insertQuery.append("'").append(xmlKey).append("', ");
+        insertQuery.append("'").append(module).append("', ");
+        insertQuery.append("'").append(filePath).append("', ");
+        insertQuery.append("'").append(data).append("', ");
+        insertQuery.append("CURRENT_TIMESTAMP);");
+        
+        System.out.println("Generated Query: " + insertQuery);
+
+        return insertQuery.toString();
+    }
     
 }
