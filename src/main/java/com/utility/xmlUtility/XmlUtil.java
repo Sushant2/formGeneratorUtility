@@ -268,36 +268,67 @@ public class XmlUtil {
     public static void fixOrderByPerSection(Document targetDoc) {
         Map<String, List<Element>> sectionFieldsMap = new HashMap<>();
         NodeList allFields = targetDoc.getElementsByTagName("field");
-    
+
         // Group all <field> elements by their <section> value
         for (int i = 0; i < allFields.getLength(); i++) {
             Element field = (Element) allFields.item(i);
             String section = XmlUtil.getSection(field);
-    
+
             if (section != null && !section.isEmpty()) {
                 sectionFieldsMap.computeIfAbsent(section, k -> new ArrayList<>()).add(field);
             }
         }
-    
+
+        // Traverse all headers to also group table-fields by section
+        NodeList headers = targetDoc.getElementsByTagName("header");
+        for (int i = 0; i < headers.getLength(); i++) {
+            Element header = (Element) headers.item(i);
+            String section = XmlUtil.getSection(header);
+
+            if (section == null || section.isEmpty())
+                continue;
+
+            NodeList dependentTables = header.getElementsByTagName("dependent-table");
+
+            for (int j = 0; j < dependentTables.getLength(); j++) {
+                Element table = (Element) dependentTables.item(j);
+                NodeList tableFields = table.getElementsByTagName("table-field");
+
+                for (int k = 0; k < tableFields.getLength(); k++) {
+                    Element tableField = (Element) tableFields.item(k);
+                    sectionFieldsMap.computeIfAbsent(section, k1 -> new ArrayList<>()).add(tableField);
+                }
+            }
+        }
+
         // Now reassign <order-by> starting from 0 within each section
         for (Map.Entry<String, List<Element>> entry : sectionFieldsMap.entrySet()) {
             String section = entry.getKey();
             List<Element> fields = entry.getValue();
-    
+
             System.out.println("Reassigning <order-by> for section " + section);
 
             List<Element> activeFields = new ArrayList<>();
             List<Element> inactiveFields = new ArrayList<>();
-    
+
             for (Element field : fields) {
-                NodeList isActiveNodes = field.getElementsByTagName("is-active");
                 boolean isActive = true;
-    
+            
+                // For <field>, check <is-active> tag
+                NodeList isActiveNodes = field.getElementsByTagName("is-active");
                 if (isActiveNodes.getLength() > 0) {
                     String isActiveValue = isActiveNodes.item(0).getTextContent().trim().toLowerCase();
                     isActive = !isActiveValue.equals("no");
                 }
-    
+            
+                // For <table-field>, check attribute "isActive"
+                if (field.getTagName().equals("table-field")) {
+                    String attr = field.getAttribute("isActive");
+                    if (attr != null && attr.trim().equalsIgnoreCase("no")) {
+                        isActive = false;
+                    }
+                }
+            
                 if (isActive) {
                     activeFields.add(field);
                 } else {
@@ -311,22 +342,27 @@ public class XmlUtil {
             for (Element field : activeFields) {
                 XmlUtil.setOrderBy(field, order++);
             }
-    
+
             // Then assign to inactive fields
             for (Element field : inactiveFields) {
                 XmlUtil.setOrderBy(field, order++);
             }
         }
-    
+
         System.out.println("All <order-by> values normalized per section.");
     }
 
     public static void setOrderBy(Element field, int value) {
+        System.out.println("Setting <order-by> to " + value + " for field: " + XmlUtil.nodeToString(field));
+        field.setAttribute("order-by", String.valueOf(value)); // handles <table-field>
+
+        // fallback for <field><order-by>...</order-by></field>
         NodeList orderByNodes = field.getElementsByTagName("order-by");
         if (orderByNodes.getLength() > 0) {
             orderByNodes.item(0).setTextContent(String.valueOf(value));
         }
     }
+    
     public static Element stringToElement(String xmlString) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setIgnoringElementContentWhitespace(true);
