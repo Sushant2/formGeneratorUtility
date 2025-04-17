@@ -85,8 +85,8 @@ public class XmlProcessor implements CommandLineRunner {
             for(String key: sourceTableMappingsMap.keySet()) { // e.g. "fimCompliance"
                 if(!targetTableMappingsMap.containsKey(key)) {
                     System.out.println("Key: " + key + " is missing in target XML");
-                    /*String insertSourceQuery = XmlUtil.generateInsertQuery(BASE_PATH + sourceTableMappingsMap.get(key), sourceTableMappingsMap.get(key));
-                    insertQueries.add(insertSourceQuery);*/
+                    //String insertSourceQuery = XmlUtil.generateInsertQuery(BASE_PATH + sourceTableMappingsMap.get(key), sourceTableMappingsMap.get(key));
+                    //insertQueries.add(insertSourceQuery);
                     continue;
                 }
                 String sourceKeyPath = BASE_PATH + sourceTableMappingsMap.get(key);
@@ -107,7 +107,7 @@ public class XmlProcessor implements CommandLineRunner {
                 xmlService.processXmlFiles(sourceKeyPath, targetKeyPath);
 
                  // Generate query
-                String filePath = targetTableMappingsMap.get(key);            // e.g. "tables/admin/franchiseesky.xml"
+                String filePath = "/" + targetTableMappingsMap.get(key);            // e.g. "/tables/admin/franchiseesky.xml"
                 // String insertQuery = XmlUtil.generateInsertQuery(targetKeyPath, filePath);
                 
                 String xmlFilename = new File(targetKeyPath).getName();           // e.g. "franchiseesky.xml"
@@ -128,14 +128,37 @@ public class XmlProcessor implements CommandLineRunner {
                 String xmlKey = xmlFilename.replace(".xml", "");
 
                 StringBuilder query = new StringBuilder();
+                //delete query for xmlkey
                 query.append("DELETE FROM CLIENT_XMLS WHERE XML_KEY = '").append(xmlKey).append("';");
                 query.append(System.lineSeparator());
+
+                //delete query for xmlkey_copy
+                query.append("DELETE FROM CLIENT_XMLS WHERE XML_KEY = '").append(xmlKey).append("_copy").append("';");
+
+                query.append(System.lineSeparator());
+
+                //insert query for xmlkey
                 query.append("INSERT INTO CLIENT_XMLS(ID, NAME, XML_KEY, MODULE, FILE_PATH, DATA, LAST_MODIFIED) VALUES (");
                 query.append("NULL, ");
                 query.append("'").append(xmlFilename).append("', ");
                 query.append("'").append(xmlKey).append("', ");
                 query.append("'").append(module).append("', ");
                 query.append("'").append(filePath).append("', ");
+                query.append("'").append(data).append("', ");
+                query.append("CURRENT_TIMESTAMP);");
+
+                query.append(System.lineSeparator());
+
+                //insert query for xmlkey_copy
+                String copiedXmlFilename = xmlFilename.replace(".xml", "_copy.xml");
+                String copiedFilePath = filePath.replace(".xml", "_copy.xml");
+
+                query.append("INSERT INTO CLIENT_XMLS(ID, NAME, XML_KEY, MODULE, FILE_PATH, DATA, LAST_MODIFIED) VALUES (");
+                query.append("NULL, ");
+                query.append("'").append(copiedXmlFilename).append("', ");
+                query.append("'").append(xmlKey).append("_copy").append("', ");
+                query.append("'").append(module).append("', ");
+                query.append("'").append(copiedFilePath).append("', ");
                 query.append("'").append(data).append("', ");
                 query.append("CURRENT_TIMESTAMP);");
                 

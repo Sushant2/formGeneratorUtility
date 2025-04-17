@@ -54,6 +54,7 @@ public class XmlService {
 
         boolean changesMade = false;
         Map<String, Integer> sectionOrderMap = new HashMap<>();
+        Map<String, Element> targetFieldMap = XmlUtil.buildTargetFieldMap(targetDoc);
 
         for (int i = 0; i < sourceElements.getLength(); i++) {
             Element sourceField = (Element) sourceElements.item(i);
@@ -122,6 +123,12 @@ public class XmlService {
                     targetParent.appendChild(targetDoc.importNode(sourceField, true));
                     changesMade = true;
                     System.out.println("Added missing element to target: " + elementValue);
+                }
+            }else{
+                if (attribute.equals("db-field")) {
+                    // db-field exists, so just update display-name if mismatch
+                    XmlUtil.updateDisplayNameIfExists(sourceField, targetFieldMap);
+                    changesMade = true;
                 }
             }
         }

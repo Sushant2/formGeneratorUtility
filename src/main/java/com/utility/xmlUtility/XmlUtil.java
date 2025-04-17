@@ -389,7 +389,37 @@ public class XmlUtil {
         }
         return null; // No direct child with the given tagName found
     }
+
+    public static void updateDisplayNameIfExists(Element sourceField, Map<String, Element> targetFieldMap) {
+        String sourceDbField = XmlUtil.getValue(sourceField, "db-field").trim().toUpperCase();
+        String sourceDisplayName = XmlUtil.getValue(sourceField, "display-name").trim();
     
+        Element targetField = targetFieldMap.get(sourceDbField);
+    
+        if (targetField != null) {
+            String targetDisplayName = XmlUtil.getValue(targetField, "display-name").trim();
+    
+            if (!targetDisplayName.equals(sourceDisplayName)) {
+                XmlUtil.replaceOrInsertChild(targetField, "display-name", sourceDisplayName);
+                System.out.println("Updated display-name of db-field '" + sourceDbField + "' from '" + targetDisplayName + "' to → '" + sourceDisplayName + "'");
+            }
+        }
+    }    
+
+    public static Map<String, Element> buildTargetFieldMap(Document targetDoc) {
+        Map<String, Element> map = new HashMap<>();
+        NodeList allTargetFields = targetDoc.getElementsByTagName("field");
+
+        for (int i = 0; i < allTargetFields.getLength(); i++) {
+            Element field = (Element) allTargetFields.item(i);
+            String dbField = XmlUtil.getValue(field, "db-field").trim().toUpperCase();
+            if (!dbField.isEmpty()) {
+                map.put(dbField, field);
+            }
+        }
+        return map;
+    }
+
     public static String generateInsertQuery(String targetKeyPath, String filePath){
 
         String xmlFilename = new File(targetKeyPath).getName();           // e.g. "franchiseesky.xml"
