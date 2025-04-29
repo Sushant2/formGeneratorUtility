@@ -1,8 +1,14 @@
 package com.utility.xmlUtility;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -15,8 +21,49 @@ public class XmlService {
     public void processXmlFiles(String sourcePath, String targetPath) {
 
         try {
-            Document sourceDoc = XmlUtil.loadXmlDocument(sourcePath);
-            Document targetDoc = XmlUtil.loadXmlDocument(targetPath);
+            Document sourceDoc = null;
+            Document targetDoc = null;
+            
+            sourceDoc = XmlUtil.loadXmlDocument(sourcePath);
+
+            if(targetPath != null && Files.exists(Paths.get(targetPath))){
+                targetDoc = XmlUtil.loadXmlDocument(targetPath);
+            }else{
+
+                // Base directory where target files will be created
+                String baseDir = "src/main/resources/tabModulesXml";  // Define base directory for target path
+                // Ensure the targetPath is relative to the base directory
+                if (targetPath != null && targetPath.startsWith("/tabModulesXml")) {
+                    targetPath = baseDir + targetPath.substring("/tabModulesXml".length());
+                }
+
+                // Check if the target path exists
+                File targetFile = new File(targetPath);
+                File parentDir = targetFile.getParentFile();
+
+                if (parentDir != null && !parentDir.exists()) {
+                    // Create missing parent directories
+                    boolean dirsCreated = parentDir.mkdirs();
+                    if (dirsCreated) {
+                        System.out.println("Created missing folders for: " + targetPath);
+                    } else {
+                        System.out.println("Failed to create directories for: " + targetPath);
+                    }
+                }
+
+                // Create a new empty XML with <table> root
+                DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+                targetDoc = docBuilder.newDocument();
+                Element rootElement = targetDoc.createElement("table");
+                targetDoc.appendChild(rootElement);
+
+                System.out.println("Target XML not found. Created new empty XML for: " + targetPath);
+                
+                // Copy the content between <table> and <header> from the source to the target XML
+                XmlUtil.copyTableContent(sourceDoc, targetDoc);
+                XmlUtil.saveXmlDocument(targetDoc, targetPath); // Save immediately after creating empty
+            }
 
             // Extract existing elements from target XML
             Set<String> targetHeaders = XmlUtil.extractElements(targetDoc, "header");
@@ -74,8 +121,16 @@ public class XmlService {
                     Element headerInTarget = XmlUtil.findHeaderByName(targetDoc, headerName);
 
                     if (headerInTarget == null) {
-                        System.out.println("Skipping: Header not found in target for section: " + sectionValue);
-                        continue;
+                        // Handling if "tabModules" : targetElements is empty
+                        if(targetElements.isEmpty()){
+                            targetParent.appendChild(targetDoc.importNode(sourceField, true));
+                            changesMade = true;
+                            System.out.println("Added missing element to target: " + elementValue);
+                            continue;
+                        }else{
+                            System.out.println("Skipping: Header not found in target for section: " + sectionValue);
+                            continue;
+                        }
                     }
 
                     // Get correct section from target
@@ -153,6 +208,8 @@ public class XmlService {
                 XmlUtil.replaceChildValue(clonedTemplate, "db-field", XmlUtil.getValue(sourceField, "db-field"));
                 XmlUtil.replaceChildValue(clonedTemplate, "data-type", XmlUtil.getValue(sourceField, "data-type"));
                 XmlUtil.replaceChildValue(clonedTemplate, "section", XmlUtil.getValue(sourceField, "section"));
+                XmlUtil.replaceChildValue(clonedTemplate, "is-active", XmlUtil.getValue(sourceField, "is-active"));
+                XmlUtil.replaceChildValue(clonedTemplate, "is-mandatory", XmlUtil.getValue(sourceField, "is-mandatory"));
                 XmlUtil.replaceChildValue(clonedTemplate, "order-by", String.valueOf(nextOrderBy));
 
                 // Special handling for Combo display-type

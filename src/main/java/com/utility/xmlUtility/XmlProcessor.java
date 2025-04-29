@@ -1,12 +1,15 @@
 package com.utility.xmlUtility;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -27,32 +30,6 @@ public class XmlProcessor implements CommandLineRunner {
     private static final String BASE_PATH = "src/main/resources/xml/";
     private static final String TARGET_BASE = System.getProperty("user.home") + "/builds/FCSkyPROD/config/xml/";
 
-    public static Map<String, String> readTableMappings(String xmlFilePath) {
-        Map<String, String> tableMappings = new HashMap<>();
-
-        try {
-            Document tableMappingDoc = XmlUtil.loadXmlDocument(xmlFilePath);
-
-            NodeList mappings = tableMappingDoc.getElementsByTagName("table-mapping");
-
-            for (int i = 0; i < mappings.getLength(); i++) {
-                Element mapping = (Element) mappings.item(i);
-
-                String tableAnchor = mapping.getAttribute("table-anchor");
-                String fileLocation = mapping.getAttribute("filelocation");
-
-                // Only put if both are non-empty
-                if (!tableAnchor.isEmpty() && !fileLocation.isEmpty()) {
-                    tableMappings.put(tableAnchor, fileLocation);
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("Error reading table mappings: " + e.getMessage());
-        }
-
-        return tableMappings;
-    }
-
     public static void main(String[] args) {
         SpringApplication.run(XmlProcessor.class, args);
     }
@@ -69,8 +46,8 @@ public class XmlProcessor implements CommandLineRunner {
             System.out.println("Source Path: " + sourcePath);
             System.out.println("Target Path: " + targetPath);
 
-            Map<String, String> sourceTableMappingsMap = readTableMappings(sourcePath);
-            Map<String, String> targetTableMappingsMap = readTableMappings(targetPath);
+            Map<String, String> sourceTableMappingsMap = XmlUtil.readTableMappings(sourcePath);
+            Map<String, String> targetTableMappingsMap = XmlUtil.readTableMappings(targetPath);
 
             for (Map.Entry<String, String> entry : sourceTableMappingsMap.entrySet()) {
                 System.out.println("Key: " + entry.getKey() + " → Value: " + entry.getValue());
@@ -89,8 +66,12 @@ public class XmlProcessor implements CommandLineRunner {
                     //insertQueries.add(insertSourceQuery);
                     continue;
                 }
+
+                // //Extracting key from the targetTableMappingsMap
+                String targetTableMappingsMapKey = targetTableMappingsMap.get(key);
+
                 String sourceKeyPath = BASE_PATH + sourceTableMappingsMap.get(key);
-                String targetKeyPath = TARGET_BASE + targetTableMappingsMap.get(key);
+                String targetKeyPath = TARGET_BASE + targetTableMappingsMapKey;
 
                 // Check if files exist before proceeding
                 File sourceFile = new File(sourceKeyPath);
@@ -104,10 +85,43 @@ public class XmlProcessor implements CommandLineRunner {
                 }
 
                 System.out.println("Processing XML files... Source: " + sourceKeyPath + " Target: " + targetKeyPath);
+                //for tabModules.xml
+
+                if(sourceKeyPath.contains("tabmodules.xml") && targetKeyPath.contains("tabmodules.xml")){
+                    Map<String, Element> sourceTabModuleElements = XmlUtil.readTabModules(sourceKeyPath);
+                    Map<String, Element> targetTabModuleElements = XmlUtil.readTabModules(targetKeyPath);
+                   
+                    XmlUtil.processCustomModulesXml(sourceTabModuleElements, targetTabModuleElements, sourceKeyPath, targetKeyPath);
+                    //Now read the updated target xml and process it
+                    Document targetTabModulesDoc = XmlUtil.loadXmlDocument(targetKeyPath);
+                    NodeList moduleTabs = targetTabModulesDoc.getElementsByTagName("module-tab");
+                    for (int i = 0; i < moduleTabs.getLength(); i++) {
+                        Element moduleTab = (Element) moduleTabs.item(i);
+                        String tabName = moduleTab.getAttribute("tab-name");
+                        String innerXmlPath = moduleTab.getAttribute("fileLocation");
+                        System.out.println("Processing tab: " + tabName + " with inner XML path: " + innerXmlPath);
+
+                        // Build the correct Source and Target path
+                        String basePath = BASE_PATH.endsWith("/") ? BASE_PATH.substring(0, BASE_PATH.length() - 1) : BASE_PATH; ///remove last "/"
+                        String sourceInnerXmlPath = basePath + (innerXmlPath.startsWith("/") ? innerXmlPath : "/" + innerXmlPath);
+                        String targetInnerXmlPath = "/tabModulesXml" + (innerXmlPath.startsWith("/") ? innerXmlPath : "/" + innerXmlPath);
+
+                        System.out.println("Reading from source: " + sourceInnerXmlPath);
+                        System.out.println("Writing to target: " + targetInnerXmlPath);
+
+                        xmlService.processXmlFiles(sourceInnerXmlPath, targetInnerXmlPath);
+                    }
+                    continue;
+                }
+
                 xmlService.processXmlFiles(sourceKeyPath, targetKeyPath);
 
-                 // Generate query
-                String filePath = "/" + targetTableMappingsMap.get(key);            // e.g. "/tables/admin/franchiseesky.xml"
+                // Generate query
+                String filePath = "";
+                if(targetTableMappingsMapKey.startsWith("/"))
+                    filePath = targetTableMappingsMapKey;   
+                else
+                    filePath = "/" + targetTableMappingsMapKey;          // e.g. "/tables/admin/franchiseesky.xml"
                 // String insertQuery = XmlUtil.generateInsertQuery(targetKeyPath, filePath);
                 
                 String xmlFilename = new File(targetKeyPath).getName();           // e.g. "franchiseesky.xml"

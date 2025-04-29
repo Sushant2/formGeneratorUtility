@@ -354,7 +354,12 @@ public class XmlUtil {
 
     public static void setOrderBy(Element field, int value) {
         System.out.println("Setting <order-by> to " + value + " for field: " + XmlUtil.nodeToString(field));
-        field.setAttribute("order-by", String.valueOf(value)); // handles <table-field>
+
+        // Set as attribute for table-field only
+        String tagName = field.getTagName();
+        if ("table-field".equals(tagName)) {
+            field.setAttribute("order-by", String.valueOf(value)); // handles <table-field>
+        }
 
         // fallback for <field><order-by>...</order-by></field>
         NodeList orderByNodes = field.getElementsByTagName("order-by");
@@ -456,17 +461,122 @@ public class XmlUtil {
         return map;
     }
 
-    public static String generateInsertQuery(String targetKeyPath, String filePath){
+    public static Map<String, String> readTableMappings(String xmlFilePath) {
+        Map<String, String> tableMappings = new HashMap<>();
 
+        try {
+            Document tableMappingDoc = XmlUtil.loadXmlDocument(xmlFilePath);
+
+            NodeList mappings = tableMappingDoc.getElementsByTagName("table-mapping");
+
+            for (int i = 0; i < mappings.getLength(); i++) {
+                Element mapping = (Element) mappings.item(i);
+
+                String tableAnchor = mapping.getAttribute("table-anchor");
+                String fileLocation = mapping.getAttribute("filelocation");
+
+                // Only put if both are non-empty
+                if (!tableAnchor.isEmpty() && !fileLocation.isEmpty()) {
+                    tableMappings.put(tableAnchor, fileLocation);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error reading table mappings: " + e.getMessage());
+        }
+
+        return tableMappings;
+    }
+
+    public static Map<String, Element> readTabModules(String xmlFilePath) {
+        Map<String, Element> tabModuleElements = new HashMap<>();
+
+        try {
+            Document tabModuleDoc = XmlUtil.loadXmlDocument(xmlFilePath);
+
+            NodeList moduleTabs = tabModuleDoc.getElementsByTagName("module-tab");
+
+            for (int i = 0; i < moduleTabs.getLength(); i++) {
+                Element element = (Element) moduleTabs.item(i);
+                String dbTable = element.getAttribute("db-table");
+                if (dbTable == null || dbTable.isEmpty()) continue;
+            
+                tabModuleElements.put(dbTable, element);
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Error reading tab modules: " + e.getMessage());
+        }
+
+        return tabModuleElements;
+    }
+
+    public static void processCustomModulesXml(Map<String, Element> sourceTabModuleElements, Map<String, Element> targetTabModuleElements, String sourceTabModulesPath, String targetTabModulesPath) {
+        try {
+
+            Document targetDoc = XmlUtil.loadXmlDocument(targetTabModulesPath);
+            Element targetRoot = targetDoc.getDocumentElement();
+            boolean updated = false;
+
+            for (Map.Entry<String, Element> entry : sourceTabModuleElements.entrySet()) {
+                String dbTable = entry.getKey();
+                Element sourceTabElement = entry.getValue();
+
+                if (!targetTabModuleElements.containsKey(dbTable)) {
+                    Node importedNode = targetDoc.importNode(sourceTabElement, true);
+                    targetRoot.appendChild(importedNode);
+                    updated = true;
+                    System.out.println("Added missing <module-tab> with db-table: " + dbTable);
+                }
+            }
+
+            if (updated) {
+                XmlUtil.saveXmlDocument(targetDoc, targetTabModulesPath); // Overwrite or write to new file
+                System.out.println("Target tabmodules.xml updated with new entries.");
+            } else {
+                System.out.println("No updates required. All module-tabs are already present.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to sync module-tabs: " + e.getMessage());
+        }
+    }
+
+    public static void copyTableContent(Document sourceDoc, Document targetDoc) {
+        // Get the <table> element from the source
+        Element sourceTable = (Element) sourceDoc.getElementsByTagName("table").item(0);
+    
+        if (sourceTable != null) {
+            NodeList childNodes = sourceTable.getChildNodes();
+    
+            for (int i = 0; i < childNodes.getLength(); i++) {
+                Node node = childNodes.item(i);
+    
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    String nodeName = node.getNodeName();
+                    
+                    // Stop copying if you encounter <table-header-map>
+                    if ("table-header-map".equals(nodeName)) {
+                        System.out.println("Encountered <table-header-map>, stopping the copy.");
+                        break;
+                    }
+    
+                    // Otherwise, copy the node
+                    Node importedNode = targetDoc.importNode(node, true);
+                    targetDoc.getDocumentElement().appendChild(importedNode);
+                }
+            }
+    
+            System.out.println("Copied missing table content from source to target.");
+        }
+    }
+
+    public static String generateInsertQuery(String targetKeyPath, String filePath){
+        // Generate query
         String xmlFilename = new File(targetKeyPath).getName();           // e.g. "franchiseesky.xml"
         String module = "";
-        String data = "";
-        try{
-            data = new String(Files.readAllBytes(Paths.get(targetKeyPath)), StandardCharsets.UTF_8).replace("'", "''"); // escape single quotes for SQL
-        }catch(Exception e){
-            System.out.println("Error reading file: " + e.getMessage());
-            return null;
-        }
+        String data = new String(Files.readAllBytes(Paths.get(targetKeyPath)), StandardCharsets.UTF_8)
+                        .replace("'", "''"); // escape single quotes for SQL
 
         int tablesIndex = filePath.indexOf("tables/");
         if (tablesIndex != -1) {
@@ -480,22 +590,46 @@ public class XmlUtil {
         // Extract XML_KEY from the filename (remove .xml)
         String xmlKey = xmlFilename.replace(".xml", "");
 
+        StringBuilder query = new StringBuilder();
+        //delete query for xmlkey
+        query.append("DELETE FROM CLIENT_XMLS WHERE XML_KEY = '").append(xmlKey).append("';");
+        query.append(System.lineSeparator());
 
-        StringBuilder insertQuery = new StringBuilder();
-        insertQuery.append("DELETE FROM CLIENT_XMLS WHERE XML_KEY = '").append(xmlKey).append("';");
-        insertQuery.append(System.lineSeparator());
-        insertQuery.append("INSERT INTO CLIENT_XMLS(ID, NAME, XML_KEY, MODULE, FILE_PATH, DATA, LAST_MODIFIED) VALUES (");
-        insertQuery.append("NULL, ");
-        insertQuery.append("'").append(xmlFilename).append("', ");
-        insertQuery.append("'").append(xmlKey).append("', ");
-        insertQuery.append("'").append(module).append("', ");
-        insertQuery.append("'").append(filePath).append("', ");
-        insertQuery.append("'").append(data).append("', ");
-        insertQuery.append("CURRENT_TIMESTAMP);");
+        //delete query for xmlkey_copy
+        query.append("DELETE FROM CLIENT_XMLS WHERE XML_KEY = '").append(xmlKey).append("_copy").append("';");
+
+        query.append(System.lineSeparator());
+
+        //insert query for xmlkey
+        query.append("INSERT INTO CLIENT_XMLS(ID, NAME, XML_KEY, MODULE, FILE_PATH, DATA, LAST_MODIFIED) VALUES (");
+        query.append("NULL, ");
+        query.append("'").append(xmlFilename).append("', ");
+        query.append("'").append(xmlKey).append("', ");
+        query.append("'").append(module).append("', ");
+        query.append("'").append(filePath).append("', ");
+        query.append("'").append(data).append("', ");
+        query.append("CURRENT_TIMESTAMP);");
+
+        query.append(System.lineSeparator());
+
+        //insert query for xmlkey_copy
+        String copiedXmlFilename = xmlFilename.replace(".xml", "_copy.xml");
+        String copiedFilePath = filePath.replace(".xml", "_copy.xml");
+
+        query.append("INSERT INTO CLIENT_XMLS(ID, NAME, XML_KEY, MODULE, FILE_PATH, DATA, LAST_MODIFIED) VALUES (");
+        query.append("NULL, ");
+        query.append("'").append(copiedXmlFilename).append("', ");
+        query.append("'").append(xmlKey).append("_copy").append("', ");
+        query.append("'").append(module).append("', ");
+        query.append("'").append(copiedFilePath).append("', ");
+        query.append("'").append(data).append("', ");
+        query.append("CURRENT_TIMESTAMP);");
         
-        System.out.println("Generated Query: " + insertQuery);
+        String insertQuery = query.toString();
 
-        return insertQuery.toString();
+        System.out.println("Generated Query: " + insertQuery);
+                        
+        insertQueries.add(insertQuery);
     }
     
 }
