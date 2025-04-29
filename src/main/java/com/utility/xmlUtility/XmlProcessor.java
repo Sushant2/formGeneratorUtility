@@ -1,15 +1,9 @@
 package com.utility.xmlUtility;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -86,6 +80,13 @@ public class XmlProcessor implements CommandLineRunner {
 
                 System.out.println("Processing XML files... Source: " + sourceKeyPath + " Target: " + targetKeyPath);
 
+                // Determine the file path for the target XML
+                String filePath = "";
+                if(targetTableMappingsMapKey.startsWith("/"))
+                    filePath = targetTableMappingsMapKey;   
+                else
+                    filePath = "/" + targetTableMappingsMapKey;          // e.g. "/tables/admin/franchiseesky.xml"
+
                 //for tabModules.xml
                 if (sourceKeyPath.contains("tabmodules.xml") && targetKeyPath.contains("tabmodules.xml")) {
                     Map<String, Element> sourceTabModuleElements = XmlUtil.readTabModules(sourceKeyPath);
@@ -95,6 +96,14 @@ public class XmlProcessor implements CommandLineRunner {
 
                     XmlUtil.processCustomModulesXml(sourceTabModuleElements, targetTabModuleElements, sourceKeyPath,
                             targetKeyPath);
+
+                    // Generate query for tabmodules.xml
+                    String tabModulesQuery = XmlUtil.generateInsertQuery(targetKeyPath, filePath, null);
+                    tabModulesInnerXMLsQueryList.add(tabModulesQuery);
+
+                    // Writing queries into file
+                    XmlUtil.writeToFile("src/main/resources/tabModulesQueries.sql", tabModulesInnerXMLsQueryList);
+
                     // Now read the updated target xml and process it
                     Document targetTabModulesDoc = XmlUtil.loadXmlDocument(targetKeyPath);
                     NodeList moduleTabs = targetTabModulesDoc.getElementsByTagName("module-tab");
@@ -130,14 +139,8 @@ public class XmlProcessor implements CommandLineRunner {
                     continue;
                 }
 
+                // Process the XML files
                 xmlService.processXmlFiles(sourceKeyPath, targetKeyPath);
-
-                // Generate query
-                String filePath = "";
-                if(targetTableMappingsMapKey.startsWith("/"))
-                    filePath = targetTableMappingsMapKey;   
-                else
-                    filePath = "/" + targetTableMappingsMapKey;          // e.g. "/tables/admin/franchiseesky.xml"
 
                 // Delete & Insert Query
                 String query = XmlUtil.generateInsertQuery(targetKeyPath, filePath, null);                

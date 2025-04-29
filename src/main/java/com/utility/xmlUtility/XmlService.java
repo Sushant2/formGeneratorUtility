@@ -182,7 +182,7 @@ public class XmlService {
             }else{
                 if (attribute.equals("db-field")) {
                     // db-field exists, so just update display-name if mismatch
-                    XmlUtil.updateDisplayNameIfExists(sourceField, targetFieldMap);
+                    XmlUtil.updateTagsIfDiff(sourceField, targetFieldMap);
                     changesMade = true;
                 }
             }

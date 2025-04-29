@@ -436,18 +436,37 @@ public class XmlUtil {
         return null; // No direct child with the given tagName found
     }
 
-    public static void updateDisplayNameIfExists(Element sourceField, Map<String, Element> targetFieldMap) {
+    public static void updateTagsIfDiff(Element sourceField, Map<String, Element> targetFieldMap) {
         String sourceDbField = XmlUtil.getValue(sourceField, "db-field").trim().toUpperCase();
         String sourceDisplayName = XmlUtil.getValue(sourceField, "display-name").trim();
-    
+        String sourceIsMandatory = XmlUtil.getValue(sourceField, "is-mandatory").trim().toLowerCase();
+        String sourceIsActive = XmlUtil.getValue(sourceField, "is-active").trim().toLowerCase();
+
         Element targetField = targetFieldMap.get(sourceDbField);
-    
+
         if (targetField != null) {
+            // Update display-name if different
             String targetDisplayName = XmlUtil.getValue(targetField, "display-name").trim();
-    
             if (!targetDisplayName.equals(sourceDisplayName)) {
                 XmlUtil.replaceOrInsertChild(targetField, "display-name", sourceDisplayName);
-                System.out.println("Updated display-name of db-field '" + sourceDbField + "' from '" + targetDisplayName + "' to → '" + sourceDisplayName + "'");
+                System.out.println("Updated display-name of db-field '" + sourceDbField + "' from '" + targetDisplayName
+                        + "' to → '" + sourceDisplayName + "'");
+            }
+
+            // Update is-mandatory if different
+            String targetIsMandatory = XmlUtil.getValue(targetField, "is-mandatory").trim().toLowerCase();
+            if (!targetIsMandatory.equals(sourceIsMandatory)) {
+                XmlUtil.replaceOrInsertChild(targetField, "is-mandatory", sourceIsMandatory);
+                System.out.println("Updated is-mandatory of db-field '" + sourceDbField + "' from '" + targetIsMandatory
+                        + "' to → '" + sourceIsMandatory + "'");
+            }
+
+            // Update is-active if different
+            String targetIsActive = XmlUtil.getValue(targetField, "is-active").trim().toLowerCase();
+            if (!targetIsActive.equals(sourceIsActive)) {
+                XmlUtil.replaceOrInsertChild(targetField, "is-active", sourceIsActive);
+                System.out.println("Updated is-active of db-field '" + sourceDbField + "' from '" + targetIsActive
+                        + "' to → '" + sourceIsActive + "'");
             }
         }
     }    
