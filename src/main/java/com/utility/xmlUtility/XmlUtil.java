@@ -1,6 +1,8 @@
 package com.utility.xmlUtility;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -360,11 +362,14 @@ public class XmlUtil {
         if ("table-field".equals(tagName)) {
             field.setAttribute("order-by", String.valueOf(value)); // handles <table-field>
         }
-
-        // fallback for <field><order-by>...</order-by></field>
-        NodeList orderByNodes = field.getElementsByTagName("order-by");
-        if (orderByNodes.getLength() > 0) {
-            orderByNodes.item(0).setTextContent(String.valueOf(value));
+        else{
+            // fallback for <field><order-by>...</order-by></field>
+            NodeList orderByNodes = field.getElementsByTagName("order-by");
+            if (orderByNodes.getLength() > 0) {
+                orderByNodes.item(0).setTextContent(String.valueOf(value));
+            }
+            // remove attribute if it exists
+            field.removeAttribute("order-by");
         }
     }
     
@@ -571,65 +576,95 @@ public class XmlUtil {
         }
     }
 
-    public static String generateInsertQuery(String targetKeyPath, String filePath){
+    public static String generateInsertQuery(String targetKeyPath, String filePath, String module) throws Exception {
         // Generate query
-        String xmlFilename = new File(targetKeyPath).getName();           // e.g. "franchiseesky.xml"
-        String module = "";
-        String data = new String(Files.readAllBytes(Paths.get(targetKeyPath)), StandardCharsets.UTF_8)
-                        .replace("'", "''"); // escape single quotes for SQL
+        try {
+            String xmlFilename = new File(targetKeyPath).getName(); // e.g. "franchiseesky.xml"
+            String data = new String(Files.readAllBytes(Paths.get(targetKeyPath)), StandardCharsets.UTF_8)
+                    .replace("'", "''"); // escape single quotes for SQL
+            String moduleName = module;
 
-        int tablesIndex = filePath.indexOf("tables/");
-        if (tablesIndex != -1) {
-            String afterTables = filePath.substring(tablesIndex + 7); // skip "tables/"
-            int slashIndex = afterTables.indexOf("/");
-            if (slashIndex != -1) {
-                module = afterTables.substring(0, slashIndex);
+            // If module is not provided, extract it from the file path
+            if (moduleName == null || moduleName.isEmpty()) {
+                int tablesIndex = filePath.indexOf("tables/");
+                if (tablesIndex != -1) {
+                    String afterTables = filePath.substring(tablesIndex + 7); // skip "tables/"
+                    int slashIndex = afterTables.indexOf("/");
+                    if (slashIndex != -1) {
+                        moduleName = afterTables.substring(0, slashIndex);
+                    }
+                }
             }
+
+            // Extract XML_KEY from the filename (remove .xml)
+            String xmlKey = xmlFilename.replace(".xml", "");
+
+            StringBuilder query = new StringBuilder();
+            // delete query for xmlkey
+            query.append("DELETE FROM CLIENT_XMLS WHERE XML_KEY = '").append(xmlKey).append("';");
+            query.append(System.lineSeparator());
+
+            // delete query for xmlkey_copy
+            query.append("DELETE FROM CLIENT_XMLS WHERE XML_KEY = '").append(xmlKey).append("_copy").append("';");
+
+            query.append(System.lineSeparator());
+
+            // insert query for xmlkey
+            query.append("INSERT INTO CLIENT_XMLS(ID, NAME, XML_KEY, MODULE, FILE_PATH, DATA, LAST_MODIFIED) VALUES (");
+            query.append("NULL, ");
+            query.append("'").append(xmlFilename).append("', ");
+            query.append("'").append(xmlKey).append("', ");
+            query.append("'").append(moduleName).append("', ");
+            query.append("'").append(filePath).append("', ");
+            query.append("'").append(data).append("', ");
+            query.append("CURRENT_TIMESTAMP);");
+
+            query.append(System.lineSeparator());
+
+            // insert query for xmlkey_copy
+            String copiedXmlFilename = xmlFilename.replace(".xml", "_copy.xml");
+            String copiedFilePath = filePath.replace(".xml", "_copy.xml");
+
+            query.append("INSERT INTO CLIENT_XMLS(ID, NAME, XML_KEY, MODULE, FILE_PATH, DATA, LAST_MODIFIED) VALUES (");
+            query.append("NULL, ");
+            query.append("'").append(copiedXmlFilename).append("', ");
+            query.append("'").append(xmlKey).append("_copy").append("', ");
+            query.append("'").append(moduleName).append("', ");
+            query.append("'").append(copiedFilePath).append("', ");
+            query.append("'").append(data).append("', ");
+            query.append("CURRENT_TIMESTAMP);");
+
+            String insertQuery = query.toString();
+
+            System.out.println("Generated Query: " + insertQuery);
+
+            return insertQuery;
+        } catch (Exception e) {
+            System.out.println("Error generating insert query: " + e.getMessage());
+            return null;
         }
-
-        // Extract XML_KEY from the filename (remove .xml)
-        String xmlKey = xmlFilename.replace(".xml", "");
-
-        StringBuilder query = new StringBuilder();
-        //delete query for xmlkey
-        query.append("DELETE FROM CLIENT_XMLS WHERE XML_KEY = '").append(xmlKey).append("';");
-        query.append(System.lineSeparator());
-
-        //delete query for xmlkey_copy
-        query.append("DELETE FROM CLIENT_XMLS WHERE XML_KEY = '").append(xmlKey).append("_copy").append("';");
-
-        query.append(System.lineSeparator());
-
-        //insert query for xmlkey
-        query.append("INSERT INTO CLIENT_XMLS(ID, NAME, XML_KEY, MODULE, FILE_PATH, DATA, LAST_MODIFIED) VALUES (");
-        query.append("NULL, ");
-        query.append("'").append(xmlFilename).append("', ");
-        query.append("'").append(xmlKey).append("', ");
-        query.append("'").append(module).append("', ");
-        query.append("'").append(filePath).append("', ");
-        query.append("'").append(data).append("', ");
-        query.append("CURRENT_TIMESTAMP);");
-
-        query.append(System.lineSeparator());
-
-        //insert query for xmlkey_copy
-        String copiedXmlFilename = xmlFilename.replace(".xml", "_copy.xml");
-        String copiedFilePath = filePath.replace(".xml", "_copy.xml");
-
-        query.append("INSERT INTO CLIENT_XMLS(ID, NAME, XML_KEY, MODULE, FILE_PATH, DATA, LAST_MODIFIED) VALUES (");
-        query.append("NULL, ");
-        query.append("'").append(copiedXmlFilename).append("', ");
-        query.append("'").append(xmlKey).append("_copy").append("', ");
-        query.append("'").append(module).append("', ");
-        query.append("'").append(copiedFilePath).append("', ");
-        query.append("'").append(data).append("', ");
-        query.append("CURRENT_TIMESTAMP);");
-        
-        String insertQuery = query.toString();
-
-        System.out.println("Generated Query: " + insertQuery);
-                        
-        insertQueries.add(insertQuery);
     }
     
+    public static void writeToFile(String filePath, List<String> queryList) throws Exception {
+        File outputFile = new File(filePath);
+        outputFile.getParentFile().mkdirs();
+        // Create the file if it doesn't exist
+        if (!outputFile.exists()) {
+            outputFile.createNewFile();
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile, StandardCharsets.UTF_8))) {
+            for (String currQuery : queryList) {
+                if (currQuery == null || currQuery.isEmpty()) {
+                    System.out.println("Skipping empty query");
+                    continue;
+                }
+                writer.write(currQuery);
+                writer.newLine();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Error writing to file: " + e.getMessage());
+        }
+    }
 }
