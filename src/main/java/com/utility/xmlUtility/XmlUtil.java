@@ -569,29 +569,27 @@ public class XmlUtil {
     public static void copyTableContent(Document sourceDoc, Document targetDoc) {
         // Get the <table> element from the source
         Element sourceTable = (Element) sourceDoc.getElementsByTagName("table").item(0);
-    
+
         if (sourceTable != null) {
             NodeList childNodes = sourceTable.getChildNodes();
-    
+
             for (int i = 0; i < childNodes.getLength(); i++) {
                 Node node = childNodes.item(i);
-    
+
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     String nodeName = node.getNodeName();
-                    
-                    // Stop copying if you encounter <table-header-map>
-                    if ("table-header-map".equals(nodeName)) {
-                        System.out.println("Encountered <table-header-map>, stopping the copy.");
+
+                    // Stop copying if you encounter <field>
+                    if ("field".equals(nodeName)) {
+                        System.out.println("Encountered <field>, stopping the copy.");
                         break;
                     }
-    
+
                     // Otherwise, copy the node
                     Node importedNode = targetDoc.importNode(node, true);
                     targetDoc.getDocumentElement().appendChild(importedNode);
                 }
             }
-    
-            System.out.println("Copied missing table content from source to target.");
         }
     }
 
