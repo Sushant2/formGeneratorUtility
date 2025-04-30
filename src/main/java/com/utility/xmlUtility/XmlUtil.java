@@ -204,13 +204,13 @@ public class XmlUtil {
         }
     }
 
-    public static Set<String> extractElements(Document doc, String tagName) {
+    public static Set<String> extractElements(Document doc, String tagName, String attributeName) {
         Set<String> elements = new HashSet<>();
         NodeList nodes = doc.getElementsByTagName(tagName);
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
-                elements.add(getElementAttributeOrText((Element) node, "name"));
+                elements.add(getElementAttributeOrText((Element) node, attributeName));
             }
         }
         return elements;

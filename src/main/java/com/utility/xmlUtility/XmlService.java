@@ -66,24 +66,25 @@ public class XmlService {
             }
 
             // Extract existing elements from target XML
-            Set<String> targetHeaders = XmlUtil.extractElements(targetDoc, "header");
-            Set<String> targetForeignTables = XmlUtil.extractElements(targetDoc, "foreign-table");
-            Set<String> targetDbFields = XmlUtil.extractElements(targetDoc, "db-field");
+            Set<String> targetHeaders = XmlUtil.extractElements(targetDoc, "header", "name");
+            Set<String> targetForeignTables = XmlUtil.extractElements(targetDoc, "foreign-table", "name");
+            Set<String> targetDbFields = XmlUtil.extractElements(targetDoc, "db-field", "name");
+            Set<String> targetHeadersValue = XmlUtil.extractElements(targetDoc, "header", "value");
 
             NodeList sourceHeaders = sourceDoc.getElementsByTagName("header");
             NodeList sourceForeignTables = sourceDoc.getElementsByTagName("foreign-table");
             NodeList sourceFields = sourceDoc.getElementsByTagName("field");
 
-            boolean headersUpdated = processMissingElements(sourceHeaders, targetHeaders, sourceDoc, targetDoc, "header", "name", XmlUtil.findOrCreateParent(targetDoc, "table-header-map"));
+            boolean headersUpdated = processMissingElements(sourceHeaders, targetHeaders, targetHeadersValue, sourceDoc, targetDoc, "header", "name", XmlUtil.findOrCreateParent(targetDoc, "table-header-map"));
             if (headersUpdated) {
                 XmlUtil.saveXmlDocument(targetDoc, targetPath);
             }
-            boolean foreignTablesUpdated = processMissingElements(sourceForeignTables, targetForeignTables, sourceDoc,
+            boolean foreignTablesUpdated = processMissingElements(sourceForeignTables, targetForeignTables, null, sourceDoc,
                     targetDoc, "foreign-table", "name", XmlUtil.findOrCreateParent(targetDoc, "foreign-tables"));
             if (foreignTablesUpdated) {
                 XmlUtil.saveXmlDocument(targetDoc, targetPath);
             }
-            boolean fieldsUpdated = processMissingElements(sourceFields, targetDbFields, sourceDoc, targetDoc, "field", "db-field", targetDoc.getDocumentElement());
+            boolean fieldsUpdated = processMissingElements(sourceFields, targetDbFields, null, sourceDoc, targetDoc, "field", "db-field", targetDoc.getDocumentElement());
             if (fieldsUpdated) {
                 // fix order-by values in target XML
                 XmlUtil.fixOrderByPerSection(targetDoc);
@@ -97,7 +98,7 @@ public class XmlService {
         }
     }
 
-    private boolean processMissingElements(NodeList sourceElements, Set<String> targetElements, Document sourceDoc, Document targetDoc, String elementTag, String attribute, Element targetParent) {
+    private boolean processMissingElements(NodeList sourceElements, Set<String> targetElements, Set<String> targetHeaderValues, Document sourceDoc, Document targetDoc, String elementTag, String attribute, Element targetParent) {
 
         boolean changesMade = false;
         Map<String, Integer> sectionOrderMap = new HashMap<>();
@@ -175,6 +176,16 @@ public class XmlService {
                     }
                 }else{
                     // For other elements(sections, headers), just import them directly
+
+                    //Special handling for header
+                    if ("header".equals(elementTag)) {
+                        String sourceHeaderValue = sourceField.getAttribute("value");
+                        if(targetHeaderValues != null && targetHeaderValues.contains(sourceHeaderValue)){
+                            System.out.println("Skipping: Header already exists in target with value: " + sourceHeaderValue);
+                            continue;
+                        }
+                    }
+                    
                     targetParent.appendChild(targetDoc.importNode(sourceField, true));
                     changesMade = true;
                     System.out.println("Added missing element to target: " + elementValue);
