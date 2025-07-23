@@ -3,6 +3,7 @@ package com.utility.xmlUtility;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -682,6 +683,17 @@ public class XmlUtil {
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Error writing to file: " + e.getMessage());
+        }
+    }
+
+    public static void appendToCustomFieldsCSV(String customFieldName) {
+        String filePath = "src/main/resources/customFields.csv";
+
+        try (FileWriter writer = new FileWriter(filePath, true)) { // true = append mode
+            writer.append(customFieldName);
+            writer.append('\n'); // add new line
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

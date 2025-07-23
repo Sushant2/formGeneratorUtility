@@ -106,6 +106,25 @@ public class XmlService {
 
         for (int i = 0; i < sourceElements.getLength(); i++) {
             Element sourceField = (Element) sourceElements.item(i);
+            if(attribute.equals("db-field")){
+                /* center info fields list starts */
+                    // fetch field-name, display-name, db-field, data-type, build-field
+                    String fieldName = XmlUtil.getValue(sourceField, "field-name");
+                    String displayName = XmlUtil.getValue(sourceField, "display-name");
+                    String displayType1 = XmlUtil.getValue(sourceField, "display-type");
+                    String buildField = XmlUtil.getValue(sourceField, "build-field");
+                    NodeList tableDisplayNameNode = sourceDoc.getElementsByTagName("table-display-name");
+                    String tableDisplayName = "";
+                    if (tableDisplayNameNode.getLength() > 0) {
+                        tableDisplayName =  tableDisplayNameNode.item(0).getTextContent().trim();
+                    }
+
+                    if(buildField.equals("no") && !displayType1.equals("htmlcheck") && !displayType1.equals("File") && (fieldName.charAt(0) != '_')) {
+                            String customFieldName = "Sales," + tableDisplayName + ',' + displayType1 + ',' + displayName + ',' + fieldName + ",_" + fieldName;
+                            XmlUtil.appendToCustomFieldsCSV(customFieldName);
+                    }
+                    /* center info fields list ends */
+            }
 
             String elementValue = XmlUtil.getElementAttributeOrText(sourceField, attribute);
             if (attribute.equals("db-field")) {
