@@ -1,9 +1,7 @@
 package com.utility.xmlUtility;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -34,6 +32,7 @@ public class XmlProcessor implements CommandLineRunner {
 
             List<String> queryList = new ArrayList<>();
 
+            Set<String> requiredKeySet = XmlUtil.getRequiredKeySet();
             String sourcePath = BASE_PATH + "/tablemappings.xml" + "/";
             String targetPath = TARGET_BASE + "/tablemappings.xml" + "/";
 
@@ -104,7 +103,7 @@ public class XmlProcessor implements CommandLineRunner {
                     // Writing queries into file
                     XmlUtil.writeToFile("src/main/resources/tabModulesQueries.sql", tabModulesInnerXMLsQueryList);
 
-                    // Now read the updated target xml and process it
+                    // Now read the updated target XML and process it
                     Document targetTabModulesDoc = XmlUtil.loadXmlDocument(targetKeyPath);
                     NodeList moduleTabs = targetTabModulesDoc.getElementsByTagName("module-tab");
                     for (int i = 0; i < moduleTabs.getLength(); i++) {
@@ -115,9 +114,7 @@ public class XmlProcessor implements CommandLineRunner {
                         System.out.println("Processing tab: " + tabName + " with inner XML path: " + innerXmlPath);
 
                         // Build the correct Source and Target path
-                        String basePath = BASE_PATH.endsWith("/") ? BASE_PATH.substring(0, BASE_PATH.length() - 1)
-                                : BASE_PATH; /// remove last "/"
-                        String sourceInnerXmlPath = basePath
+                        String sourceInnerXmlPath = BASE_PATH
                                 + (innerXmlPath.startsWith("/") ? innerXmlPath : "/" + innerXmlPath);
                         String targetInnerXmlPath = "/tabModulesXml"
                                 + (innerXmlPath.startsWith("/") ? innerXmlPath : "/" + innerXmlPath);
@@ -139,17 +136,20 @@ public class XmlProcessor implements CommandLineRunner {
                     continue;
                 }
 
-                // Process the XML files
-                xmlService.processXmlFiles(sourceKeyPath, targetKeyPath);
+                if(requiredKeySet.contains(key)) {
+                    // Process the XML files
+                    xmlService.processXmlFiles(sourceKeyPath, targetKeyPath);
 
-                // Delete & Insert Query
-                String query = XmlUtil.generateInsertQuery(targetKeyPath, filePath, null);                
-                queryList.add(query);
+                    // Delete & Insert Query
+                    String query = XmlUtil.generateInsertQuery(targetKeyPath, filePath, null);
+                    queryList.add(query);
 
-                // Writing queries into file
-                XmlUtil.writeToFile("src/main/resources/tableMappingsQueries.sql", queryList);
-                
+                    // Writing queries into file
+                    XmlUtil.writeToFile("src/main/resources/tableMappingsQueries.sql", queryList);
+                }
             }
+
+            // For testing purpose only - single XML
             // xmlService.processXmlFiles("src/main/resources/mbe.xml", "src/main/resources/sky.xml");
 
         } catch (Exception e) {
