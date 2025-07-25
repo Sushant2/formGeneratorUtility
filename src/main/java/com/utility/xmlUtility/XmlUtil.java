@@ -468,6 +468,17 @@ public class XmlUtil {
                 System.out.println("Updated is-active of db-field '" + sourceDbField + "' from '" + targetIsActive
                         + "' to → '" + sourceIsActive + "'");
             }
+
+            // Check if source has sync tag but target doesn't
+            Node sourceSyncNode = XmlUtil.getDirectChildNode(sourceField, "sync");
+            Node targetSyncNode = XmlUtil.getDirectChildNode(targetField, "sync");
+            
+            if (sourceSyncNode != null && targetSyncNode == null) {
+                // Import sync tag from source to target
+                Node importedSync = targetField.getOwnerDocument().importNode(sourceSyncNode, true);
+                targetField.appendChild(importedSync);
+                System.out.println("Added missing sync tag for db-field: " + sourceDbField);
+            }
         }
     }    
 

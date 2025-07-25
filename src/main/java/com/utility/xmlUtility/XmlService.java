@@ -235,6 +235,14 @@ public class XmlService {
                     clonedTemplate.appendChild(importedMailMerge);
                 }
 
+                // If sourceField has sync node, import it to clonedTemplate
+                Node syncNode = XmlUtil.getDirectChildNode(sourceField, "sync");
+                if (syncNode != null) {
+                    Node importedSync = targetDoc.importNode(syncNode, true);
+                    clonedTemplate.appendChild(importedSync);
+                    System.out.println("Added sync tag for field: " + XmlUtil.getValue(sourceField, "db-field"));
+                }
+
                 System.out.println("Field modified from template: " + XmlUtil.getValue(sourceField, "db-field"));
 
                 return clonedTemplate; // Return newly created Element
