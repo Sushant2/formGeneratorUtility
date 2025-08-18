@@ -18,7 +18,8 @@ import org.w3c.dom.NodeList;
 
 @Service
 public class XmlService {
-    public void processXmlFiles(String sourcePath, String targetPath) {
+    public static HashMap<String, String> updatedHeaders = new HashMap<>();
+    public void processXmlFiles(String sourcePath, String targetPath, Set<String> underscoreFieldsSet) {
 
         try {
             Document sourceDoc = null;
@@ -75,16 +76,16 @@ public class XmlService {
             NodeList sourceForeignTables = sourceDoc.getElementsByTagName("foreign-table");
             NodeList sourceFields = sourceDoc.getElementsByTagName("field");
 
-            boolean headersUpdated = processMissingElements(sourceHeaders, targetHeaders, targetHeadersValue, sourceDoc, targetDoc, "header", "name", XmlUtil.findOrCreateParent(targetDoc, "table-header-map"));
+            boolean headersUpdated = processMissingElements(sourceHeaders, targetHeaders, targetHeadersValue, sourceDoc, targetDoc, "header", "name", XmlUtil.findOrCreateParent(targetDoc, "table-header-map"), underscoreFieldsSet);
             if (headersUpdated) {
                 XmlUtil.saveXmlDocument(targetDoc, targetPath);
             }
             boolean foreignTablesUpdated = processMissingElements(sourceForeignTables, targetForeignTables, null, sourceDoc,
-                    targetDoc, "foreign-table", "name", XmlUtil.findOrCreateParent(targetDoc, "foreign-tables"));
+                    targetDoc, "foreign-table", "name", XmlUtil.findOrCreateParent(targetDoc, "foreign-tables"), underscoreFieldsSet);
             if (foreignTablesUpdated) {
                 XmlUtil.saveXmlDocument(targetDoc, targetPath);
             }
-            boolean fieldsUpdated = processMissingElements(sourceFields, targetDbFields, null, sourceDoc, targetDoc, "field", "db-field", targetDoc.getDocumentElement());
+            boolean fieldsUpdated = processMissingElements(sourceFields, targetDbFields, null, sourceDoc, targetDoc, "field", "db-field", targetDoc.getDocumentElement(), underscoreFieldsSet);
             if (fieldsUpdated) {
                 // fix order-by values in target XML
                 XmlUtil.fixOrderByPerSection(targetDoc);
@@ -98,7 +99,7 @@ public class XmlService {
         }
     }
 
-    private boolean processMissingElements(NodeList sourceElements, Set<String> targetElements, Set<String> targetHeaderValues, Document sourceDoc, Document targetDoc, String elementTag, String attribute, Element targetParent) {
+    private boolean processMissingElements(NodeList sourceElements, Set<String> targetElements, Set<String> targetHeaderValues, Document sourceDoc, Document targetDoc, String elementTag, String attribute, Element targetParent, Set<String> underscoreFieldsSet) {
 
         boolean changesMade = false;
         Map<String, Integer> sectionOrderMap = new HashMap<>();
@@ -106,10 +107,11 @@ public class XmlService {
 
         for (int i = 0; i < sourceElements.getLength(); i++) {
             Element sourceField = (Element) sourceElements.item(i);
+            Element clonedSourceField = (Element) sourceField.cloneNode(true);
 
-            String elementValue = XmlUtil.getElementAttributeOrText(sourceField, attribute);
+            String elementValue = XmlUtil.getElementAttributeOrText(clonedSourceField, attribute);
             if (attribute.equals("db-field")) {
-                elementValue = XmlUtil.extractDbFieldValue(sourceField).trim().toUpperCase();
+                elementValue = XmlUtil.extractDbFieldValue(clonedSourceField).trim().toUpperCase();
             }
 
             if (!targetElements.contains(elementValue)) {
@@ -117,14 +119,39 @@ public class XmlService {
 
                 if (attribute.equals("db-field")) {
 
-                    String sectionValue = XmlUtil.getSection(sourceField);
+                    // skip if <field-name>bestTimeToContact</field-name> is already in target
+                    boolean isBestTimeToContact = XmlUtil.getValue(clonedSourceField, "field-name").equals("bestTimeToContact");
+                    if(isBestTimeToContact){
+                        System.out.println("Skipping: bestTimeToContact field is already in target");
+                        continue;
+                    }
+
+                    //handle preferredStateId3, preferredStateId3
+                    if(elementValue.equals("PREFERRED_COUNTRY3")){
+                        Node fieldNode = getPreferredFields("PREFERRED_COUNTRY3");
+                        Node adopted = targetDoc.importNode(fieldNode, true);
+                        targetDoc.getDocumentElement().appendChild(adopted);
+                        continue;
+                    }else if(elementValue.equals("PREFERRED_STATE_ID3")){
+                        Node fieldNode = getPreferredFields("PREFERRED_STATE_ID3");
+                        Node adopted = targetDoc.importNode(fieldNode, true);
+                        targetDoc.getDocumentElement().appendChild(adopted);
+                        continue;
+                    }
+
+                    String sectionValue = XmlUtil.getSection(clonedSourceField);
                     String headerName = XmlUtil.getHeaderNameBySection(sourceDoc, sectionValue);
-                    Element headerInTarget = XmlUtil.findHeaderByName(targetDoc, headerName);
+                    Element headerInTarget = null;
+                    if(updatedHeaders.containsKey(headerName))
+                        headerName = updatedHeaders.get(headerName);
+
+                    headerInTarget = XmlUtil.findHeaderByName(targetDoc, headerName);
+
 
                     if (headerInTarget == null) {
                         // Handling if "tabModules" : targetElements is empty
                         if(targetElements.isEmpty()){
-                            targetParent.appendChild(targetDoc.importNode(sourceField, true));
+                            targetParent.appendChild(targetDoc.importNode(clonedSourceField, true));
                             changesMade = true;
                             System.out.println("Added missing element to target: " + elementValue);
                             continue;
@@ -140,7 +167,7 @@ public class XmlService {
                     // Update section
                     if(!targetSectionValue.equals(sectionValue)){
                         //get the section Node from the element
-                        NodeList sectionNode = sourceField.getElementsByTagName("section");
+                        NodeList sectionNode = clonedSourceField.getElementsByTagName("section");
                         if (sectionNode.getLength() > 0) {
                             Element sectionElement = (Element) sectionNode.item(0);
                             sectionElement.setTextContent(String.valueOf(targetSectionValue));
@@ -153,9 +180,9 @@ public class XmlService {
                         return (curr == null) ? XmlUtil.getLastOrderBy(targetDoc, sec) + 1 : curr + 1;
                     });
 
-                    // Use template based on display-type
-                    String displayType = XmlUtil.getDisplayType(sourceField);
-                    boolean isMultiSelect = XmlUtil.isMultiSelect(sourceField);
+                    // Use template based on display-type, is-multiselect
+                    String displayType = XmlUtil.getDisplayType(clonedSourceField);
+                    boolean isMultiSelect = XmlUtil.isMultiSelect(clonedSourceField);
 
                     Element template = XmlNodeTemplate.getTemplateByType(displayType, isMultiSelect);
                     if (template == null) {
@@ -164,7 +191,7 @@ public class XmlService {
                     }
 
                     // Clone and modify template
-                    Element newField = updateXMLNode(sourceField, displayType, isMultiSelect, nextOrderBy, targetDoc, template, targetParent);
+                    Element newField = updateXMLNode(clonedSourceField, displayType, isMultiSelect, nextOrderBy, targetDoc, template, targetParent, underscoreFieldsSet);
 
                     // Add to target XML
                     if (newField != null) {
@@ -179,21 +206,40 @@ public class XmlService {
 
                     //Special handling for header
                     if ("header".equals(elementTag)) {
-                        String sourceHeaderValue = sourceField.getAttribute("value");
+                        String sourceHeaderValue = clonedSourceField.getAttribute("value");
                         if(targetHeaderValues != null && targetHeaderValues.contains(sourceHeaderValue)){
                             System.out.println("Skipping: Header already exists in target with value: " + sourceHeaderValue);
                             continue;
                         }
+                        //if headerName not starts with "bSec_" then append bsec_ in front of headerName
+                        if(!elementValue.startsWith("bSec_")){
+                            String prevValue = elementValue;
+                            elementValue = "bSec_" + elementValue;
+                            //generate random number in between 1000000000 and 9999999999
+                            int randomNumber = (int)(Math.random() * 9000000) + 1000000;
+                            elementValue = elementValue + randomNumber;
+                            updatedHeaders.put(prevValue, elementValue);
+
+                            //now update the CLONED field with new headerName
+                            clonedSourceField.setAttribute("name", elementValue);
+                            // Update the section element value with the header name (elementValue)
+                            NodeList sectionNodes = clonedSourceField.getElementsByTagName("section");
+                            if (sectionNodes.getLength() > 0) {
+                                Element sectionElement = (Element) sectionNodes.item(0);
+                                sectionElement.setTextContent(elementValue);
+                                System.out.println("Updated section element value to: " + elementValue);
+                            }
+                        }
                     }
-                    
-                    targetParent.appendChild(targetDoc.importNode(sourceField, true));
+                    targetParent.appendChild(targetDoc.importNode(clonedSourceField, true));
                     changesMade = true;
                     System.out.println("Added missing element to target: " + elementValue);
                 }
             }else{
+                //if targetElements contains elementValue, then update the tags if mismatch
                 if (attribute.equals("db-field")) {
                     // db-field exists, so just update display-name if mismatch
-                    XmlUtil.updateTagsIfDiff(sourceField, targetFieldMap);
+                    XmlUtil.updateTagsIfDiff(clonedSourceField, targetFieldMap);
                     changesMade = true;
                 }
             }
@@ -203,7 +249,7 @@ public class XmlService {
     }
 
     public static Element updateXMLNode(Element sourceField, String displayType,boolean isMultiSelect, int nextOrderBy,
-            Document targetDoc, Element template, Element targetParent) { 
+            Document targetDoc, Element template, Element targetParent, Set<String> underscoreFieldsSet) { 
         try {
 
             if (template != null) {
@@ -214,7 +260,10 @@ public class XmlService {
                 Element clonedTemplate = (Element) targetDoc.importNode(template, true);
 
                 // Replace key attributes
-                XmlUtil.replaceChildValue(clonedTemplate, "field-name", XmlUtil.getValue(sourceField, "field-name"));
+                String fieldName = XmlUtil.getValue(sourceField, "field-name");
+                if(!fieldName.startsWith("_")) 
+                    underscoreFieldsSet.add(fieldName);
+                XmlUtil.replaceChildValue(clonedTemplate, "field-name", fieldName.startsWith("_") ? fieldName : "_" + fieldName);
                 XmlUtil.replaceChildValue(clonedTemplate, "display-name", XmlUtil.getValue(sourceField, "display-name"));
                 XmlUtil.replaceChildValue(clonedTemplate, "db-field", XmlUtil.getValue(sourceField, "db-field"));
                 XmlUtil.replaceChildValue(clonedTemplate, "data-type", XmlUtil.getValue(sourceField, "data-type"));
@@ -235,6 +284,32 @@ public class XmlService {
                     clonedTemplate.appendChild(importedMailMerge);
                 }
 
+                // If sourceField has sync node, import it to clonedTemplate
+                Node syncNode = XmlUtil.getDirectChildNode(sourceField, "sync");
+                Node syncWithNode = XmlUtil.getDirectChildNode(sourceField, "sync-with");
+                if (syncNode != null) {
+                    Node importedSync = targetDoc.importNode(syncNode, true);
+                    clonedTemplate.appendChild(importedSync);
+                    System.out.println("Added sync tag for field: " + XmlUtil.getValue(sourceField, "db-field"));
+                }else if (syncWithNode != null) {
+                    Node importedSyncWith = targetDoc.importNode(syncWithNode, true);
+                    clonedTemplate.appendChild(importedSyncWith);
+                    System.out.println("Added sync-with tag for field: " + XmlUtil.getValue(sourceField, "db-field"));
+                }
+
+                // If sourceField has dependent node, import it to clonedTemplate
+                Node dependentNode = XmlUtil.getDirectChildNode(sourceField, "dependent");
+                Node dependentParentNode = XmlUtil.getDirectChildNode(sourceField, "dependent-parent");
+                if(dependentNode != null){
+                    Node importedDependent = targetDoc.importNode(dependentNode, true);
+                    clonedTemplate.appendChild(importedDependent);
+                    System.out.println("Added dependent tag for field: " + XmlUtil.getValue(sourceField, "db-field"));
+                }else if(dependentParentNode != null){
+                    Node importedDependentParent = targetDoc.importNode(dependentParentNode, true);
+                    clonedTemplate.appendChild(importedDependentParent);
+                    System.out.println("Added dependent-parent tag for field: " + XmlUtil.getValue(sourceField, "db-field"));
+                }
+
                 System.out.println("Field modified from template: " + XmlUtil.getValue(sourceField, "db-field"));
 
                 return clonedTemplate; // Return newly created Element
@@ -248,4 +323,117 @@ public class XmlService {
             return null;
         }
     }
+
+    public Node getPreferredFields(String elementValue){
+        if(elementValue.equals("PREFERRED_COUNTRY3")){
+            try {
+                // Create a new document to build the field node
+                DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+                Document doc = docBuilder.newDocument();
+                
+                // Create the field element
+                Element field = doc.createElement("field");
+                field.setAttribute("summary", "true");
+                
+                // Add all child elements
+                field.appendChild(createElement(doc, "field-name", "_preferredCountry3"));
+                field.appendChild(createElement(doc, "display-name", "Preferred Country 3"));
+                field.appendChild(createElement(doc, "db-field", "PREFERRED_COUNTRY3"));
+                field.appendChild(createElement(doc, "data-type", "String"));
+                field.appendChild(createElement(doc, "display-type", "Combo"));
+                field.appendChild(createElement(doc, "group-by", "true"));
+                field.appendChild(createElement(doc, "section", "3"));
+                field.appendChild(createElement(doc, "is-active", "yes"));
+                field.appendChild(createElement(doc, "is-mandatory", "false"));
+                field.appendChild(createElement(doc, "build-field", "no"));
+                field.appendChild(createElement(doc, "field-export", "true"));
+                field.appendChild(createElement(doc, "order-by", "6"));
+                field.appendChild(createElement(doc, "dropdown-option", "2"));
+                
+                // Create combo element
+                Element combo = doc.createElement("combo");
+                combo.appendChild(createElement(doc, "parent", "true"));
+                combo.appendChild(createElement(doc, "dependent-field", "_preferredStateId3"));
+                combo.appendChild(createElement(doc, "combo-source-values-method", "comboFimCountry"));
+                field.appendChild(combo);
+                
+                field.appendChild(createElement(doc, "transform-method", "transformCountryFromId"));
+                field.appendChild(createElement(doc, "src-table", "countries"));
+                field.appendChild(createElement(doc, "src-field", "countryID"));
+                field.appendChild(createElement(doc, "src-value", "name"));
+                
+                // Create mailmerge element
+                Element mailmerge = doc.createElement("mailmerge");
+                mailmerge.setAttribute("is-active", "true");
+                mailmerge.setAttribute("keyword-name", "$fsLeadDet_preferredCountry3$");
+                field.appendChild(mailmerge);
+                
+                field.appendChild(createElement(doc, "pii-enabled", "false"));
+                
+                return field;
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+
+        } else if (elementValue.equals("PREFERRED_STATE_ID3")) {
+            try {
+                DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+                Document doc = docBuilder.newDocument();
+        
+                Element field = doc.createElement("field");
+                field.setAttribute("summary", "true");
+        
+                field.appendChild(createElement(doc, "field-name", "_preferredStateId3"));
+                field.appendChild(createElement(doc, "display-name", "Preferred State / Province 3"));
+                field.appendChild(createElement(doc, "db-field", "PREFERRED_STATE_ID3"));
+                field.appendChild(createElement(doc, "group-by", "true"));
+                field.appendChild(createElement(doc, "data-type", "String"));
+                field.appendChild(createElement(doc, "display-type", "Combo"));
+                field.appendChild(createElement(doc, "section", "3"));
+                field.appendChild(createElement(doc, "is-active", "yes"));
+                field.appendChild(createElement(doc, "is-mandatory", "false"));
+                field.appendChild(createElement(doc, "build-field", "no"));
+                field.appendChild(createElement(doc, "field-export", "true"));
+                field.appendChild(createElement(doc, "order-by", "8"));
+                field.appendChild(createElement(doc, "dropdown-option", "2"));
+        
+                Element combo = doc.createElement("combo");
+                combo.appendChild(createElement(doc, "parent", "false"));
+                combo.appendChild(createElement(doc, "dependent-field", "_preferredCountry3"));
+                combo.appendChild(createElement(doc, "combo-source-values-method", "comboFimState"));
+                combo.appendChild(createElement(doc, "combo-method-param", "_preferredCountry3"));
+                field.appendChild(combo);
+        
+                field.appendChild(createElement(doc, "transform-method", "transformStateFromId"));
+                field.appendChild(createElement(doc, "src-table", "regions"));
+                field.appendChild(createElement(doc, "src-field", "regionNo"));
+                field.appendChild(createElement(doc, "src-value", "regionName"));
+        
+                Element mailmerge = doc.createElement("mailmerge");
+                mailmerge.setAttribute("is-active", "true");
+                mailmerge.setAttribute("keyword-name", "$fsLeadDet_preferredStateId3$");
+                field.appendChild(mailmerge);
+        
+                field.appendChild(createElement(doc, "pii-enabled", "false"));
+        
+                return field;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        
+        return null;
+    }
+    
+    private Element createElement(Document doc, String name, String value) {
+        Element element = doc.createElement(name);
+        element.setTextContent(value);
+        return element;
+    }
+
 }

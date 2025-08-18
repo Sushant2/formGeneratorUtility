@@ -75,7 +75,18 @@ public class XmlUtil {
     
         for (int i = 0; i < headers.getLength(); i++) {
             Element header = (Element) headers.item(i);
-            if (header.hasAttribute("name") && header.getAttribute("name").equals(headerName)) {
+            if (header.hasAttribute("name") && header.getAttribute("name").startsWith(headerName)) {
+                return header; // Found the correct header, return it
+            }
+        }
+        return null; // No matching header found
+    }
+
+    public static Element findHeaderBybSecName(Document doc, String headerName) {
+        NodeList headers = doc.getElementsByTagName("header");
+        for (int i = 0; i < headers.getLength(); i++) {
+            Element header = (Element) headers.item(i);
+            if (header.hasAttribute("name") && header.getAttribute("name").startsWith("bSec" + headerName)) {
                 return header; // Found the correct header, return it
             }
         }
@@ -349,6 +360,66 @@ public class XmlUtil {
         System.out.println("All <order-by> values normalized per section.");
     }
 
+    public static void fixHeaderSectionOrder(Document targetDoc) {
+        //fix section number order for each header
+        /*
+         <header name="developmentDetails" order="9" value="Development Details">
+        <type>0</type>
+        <section>10</section>
+        </header>
+        <header name="salesAccelerator" order="10" value="Sales Accelerator">
+        <type>0</type>
+        <section>11</section>
+        </header>
+        <header name="bSec_gdpr8356374" order="7" value="GDPR">
+        <type>0</type>
+        <section>9</section>
+        </header> 
+         */
+        
+        NodeList headers = targetDoc.getElementsByTagName("header");
+        
+        // Create a list to store headers with their section values for sorting
+        List<Element> headerList = new ArrayList<>();
+        for (int i = 0; i < headers.getLength(); i++) {
+            Element header = (Element) headers.item(i);
+            String section = XmlUtil.getSection(header);
+            if(section != null && !section.isEmpty()){
+                headerList.add(header);
+            }
+        }
+        
+        // Sort headers by their current section values
+        headerList.sort((h1, h2) -> {
+            String section1 = XmlUtil.getSection(h1);
+            String section2 = XmlUtil.getSection(h2);
+            try {
+                int sec1 = Integer.parseInt(section1);
+                int sec2 = Integer.parseInt(section2);
+                return Integer.compare(sec1, sec2);
+            } catch (NumberFormatException e) {
+                return section1.compareTo(section2);
+            }
+        });
+        
+        // Reassign sequential section numbers starting from 1
+        int newSectionNumber = 1;
+        for (Element header : headerList) {
+            String currentSection = XmlUtil.getSection(header);
+            System.out.println("Updating header section from " + currentSection + " to " + newSectionNumber);
+            
+            // Update the section element
+            NodeList sectionNodes = header.getElementsByTagName("section");
+            if (sectionNodes.getLength() > 0) {
+                sectionNodes.item(0).setTextContent(String.valueOf(newSectionNumber));
+            }
+            
+            newSectionNumber++;
+        }
+        
+        System.out.println("Header section order fixed. Total headers processed: " + headerList.size());
+    }
+
     public static void setOrderBy(Element field, int value) {
         System.out.println("Setting <order-by> to " + value + " for field: " + XmlUtil.nodeToString(field));
 
@@ -387,7 +458,7 @@ public class XmlUtil {
     }
 
     public static Boolean isMultiSelect(Element fieldElement) {
-        NodeList nodes = fieldElement.getElementsByTagName("is-multiselect-fimSearch");
+        NodeList nodes = fieldElement.getElementsByTagName("is-multiselect");
         if (nodes.getLength() > 0) {
             return true;
         }
@@ -588,7 +659,7 @@ public class XmlUtil {
         }
     }
 
-    public static String generateInsertQuery(String targetKeyPath, String filePath, String module) throws Exception {
+    public static String generateInsertQuery(String targetKeyPath, String filePath, String module, Set<String> underscoreFieldsSet) throws Exception {
         // Generate query
         try {
             String xmlFilename = new File(targetKeyPath).getName(); // e.g. "franchiseesky.xml"
@@ -645,6 +716,36 @@ public class XmlUtil {
             query.append("'").append(copiedFilePath).append("', ");
             query.append("'").append(data).append("', ");
             query.append("CURRENT_TIMESTAMP);");
+
+            // Query to update all the fields with underscore
+            for (String fieldName : underscoreFieldsSet) {
+                String newField = "_" + fieldName;
+                query.append(System.lineSeparator());
+                query.append("UPDATE CLIENT_XMLS SET DATA = REPLACE(DATA, '" + fieldName + "', '" + newField + "');");
+                query.append(System.lineSeparator());
+                query.append("UPDATE SUMMARY_DISPLAY SET FIELD_NAME = REPLACE(FIELD_NAME, '" + fieldName + "', '" + newField + "');");
+                query.append(System.lineSeparator());
+                query.append("UPDATE SUMMARY_DISPLAY SET CUSTOM_FIELD_NAME = REPLACE(CUSTOM_FIELD_NAME, '" + fieldName + "', '" + newField + "');");
+                query.append(System.lineSeparator());
+                query.append("UPDATE FORM_FIELD_ACCESS_MAPPING SET FIELD_NAME = REPLACE(FIELD_NAME, '" + fieldName + "', '" + newField + "');");
+                query.append(System.lineSeparator());
+                query.append("UPDATE FIM_BUILDER_MASTER_DATA SET FIELD_NAME = REPLACE(FIELD_NAME, '" + fieldName + "', '" + newField + "');");
+                query.append(System.lineSeparator());
+                query.append("UPDATE TRIGGER_EVENT SET FIELD_NAME = REPLACE(FIELD_NAME, '" + fieldName + "', '" + newField + "');");
+                query.append(System.lineSeparator());
+                query.append("UPDATE TRIGGER_EVENT SET DB_FIELD_NAME = REPLACE(DB_FIELD_NAME, '" + fieldName.toUpperCase() + "', '" + newField.toUpperCase() + "');");
+                query.append(System.lineSeparator());
+                query.append("UPDATE TABULAR_SECTION_DISPLAY_COLUMN SET FIELD_NAME = REPLACE(FIELD_NAME, '" + fieldName + "', '" + newField + "') WHERE TABLE_NAME LIKE '%" + xmlKey + "%';");
+                query.append(System.lineSeparator());
+                query.append("UPDATE TABULAR_SECTION_DISPLAY_COLUMN SET DISPLAY_VALUE = REPLACE(DISPLAY_VALUE, '" + fieldName.toUpperCase() + "', '" + newField.toUpperCase() + "') WHERE TABLE_NAME LIKE '%" + xmlKey + "%';");
+                query.append(System.lineSeparator());
+                query.append("UPDATE SMART_GROUP_CRITERIA SET FIELD_NAME = REPLACE(FIELD_NAME, '" + fieldName + "', '" + newField + "');");
+                query.append(System.lineSeparator());
+                query.append("UPDATE CUSTOM_REPORT SET");
+                query.append("  CUSTOM_REPORT_SELECT_FIELDS = REPLACE(CUSTOM_REPORT_SELECT_FIELDS, '" + fieldName + "', '" + newField + "'),");
+                query.append("  CUSTOM_REPORT_WHERE_FIELDS = REPLACE(CUSTOM_REPORT_WHERE_FIELDS, '" + fieldName + "', '" + newField + "'),");
+                query.append("  CUSTOM_REPORT_SELECT_FIELDS_WITH_TABLES = REPLACE(CUSTOM_REPORT_SELECT_FIELDS_WITH_TABLES, '#####" + fieldName + "', '#####" + newField + "');");
+            }
 
             String insertQuery = query.toString();
 
