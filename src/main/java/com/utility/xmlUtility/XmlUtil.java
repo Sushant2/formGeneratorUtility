@@ -360,66 +360,6 @@ public class XmlUtil {
         System.out.println("All <order-by> values normalized per section.");
     }
 
-    public static void fixHeaderSectionOrder(Document targetDoc) {
-        //fix section number order for each header
-        /*
-         <header name="developmentDetails" order="9" value="Development Details">
-        <type>0</type>
-        <section>10</section>
-        </header>
-        <header name="salesAccelerator" order="10" value="Sales Accelerator">
-        <type>0</type>
-        <section>11</section>
-        </header>
-        <header name="bSec_gdpr8356374" order="7" value="GDPR">
-        <type>0</type>
-        <section>9</section>
-        </header> 
-         */
-        
-        NodeList headers = targetDoc.getElementsByTagName("header");
-        
-        // Create a list to store headers with their section values for sorting
-        List<Element> headerList = new ArrayList<>();
-        for (int i = 0; i < headers.getLength(); i++) {
-            Element header = (Element) headers.item(i);
-            String section = XmlUtil.getSection(header);
-            if(section != null && !section.isEmpty()){
-                headerList.add(header);
-            }
-        }
-        
-        // Sort headers by their current section values
-        headerList.sort((h1, h2) -> {
-            String section1 = XmlUtil.getSection(h1);
-            String section2 = XmlUtil.getSection(h2);
-            try {
-                int sec1 = Integer.parseInt(section1);
-                int sec2 = Integer.parseInt(section2);
-                return Integer.compare(sec1, sec2);
-            } catch (NumberFormatException e) {
-                return section1.compareTo(section2);
-            }
-        });
-        
-        // Reassign sequential section numbers starting from 1
-        int newSectionNumber = 1;
-        for (Element header : headerList) {
-            String currentSection = XmlUtil.getSection(header);
-            System.out.println("Updating header section from " + currentSection + " to " + newSectionNumber);
-            
-            // Update the section element
-            NodeList sectionNodes = header.getElementsByTagName("section");
-            if (sectionNodes.getLength() > 0) {
-                sectionNodes.item(0).setTextContent(String.valueOf(newSectionNumber));
-            }
-            
-            newSectionNumber++;
-        }
-        
-        System.out.println("Header section order fixed. Total headers processed: " + headerList.size());
-    }
-
     public static void setOrderBy(Element field, int value) {
         System.out.println("Setting <order-by> to " + value + " for field: " + XmlUtil.nodeToString(field));
 
