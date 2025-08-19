@@ -211,7 +211,7 @@ public class XmlService {
                             System.out.println("Skipping: Header already exists in target with value: " + sourceHeaderValue);
                             continue;
                         }
-                        //if headerName not starts with "bSec_" then append bsec_ in front of headerName
+                        //if headerName not starts with "bSec_" then append bSec_ in front of headerName
                         if(!elementValue.startsWith("bSec_")){
                             String prevValue = elementValue;
                             elementValue = "bSec_" + elementValue;

@@ -33,6 +33,7 @@ public class XmlProcessor implements CommandLineRunner {
             List<String> queryList = new ArrayList<>();
 
             Set<String> requiredKeySet = XmlUtil.getRequiredKeySet();
+            Set<String> underscoreFieldsSet = new HashSet<>();
             String sourcePath = BASE_PATH + "/tablemappings.xml" + "/";
             String targetPath = TARGET_BASE + "/tablemappings.xml" + "/";
 
@@ -42,7 +43,7 @@ public class XmlProcessor implements CommandLineRunner {
             Map<String, String> sourceTableMappingsMap = XmlUtil.readTableMappings(sourcePath);
             Map<String, String> targetTableMappingsMap = XmlUtil.readTableMappings(targetPath);
 
-            for (Map.Entry<String, String> entry : sourceTableMappingsMap.entrySet()) {
+            /*for (Map.Entry<String, String> entry : sourceTableMappingsMap.entrySet()) {
                 System.out.println("Key: " + entry.getKey() + " → Value: " + entry.getValue());
             }
 
@@ -50,7 +51,7 @@ public class XmlProcessor implements CommandLineRunner {
 
             for (Map.Entry<String, String> entry : targetTableMappingsMap.entrySet()) {
                 System.out.println("Key: " + entry.getKey() + " → Value: " + entry.getValue());
-            }
+            }*/
 
             for(String key: sourceTableMappingsMap.keySet()) { // e.g. "fimCompliance"
                 if(!targetTableMappingsMap.containsKey(key)) {
@@ -97,7 +98,7 @@ public class XmlProcessor implements CommandLineRunner {
                             targetKeyPath);
 
                     // Generate query for tabmodules.xml
-                    String tabModulesQuery = XmlUtil.generateInsertQuery(targetKeyPath, filePath, null);
+                    String tabModulesQuery = XmlUtil.generateInsertQuery(targetKeyPath, filePath, null, underscoreFieldsSet);
                     tabModulesInnerXMLsQueryList.add(tabModulesQuery);
 
                     // Writing queries into file
@@ -122,13 +123,13 @@ public class XmlProcessor implements CommandLineRunner {
                         System.out.println("Reading from source: " + sourceInnerXmlPath);
                         System.out.println("Writing to target: " + targetInnerXmlPath);
 
-                        xmlService.processXmlFiles(sourceInnerXmlPath, targetInnerXmlPath);
+                        xmlService.processXmlFiles(sourceInnerXmlPath, targetInnerXmlPath, underscoreFieldsSet);
                         // Generate query for inner XMLs of tabmodules.xml
                         String completeTargetInnerXmlPath = System.getProperty("user.home")
                                 + "/formGeneratorXml/src/main/resources/" + targetInnerXmlPath;
                         innerXmlPath = (innerXmlPath.startsWith("/") ? innerXmlPath : "/" + innerXmlPath);
                         String innerXMLQuery = XmlUtil.generateInsertQuery(completeTargetInnerXmlPath, innerXmlPath,
-                                moduleName);
+                                moduleName, underscoreFieldsSet);
                         tabModulesInnerXMLsQueryList.add(innerXMLQuery);
                     }
                     // Writing queries into file
@@ -137,20 +138,34 @@ public class XmlProcessor implements CommandLineRunner {
                 }
 
                 if(requiredKeySet.contains(key)) {
-                    // Process the XML files
-                    xmlService.processXmlFiles(sourceKeyPath, targetKeyPath);
 
-                    // Delete & Insert Query
-                    String query = XmlUtil.generateInsertQuery(targetKeyPath, filePath, null);
-                    queryList.add(query);
+                    if(key.equals("fimEntityDetail") || key.equals("fimEntityDetail_copy")) {
+                        String query = XmlUtil.getSpecificXmlQuery("fimEntityDetail");
+                        queryList.add(query);
+                    }
+                    else if(key.equals("fimTraining") || key.equals("fimTraining_copy")){
+                        String query = XmlUtil.getSpecificXmlQuery("fimTraining");
+                        queryList.add(query);
+                    }else{
+                        // Process the XML files
+                        xmlService.processXmlFiles(sourceKeyPath, targetKeyPath, underscoreFieldsSet);
+
+                        // Delete & Insert Query
+                        String query = XmlUtil.generateInsertQuery(targetKeyPath, filePath, null, underscoreFieldsSet);
+                        queryList.add(query);
+                    }
 
                     // Writing queries into file
                     XmlUtil.writeToFile("src/main/resources/tableMappingsQueries.sql", queryList);
                 }
             }
-
+            
             // For testing purpose only - single XML
-            // xmlService.processXmlFiles("src/main/resources/mbe.xml", "src/main/resources/sky.xml");
+            // xmlService.processXmlFiles("src/main/resources/mbe.xml", "src/main/resources/sky.xml", underscoreFieldsSet);
+            // String query = XmlUtil.generateInsertQuery("src/main/resources/sky.xml", "filePath", null, underscoreFieldsSet);
+            // queryList.add(query);
+
+            // XmlUtil.writeToFile("src/main/resources/sampleQueries.sql", queryList);
 
         } catch (Exception e) {
             System.err.println("Error processing xml files");

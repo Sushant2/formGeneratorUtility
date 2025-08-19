@@ -8,6 +8,7 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.io.IOException;
 import java.util.*;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -559,6 +560,10 @@ public class XmlUtil {
                 }
             }
 
+            // add custom training module entry
+            boolean customAdded = addCustomTrainingModule(targetDoc, targetRoot, targetTabModuleElements);
+            updated = updated || customAdded;
+
             if (updated) {
                 XmlUtil.saveXmlDocument(targetDoc, targetTabModulesPath); // Overwrite or write to new file
                 System.out.println("Target tabmodules.xml updated with new entries.");
@@ -570,6 +575,41 @@ public class XmlUtil {
             e.printStackTrace();
             System.out.println("Failed to sync module-tabs: " + e.getMessage());
         }
+    }
+
+    private static boolean addCustomTrainingModule(Document targetDoc, Element targetRoot,
+                                               Map<String, Element> targetTabModuleElements) {
+        String trainingDbTable = "_TRAINING_1851313017";
+
+        if (targetTabModuleElements.containsKey(trainingDbTable)) {
+            System.out.println("Custom <module-tab> entry already exists for training.");
+            return false;
+        }
+
+        Element customModule = targetDoc.createElement("module-tab");
+        customModule.setAttribute("addMore", "true");
+        customModule.setAttribute("builderFormId", "1851313017");
+        customModule.setAttribute("condition", "dataPresent");
+        customModule.setAttribute("db-table", trainingDbTable);
+        customModule.setAttribute("fileLocation", "tables/buildertabs/training1851313017.xml");
+        customModule.setAttribute("href", "/moduleCustomTab");
+        customModule.setAttribute("is-active", "Y");
+        customModule.setAttribute("is-exportable", "true");
+        customModule.setAttribute("module", "fim");
+        customModule.setAttribute("path", "/moduleCustomTab,/addModuleCustomTab");
+        customModule.setAttribute("privilegeUrl", "/moduleCustomTab");
+        customModule.setAttribute("submodule", "franchisee");
+        customModule.setAttribute("tab-display", "TRAINING");
+        customModule.setAttribute("tab-name", "training1851313017");
+        customModule.setAttribute("tab-row", "1");
+        customModule.setAttribute("tabOrder", "28");
+        customModule.setAttribute("tableAnchor", "training1851313017");
+        customModule.setAttribute("viewRoles", "");
+        customModule.setAttribute("writeRoles", "");
+
+        targetRoot.appendChild(customModule);
+        System.out.println("Added custom <module-tab> entry for training.");
+        return true;
     }
 
     public static void copyTableContent(Document sourceDoc, Document targetDoc) {
@@ -696,6 +736,68 @@ public class XmlUtil {
             System.out.println("Error generating insert query: " + e.getMessage());
             return null;
         }
+    }
+
+    public static String getSpecificXmlQuery(String xmlKey) {
+        StringBuilder query = new StringBuilder();
+        if(xmlKey.equals("fimEntityDetail") || xmlKey.equals("fimEntityDetail_copy")) {
+            query.append("INSERT INTO CLIENT_XMLS(ID, NAME, XML_KEY, MODULE, FILE_PATH, DATA, LAST_MODIFIED) VALUES (");
+            query.append("NULL, ");
+            if(xmlKey.equals("fimEntityDetail")) {
+                query.append("'fimEntityDetail.xml', ");
+                query.append("'fimEntityDetail', ");
+                query.append("'fim', ");
+                query.append("'/tables/fim/fimEntityDetail.xml', ");
+            }
+            else if(xmlKey.equals("fimEntityDetail_copy")) {
+                query.append("'fimEntityDetail_copy.xml', ");
+                query.append("'fimEntityDetail_copy', ");
+                query.append("'fim', ");
+                query.append("'/tables/fim/fimEntityDetail_copy.xml', ");
+            }
+
+            String xmlData;
+            try {
+                xmlData = Files.readString(Paths.get("src/main/resources/requiredXml/fimEntityDetail.xml"));
+            } catch (IOException e) {
+                xmlData = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><table></table>";
+            }
+
+            // Escape single quotes in XML so it can be safely inserted
+            xmlData = xmlData.replace("'", "''");
+
+            query.append("'" + xmlData + "', ");
+            query.append("NOW());"); // Assuming LAST_MODIFIED is a timestamp
+        }else if("fimTraining".equals(xmlKey) || "fimTraining_copy".equals(xmlKey)){
+            query.append("INSERT INTO CLIENT_XMLS(ID, NAME, XML_KEY, MODULE, FILE_PATH, DATA, LAST_MODIFIED) VALUES (");
+            query.append("NULL, ");
+            if(xmlKey.equals("fimTraining")) {
+                query.append("'training1851313017.xml', ");
+                query.append("'training1851313017', ");
+                query.append("'buildertabs', ");
+                query.append("'/tables/buildertabs/training1851313017.xml', ");
+            }
+            else if(xmlKey.equals("fimTraining_copy")) {
+                query.append("'training1851313017_copy.xml', ");
+                query.append("'training1851313017_copy', ");
+                query.append("'buildertabs', ");
+                query.append("'/tables/buildertabs/training1851313017_copy.xml', ");
+            }
+
+            String xmlData;
+            try {
+                xmlData = Files.readString(Paths.get("src/main/resources/requiredXml/fimTraining.xml"));
+            } catch (IOException e) {
+                xmlData = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><table></table>";
+            }
+
+            // Escape single quotes in XML so it can be safely inserted
+            xmlData = xmlData.replace("'", "''");
+
+            query.append("'" + xmlData + "', ");
+            query.append("NOW());"); // Assuming LAST_MODIFIED is a timestamp
+        }
+        return query.toString();
     }
     
     public static void writeToFile(String filePath, List<String> queryList) throws Exception {
