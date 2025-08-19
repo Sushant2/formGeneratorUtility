@@ -182,6 +182,14 @@ public class XmlService {
 
                     // Use template based on display-type, is-multiselect
                     String displayType = XmlUtil.getDisplayType(clonedSourceField);
+                    if(displayType.equals("Label")){
+                        String dataType = XmlUtil.getValue(clonedSourceField, "data-type");
+                        if(dataType.equals("Date")){
+                            displayType = "Date";
+                        }else if(dataType.equals("String")){
+                            displayType = "Text";
+                        }
+                    }
                     boolean isMultiSelect = XmlUtil.isMultiSelect(clonedSourceField);
 
                     Element template = XmlNodeTemplate.getTemplateByType(displayType, isMultiSelect);
