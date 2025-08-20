@@ -119,12 +119,26 @@ public class XmlService {
 
                 if (attribute.equals("db-field")) {
 
+                    String tableName = XmlUtil.getValue(sourceDoc.getDocumentElement(), "table-name");
                     // skip if <field-name>bestTimeToContact</field-name> is already in target
-                    boolean isBestTimeToContact = XmlUtil.getValue(clonedSourceField, "field-name").equals("bestTimeToContact");
-                    if(isBestTimeToContact){
-                        System.out.println("Skipping: bestTimeToContact field is already in target");
-                        continue;
+                    if(tableName.equals("FS_LEAD_DETAILS")){
+                        boolean isBestTimeToContact = XmlUtil.getValue(clonedSourceField, "field-name").equals("bestTimeToContact");
+                        if(isBestTimeToContact){
+                            System.out.println("Skipping: bestTimeToContact field is already in target");
+                            continue;
+                        }
                     }
+
+                    // skip if <field-name>typeOfOwnership</field-name> is already in target
+                    if(tableName.equals("FIM_OWNERS")){
+                        boolean isTypeOfOwnership = XmlUtil.getValue(clonedSourceField, "field-name").equals("typeOfOwnership");
+                        if(isTypeOfOwnership){
+                            System.out.println("Skipping: typeOfOwnership field is already in target");
+                            continue;
+                        }
+                    }
+
+                    boolean isAreaManager = XmlUtil.getValue(clonedSourceField, "field-name").equals("areaManager");
 
                     //handle preferredStateId3, preferredStateId3
                     if(elementValue.equals("PREFERRED_COUNTRY3")){
@@ -191,6 +205,9 @@ public class XmlService {
                         }
                     }
                     boolean isMultiSelect = XmlUtil.isMultiSelect(clonedSourceField);
+                    if(isAreaManager){
+                        isMultiSelect = true;
+                    }
 
                     Element template = XmlNodeTemplate.getTemplateByType(displayType, isMultiSelect);
                     if (template == null) {
@@ -200,6 +217,17 @@ public class XmlService {
 
                     // Clone and modify template
                     Element newField = updateXMLNode(clonedSourceField, displayType, isMultiSelect, nextOrderBy, targetDoc, template, targetParent, underscoreFieldsSet);
+                    if(isAreaManager){
+                        newField.appendChild(createElement(targetDoc, "dropdown-option", "4"));
+                        
+                        // Create combo element with proper nested structure
+                        Element combo = targetDoc.createElement("combo");
+                        combo.appendChild(createElement(targetDoc, "combo-source-values-method", "fetchUserDataBasedOnRoleIds"));
+                        newField.appendChild(combo);
+                        
+                        newField.appendChild(createElement(targetDoc, "transform-method", "fetchUserNameBasedOnUserIds"));
+                        XmlUtil.replaceChildValue(newField, "data-type", "String");
+                    }
 
                     // Add to target XML
                     if (newField != null) {

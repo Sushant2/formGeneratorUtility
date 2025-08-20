@@ -796,6 +796,16 @@ public class XmlUtil {
 
             query.append("'" + xmlData + "', ");
             query.append("NOW());"); // Assuming LAST_MODIFIED is a timestamp
+        }else if("franchisees".equals(xmlKey) || "franchisees_copy".equals(xmlKey)){
+            query.append("DELETE FROM FIM_BUILDER_MASTER_DATA WHERE FIELD_NAME='_areaManager';");
+            query.append(System.lineSeparator());
+            query.append("SET @A:=0;");
+            query.append(System.lineSeparator());
+            query.append("INSERT INTO FIM_BUILDER_MASTER_DATA(FIELD_ID,FIELD_NAME,OPTION_ID,OPTION_VALUE,TABLE_ANCHOR,IS_ACTIVE,DEPENDENT_VALUE,ORDER_NO) ");
+            query.append("SELECT '0','_areaManager',@A:=@A+1,ROLE_ID,'franchisees','Y',NULL,@A:=@A+1 FROM ROLE WHERE ROLE_ID IN (SELECT ROLE_ID FROM USER_ROLES WHERE USER_NO IN (SELECT USER_NO FROM USERS WHERE IS_AREA_MANAGER='Y' AND STATUS=1 AND IS_DELETED='N'));");
+            query.append(System.lineSeparator());
+            query.append("ALTER TABLE FRANCHISEE MODIFY AREA_MANAGER TEXT;");
+            query.append(System.lineSeparator());
         }
         return query.toString();
     }
