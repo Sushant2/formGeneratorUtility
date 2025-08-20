@@ -53,7 +53,7 @@ public class XmlProcessor implements CommandLineRunner {
                 System.out.println("Key: " + entry.getKey() + " → Value: " + entry.getValue());
             }*/
 
-            /*for(String key: sourceTableMappingsMap.keySet()) { // e.g. "fimCompliance"
+            for(String key: sourceTableMappingsMap.keySet()) { // e.g. "fimCompliance"
                 if(!targetTableMappingsMap.containsKey(key)) {
                     System.out.println("Key: " + key + " is missing in target XML");
                     //String insertSourceQuery = XmlUtil.generateInsertQuery(BASE_PATH + sourceTableMappingsMap.get(key), sourceTableMappingsMap.get(key));
@@ -153,19 +153,23 @@ public class XmlProcessor implements CommandLineRunner {
                         // Delete & Insert Query
                         String query = XmlUtil.generateInsertQuery(targetKeyPath, filePath, null, underscoreFieldsSet);
                         queryList.add(query);
+
+                        if(key.equals("franchisees") || key.equals("franchisees_copy")){
+                            query = XmlUtil.getSpecificXmlQuery("franchisees");
+                            queryList.add(query);
+                        }
                     }
 
                     // Writing queries into file
                     XmlUtil.writeToFile("src/main/resources/tableMappingsQueries.sql", queryList);
                 }
-            }*/
+            }
             
             // For testing purpose only - single XML
-            xmlService.processXmlFiles("src/main/resources/mbe.xml", "src/main/resources/sky.xml", underscoreFieldsSet);
+            /*xmlService.processXmlFiles("src/main/resources/mbe.xml", "src/main/resources/sky.xml", underscoreFieldsSet);
             String query = XmlUtil.generateInsertQuery("src/main/resources/sky.xml", "filePath", null, underscoreFieldsSet);
             queryList.add(query);
-
-            XmlUtil.writeToFile("src/main/resources/sampleQueries.sql", queryList);
+            XmlUtil.writeToFile("src/main/resources/sampleQueries.sql", queryList);*/
 
         } catch (Exception e) {
             System.err.println("Error processing xml files");
