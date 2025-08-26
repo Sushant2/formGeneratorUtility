@@ -166,10 +166,12 @@ public class XmlProcessor implements CommandLineRunner {
             }
             
             // For testing purpose only - single XML
-            /*xmlService.processXmlFiles("src/main/resources/mbe.xml", "src/main/resources/sky.xml", underscoreFieldsSet);
+            /*
+            xmlService.processXmlFiles("src/main/resources/mbe.xml", "src/main/resources/sky.xml", underscoreFieldsSet);
             String query = XmlUtil.generateInsertQuery("src/main/resources/sky.xml", "filePath", null, underscoreFieldsSet);
             queryList.add(query);
-            XmlUtil.writeToFile("src/main/resources/sampleQueries.sql", queryList);*/
+            XmlUtil.writeToFile("src/main/resources/sampleQueries.sql", queryList);
+            */
 
         } catch (Exception e) {
             System.err.println("Error processing xml files");
