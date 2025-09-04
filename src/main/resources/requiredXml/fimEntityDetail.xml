@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8"?><table>
+	<connection-name>appnetix</connection-name>
+	<table-name>FIM_ENTITY_DETAIL</table-name>
+	<table-display-name>Entity Details</table-display-name>
+	<table-header-map>
+		<header name="entityDetails" order="0" value="Entity Details">
+			<type>0</type>
+			<section>1</section>
+			<documents name="fimDocuments" section="1" tabName="FIM_DOCUMENTS" tableAnchor="fimDocuments">
+			<document count="0" doc-column="DOCUMENT_FIM_ATTACHMENT" doc-display="Document" doc-name="fimDocumentAttachment" doc-option="0" isActive="yes" isBuild="true" name="0" order-by="17" section="1" title-column="DOCUMENT_FIM_TITLE" title-display="Formation Document Title" title-name="fimDocumentTitle"/>
+			<document count="1" doc-column="DOCUMENT_FIM_ATTACHMENT" doc-display="Document" doc-name="fimDocumentAttachment" doc-option="0" isActive="yes" isBuild="true" name="1" order-by="18" section="1" title-column="DOCUMENT_FIM_TITLE" title-display="Governing Document Title" title-name="fimDocumentTitle"/>
+			</documents>
+			<dependent-table name="address_0" tableAnchor="address" tableWithalias="address_0">
+			<!--Sperry-20140113-125	starts-->
+				<!-- <table-field name="addressID" display-name = "" colname="ADDRESS_ID" isActive="false" order-by="8" section="1"/> -->
+				<table-field colname="ADDRESS" display-name="Address" is-active="no" isActive="yes" keyword-name="$fim_EntityAddress$" name="address" order-by="28" section="1"/>
+				<table-field colname="CITY" display-name="City" is-active="no" isActive="yes" keyword-name="$fim_EntityCity$" name="city" order-by="27" section="1"/>
+				<table-field colname="COUNTRY" display-name="Country" is-active="no" isActive="yes" keyword-name="$fim_EntityCountry$" name="country" order-by="24" section="1"/>
+				<table-field colname="STATE" display-name="State/Province" is-active="no" isActive="yes" keyword-name="$fim_EntityState$" name="state" order-by="23" section="1"/>
+				<table-field colname="ZIPCODE" display-name="Zip / Postal Code" is-active="no" isActive="yes" keyword-name="$fim_EntityZip$" name="zipcode" order-by="26" section="1"/>
+				<table-field colname="PHONE_NUMBERS" display-name="Phone" is-active="no" isActive="yes" keyword-name="$fim_EntityPhone$" name="phoneNumbers" order-by="20" section="1"/>
+				<table-field colname="EXTN" display-name="Phone Extension" is-active="no" isActive="yes" keyword-name="$fim_EntityPhoneExtn$" name="extn" order-by="25" section="1"/>
+				<table-field colname="FAX_NUMBERS" display-name="Fax" is-active="no" isActive="yes" keyword-name="$fim_EntityFax$" name="faxNumbers" order-by="22" section="1"/>
+				<table-field colname="MOBILE_NUMBERS" display-name="Mobile" is-active="no" isActive="yes" keyword-name="$fim_EntityMobile$" name="mobileNumbers" order-by="21" section="1"/>
+				<table-field colname="EMAIL_IDS" display-name="Email" include-in-campaign="0" isActive="yes" keyword-name="$fim_EntityEmail$" name="emailIds" order-by="12" section="1" validation-type="Email"/>
+			<!--Sperry-20140113-125	Ends-->	
+			</dependent-table>
+			<dependent-table name="fimEntityLocationMapping_0" tableAnchor="fimEntityLocationMapping" tableWithalias="fimEntityLocationMapping_0">
+				<table-field colname="STORE_OWNED_PERCENTAGE" display-name="Owned Percentage" isActive="yes" name="storeOwnedPercentage" order-by="16" section="1" source-field="true"/>
+			    <table-field colname="TYPE_OF_OWNERSHIP" display-name="Type Of Ownership" isActive="yes" name="typeOfOwnership" order-by="17" section="1" source-field="true"/>
+				<table-field colname="OWNERSHIP_START_DATE" display-name="Ownership Start Date" isActive="yes" name="ownershipStartDate" order-by="13" section="1" source-field="true"/>
+				<table-field colname="IS_MANAGER" colspan="2" display-name="Managing Owner" isActive="yes" name="isManager" order-by="18" section="1" source-field="true"/>
+			</dependent-table>
+			<dependent-table name="fimEntityRoleMapping_0" tableAnchor="fimEntityRoleMapping" tableWithalias="fimEntityRoleMapping_0">
+				<table-field colname="ENTITY_ROLE_ID" display-name="Entity Role" isActive="yes" name="entityRoleId" order-by="15" section="1"/>
+			</dependent-table>
+			<dependent-table name="fimEntityAreaMapping_0" tableAnchor="fimEntityAreaMapping" tableWithalias="fimEntityAreaMapping_0">
+				<table-field colname="AREA_ID" display-name="Area / Region(s)" isActive="yes" name="areaID" order-by="19" section="1" source-field="true"/>
+			</dependent-table>
+		</header>
+	</table-header-map>
+	<id-field>fimEntityID</id-field>
+	<foreign-tables>
+		<foreign-table name="fimEntityAreaMapping" table-export="true">
+			<link-field foreignField="fimEntityID" thisField="fimEntityID"/>
+		</foreign-table>
+		<foreign-table name="fimEntityRoleMapping" table-export="true">
+			<link-field foreignField="fimEntityID" thisField="fimEntityID"/>
+		</foreign-table>
+		<foreign-table name="fimEntityLocationMapping" table-export="true">
+			<link-field foreignField="fimEntityID" thisField="fimEntityID"/>
+			<link-field foreignField="franchiseeNo" thisField="entityID"/>
+		</foreign-table>
+		<foreign-table name="fimEntityOwnerMapping" table-export="true">
+			<link-field foreignField="fimEntityID" thisField="fimEntityID"/>
+		</foreign-table>
+		<foreign-table name="address" table-export="true">
+			<link-field foreignField="foreignID" thisField="fimEntityID"/>
+		</foreign-table>
+		<foreign-table name="fimDocuments" table-export="false">
+			<link-field foreignField="tabPrimaryId" thisField="fimEntityID"/>
+			<link-field foreignField="entityID" thisField="fimEntityID"/>
+		</foreign-table>
+		<!-- Valvol-20140310-006  -->
+		<!-- Valvol-20140310-006 -->
+	</foreign-tables>
+	<field summary="true">
+		<field-name>fimEntityID</field-name>
+		<display-name>Entity ID</display-name>
+		<db-field>FIM_ENTITY_ID</db-field>
+		<data-type>Integer</data-type>
+	</field>
+	<field colspan="2" colspan-export="3" summary="true">
+		<field-name>fimTtEntityName</field-name>
+		<display-name>Company Name - 1</display-name>
+		<display-export-name>Company Name - 1</display-export-name>
+		<db-field>FIM_TT_ENTITY_NAME</db-field>
+		<data-type>String</data-type>
+		<field-export>true</field-export>
+		<search>
+		<search-field>textlike</search-field>
+		</search>
+		<sortable>true</sortable>
+		<pii-enabled>false</pii-enabled>
+		<validation>
+			<validation-type>Mandatory</validation-type>
+		</validation>
+		<is-mandatory>true</is-mandatory>
+		<source-field>true</source-field>
+		<transform-export-method>transformEntityNameExport</transform-export-method>
+		<transform-method-export-param>ENTITY_STATUS</transform-method-export-param>
+		<section>1</section>
+		<order-by>0</order-by>
+		<display-type>Text</display-type>
+		<mailmerge is-active="true" keyword-name="$fim_EntityName$"/>
+	</field>
+	<field colspan="2" colspan-export="3" summary="true">
+		<field-name>clientEntityID</field-name>
+		<display-name>Company Legal Representativ - 6</display-name>
+		<display-export-name>Company Legal Representativ - 6</display-export-name>
+		<db-field>CLIENT_ENTITY_ID</db-field>
+		<data-type>String</data-type>
+		<field-export>true</field-export>
+		<search>
+		<search-field>textlike</search-field>
+		</search>
+		<sortable>true</sortable>
+		<pii-enabled>false</pii-enabled>
+		<source-field>false</source-field>
+		<is-active>yes</is-active>
+		<section>1</section>
+		<order-by>5</order-by>
+		<display-type>Text</display-type>
+	</field>
+	<field summary="true">
+        <field-name>fimEntityDetail0</field-name>
+        <display-name>Entity Address</display-name>
+        <db-field>FIM_ENTITY_ID</db-field>
+        <data-type>Integer</data-type>
+        <field-export>true</field-export>
+        <allow-field-in-main>false</allow-field-in-main>
+        <transform-method>transformAddress</transform-method>
+        <custom-sortable>false</custom-sortable><!-- CUSTOM_REPORT_SORTING_ISSUE -->
+	</field>
+	<field summary="true">
+		<field-name>fimCbCountryOfFormation</field-name>
+		<display-name>Company HQ - Country - 8</display-name>
+		<db-field>FIM_CB_COUNTRY_OF_FORMATION</db-field>
+		<data-type>String</data-type>
+		<field-export>true</field-export>
+		<group-by>true</group-by>
+		<transform-method>transformCountryFromId</transform-method>
+	    <src-table>countries</src-table>
+	    <src-field>countryID</src-field>
+	    <src-value>name</src-value>
+		<search>
+			<search-field>comboFimCountry</search-field>
+			<search-source-values-method>getSearchCountryCombo</search-source-values-method>
+		</search>
+		<section>1</section>
+		<order-by>7</order-by>
+		<display-type>Combo</display-type>
+		<dropdown-option>-1</dropdown-option>
+		<combo>
+			<parent>true</parent>
+			<dependent-field>fimCbStateOfFormation</dependent-field>
+			<combo-source-values-method>comboFimCountry</combo-source-values-method>
+		</combo>
+		<mailmerge is-active="true" keyword-name="$fim_CountryOfFormation$"/>
+		<internationalization>yes</internationalization>
+	<is-active>yes</is-active><display-export-name>Company HQ - Country - 8</display-export-name></field>
+	<field summary="true">
+		<field-name>fimCbStateOfFormation</field-name>
+		<display-name>Company HQ - State/Province - 9</display-name>
+		<db-field>FIM_CB_STATE_OF_FORMATION</db-field>
+		<data-type>String</data-type>
+		<field-export>true</field-export>
+		<group-by>true</group-by>
+		<transform-method>transformStateFromId</transform-method>
+	    <src-table>regions</src-table>
+	    <src-field>regionNo</src-field>
+	    <src-value>regionName</src-value>
+		<search>
+		<!-- <search-field>textlike</search-field> -->
+			<search-field>comboFimState</search-field><!-- BBP-20140508-244 -->
+			<search-source-values-method>getSearchStateCombo</search-source-values-method>
+		</search>
+		<section>1</section>
+		<order-by>8</order-by>
+		<display-type>Combo</display-type>
+		<dropdown-option>-1</dropdown-option>
+		<combo>
+			<parent>false</parent>
+			<dependent-field>fimCbCountryOfFormation</dependent-field>
+			<combo-source-values-method>comboFimState</combo-source-values-method>
+			<combo-method-param>fimCbCountryOfFormation</combo-method-param>
+		</combo>
+		<mailmerge is-active="true" keyword-name="$fim_StateOfFormation$"/>
+		<internationalization>yes</internationalization>
+	<is-active>yes</is-active><display-export-name>Company HQ - State/Province - 9</display-export-name></field>
+        
+	<field summary="true">
+		<field-name>fimDdDateOfFormation</field-name>
+		<display-name>Company establishment Start date - 7</display-name>
+		<db-field>FIM_DD_DATE_OF_FORMATION</db-field>
+		<data-type>Date</data-type>
+		<field-export>true</field-export>
+        <group-by>true</group-by>
+		<sortable>true</sortable>
+		<search>
+		<search-field>dateRange</search-field>
+		</search>
+		<section>1</section>
+		<order-by>6</order-by>
+		<display-type>Date</display-type>
+		<pii-enabled>false</pii-enabled>
+		<mailmerge is-active="true" keyword-name="$fim_dateOfFormation$"/>
+	<is-active>yes</is-active><display-export-name>Company establishment Start date - 7</display-export-name></field>
+	<field summary="true">
+		<field-name>fimTtTaxpayer</field-name>
+		<display-name>Company TAXPAYER number - 4</display-name>
+		<db-field>FIM_TT_TAXPAYER</db-field>
+		<data-type>String</data-type>
+		<field-export>true</field-export>
+		<search>
+		<search-field>textlike</search-field>
+		</search>
+		<section>1</section>
+		<order-by>3</order-by>
+		<display-type>Text</display-type>
+		<pii-enabled>true</pii-enabled>
+		<mailmerge is-active="true" keyword-name="$fim_TaxpayerId$"/>
+	<display-export-name>Company TAXPAYER number - 4</display-export-name></field>
+	<field summary="true">
+		<field-name>fimCbEntityType</field-name>
+		<display-name>Entity Type</display-name>
+		<db-field>FIM_CB_ENTITY_TYPE</db-field>
+		<data-type>Integer</data-type>
+		<source-field>true</source-field>
+		<field-export>true</field-export>
+		<group-by>true</group-by>
+		<jScriptFunct onChange="show()"/>
+		<transform-method>transformIdToValue</transform-method>
+	    <src-table>masterData</src-table>
+	    <src-field>masterDataID</src-field>
+	    <src-value>dataValue</src-value>
+		<internationalization>yes</internationalization>
+		<search>
+		<!-- <search-field>textlike</search-field> -->
+			<search-field>array</search-field>
+			<search-source-values-method>getSearchMDCombo</search-source-values-method>
+			<search-source-method-args>2011</search-source-method-args>
+		</search>
+		<section>1</section>
+		<order-by>14</order-by>
+		<display-type>Combo</display-type>
+		<combo>
+		<combo-source-values-method>getSearchMDCombo</combo-source-values-method>
+		<combo-source-method-args>2011</combo-source-method-args>
+		<combo-source-method-other-field>fimCbOtherEntityType</combo-source-method-other-field>
+		<combo-source-method-other-field-args>314</combo-source-method-other-field-args>
+		</combo>
+		<mailmerge is-active="true" keyword-name="$fim_EntityType$"/>
+		<internationalization>yes</internationalization>
+	</field>
+	<field summary="true">
+		<field-name>entityID</field-name>
+		<display-name>Entity ID</display-name>
+		<db-field>ENTITY_ID</db-field>
+		<data-type>Integer</data-type>
+	</field>
+        <field summary="true">
+		<field-name>fimCbOtherEntityType</field-name>
+		<display-name>Other Value</display-name>
+		<display-export-name>Other Entity Type</display-export-name>
+		<db-field>FIM_CB_OTHER_ENTITY_TYPE</db-field>
+		<data-type>String</data-type>
+		<field-export>true</field-export>
+	</field>
+        <field summary="true">
+		<field-name>fimEntityDetailDoc0</field-name>
+		<display-name>Upload Formation Document</display-name>
+		<db-field>FIM_ENTITY_ID</db-field>
+		<data-type>Integer</data-type>
+		<field-export>true</field-export>
+        <allow-field-in-main>false</allow-field-in-main>
+		<transform-method>transformDocumentsData</transform-method>
+		<custom-sortable>false</custom-sortable><!-- CUSTOM_REPORT_SORTING_ISSUE -->
+    </field>
+    <field summary="true">
+		<field-name>fimEntityDetailDoc1</field-name>
+		<display-name>Upload Governing Document</display-name>
+		<db-field>FIM_ENTITY_ID</db-field>
+		<data-type>Integer</data-type>
+		<field-export>true</field-export>
+        <allow-field-in-main>false</allow-field-in-main>
+		<transform-method>transformDocumentsData</transform-method>
+		<custom-sortable>false</custom-sortable><!-- CUSTOM_REPORT_SORTING_ISSUE -->
+    </field>
+
+	<field summary="true">
+		<field-name>fimEntityDetailC1</field-name>
+		<display-name>Fim Entity Detail C1</display-name>
+		<db-field>FIM_ENTITY_DETAIL_C1</db-field>
+		<data-type>String</data-type>
+		<custom-field>true</custom-field>
+		<field-export>true</field-export>
+	</field>
+	<field summary="true">
+		<field-name>fimEntityDetailC2</field-name>
+		<display-name>Fim Entity Detail C2</display-name>
+		<db-field>FIM_ENTITY_DETAIL_C2</db-field>
+		<data-type>String</data-type>
+		<custom-field>true</custom-field>
+		<field-export>true</field-export>
+	</field>
+	<field summary="true">
+		<field-name>fimEntityDetailC3</field-name>
+		<display-name>Fim Entity Detail C3</display-name>
+		<db-field>FIM_ENTITY_DETAIL_C3</db-field>
+		<data-type>String</data-type>
+		<custom-field>true</custom-field>
+		<field-export>true</field-export>
+	</field>
+	<field summary="true">
+		<field-name>fimEntityDetailC4</field-name>
+		<display-name>Fim Entity Detail C4</display-name>
+		<db-field>FIM_ENTITY_DETAIL_C4</db-field>
+		<data-type>String</data-type>
+		<custom-field>true</custom-field>
+		<field-export>true</field-export>
+	</field>
+	<field summary="true">
+		<field-name>fimEntityDetailC5</field-name>
+		<display-name>Fim Entity Detail C5</display-name>
+		<db-field>FIM_ENTITY_DETAIL_C5</db-field>
+		<data-type>String</data-type>
+		<custom-field>true</custom-field>
+		<field-export>true</field-export>
+	</field>
+	<field summary="true">
+		<field-name>fimEntityDetailC6</field-name>
+		<display-name>Fim Entity Detail C6</display-name>
+		<db-field>FIM_ENTITY_DETAIL_C6</db-field>
+		<data-type>String</data-type>
+		<custom-field>true</custom-field>
+		<field-export>true</field-export>
+	</field>
+	<field summary="true">
+		<field-name>fimEntityDetailC7</field-name>
+		<display-name>Fim Entity Detail C7</display-name>
+		<db-field>FIM_ENTITY_DETAIL_C7</db-field>
+		<data-type>String</data-type>
+		<custom-field>true</custom-field>
+		<field-export>true</field-export>
+	</field>
+	<field summary="true">
+		<field-name>fimEntityDetailC8</field-name>
+		<display-name>Fim Entity Detail C8</display-name>
+		<db-field>FIM_ENTITY_DETAIL_C8</db-field>
+		<data-type>String</data-type>
+		<custom-field>true</custom-field>
+		<field-export>true</field-export>
+	</field>
+	<field summary="true">
+		<field-name>fimEntityDetailC9</field-name>
+		<display-name>Fim Entity Detail C9</display-name>
+		<db-field>FIM_ENTITY_DETAIL_C9</db-field>
+		<data-type>String</data-type>
+		<custom-field>true</custom-field>
+		<field-export>true</field-export>
+	</field>
+	<field summary="true">
+		<field-name>fimEntityDetailC10</field-name>
+		<display-name>Fim Entity Detail C10</display-name>
+		<db-field>FIM_ENTITY_DETAIL_C10</db-field>
+		<data-type>String</data-type>
+		<custom-field>true</custom-field>
+		<field-export>true</field-export>
+	</field>
+	<field summary="true">
+		<field-name>entityStatus</field-name>
+		<display-name>Entity Status</display-name>
+		<db-field>ENTITY_STATUS</db-field>
+		<data-type>String</data-type>
+	</field>
+
+	<field summary="true">
+		<field-name>entityIndividualOwners</field-name>
+		<display-name>Entity Individual Owners</display-name>
+		<db-field>ENTITY_INDIVIDUAL_OWNERS</db-field>
+		<data-type>String</data-type>
+		<display-type>hidden</display-type>
+		<display-export-name>Entity Individual Owners</display-export-name>
+		<source-field>true</source-field>
+		<field-export>true</field-export>
+		<transform-export-method>getAllIndividualOwnerOfEntity</transform-export-method>
+		<transform-method-param>fimEntityID</transform-method-param>
+		<transform-method-export-param>FIM_ENTITY_ID</transform-method-export-param>
+	</field>
+	<field summary="true">
+		<field-name>parentEntity</field-name>
+		<display-name>Parent Entity</display-name>
+		<db-field>PARENT_ENTITY</db-field>
+		<data-type>String</data-type>
+		<display-type>hidden</display-type>
+		<display-export-name>Parent Entity</display-export-name>
+		<source-field>true</source-field>
+		<field-export>true</field-export>
+		<transform-export-method>getParentEntity</transform-export-method>
+		<transform-method-param>fimEntityID</transform-method-param>
+		<transform-method-export-param>FIM_ENTITY_ID</transform-method-export-param>
+	</field>
+	<field summary="true">
+		<field-name>parentEntityIndividualOwners</field-name>
+		<display-name>Parent Entity Individual Owners</display-name>
+		<db-field>PARENT_ENTITY_INDIVIDUAL_OWNERS</db-field>
+		<data-type>String</data-type>
+		<display-type>hidden</display-type>
+		<display-export-name>Parent Entity Individual Owners</display-export-name>
+		<source-field>true</source-field>
+		<field-export>true</field-export>
+		<transform-export-method>getParentEntityIndividualOwners</transform-export-method>
+		<transform-method-param>fimEntityID</transform-method-param>
+		<transform-method-export-param>FIM_ENTITY_ID</transform-method-export-param>
+	</field>
+<field summary="true"><field-name>_companyLegalForm21434572487</field-name><display-name>Company legal form - 2</display-name><db-field>_COMPANY_LEGAL_FORM__2_1434572487</db-field><data-type>String</data-type><display-type>Combo</display-type><group-by>true</group-by><section>1</section><is-active>yes</is-active><is-mandatory>false</is-mandatory><build-field>no</build-field><field-export>true</field-export><order-by>1</order-by><mailmerge is-active="true" keyword-name="$fimEntity_companylegalform2$"/><pii-enabled>false</pii-enabled><display-export-name>Company legal form - 2</display-export-name></field><field summary="true"><field-name>_companyVatNumber32028351173</field-name><display-name>Company VAT number - 3</display-name><db-field>_COMPANY_VAT_NUMBER__3_2028351173</db-field><data-type>String</data-type><display-type>Text</display-type><db-field-length>255</db-field-length><validation><validation-type>None</validation-type></validation><section>1</section><is-active>yes</is-active><is-mandatory>false</is-mandatory><build-field>no</build-field><field-export>true</field-export><order-by>2</order-by><mailmerge is-active="true" keyword-name="$fimEntity_companyvatnumber3$"/><pii-enabled>false</pii-enabled></field><field summary="true"><field-name>_companyHqAddress5467918015</field-name><display-name>Company HQ - Address - 5</display-name><db-field>_COMPANY_HQ__ADDRESS__5_467918015</db-field><data-type>String</data-type><display-type>Text</display-type><section>1</section><is-active>yes</is-active><is-mandatory>false</is-mandatory><build-field>no</build-field><field-export>true</field-export><order-by>4</order-by><mailmerge is-active="true" keyword-name="$fimEntity_companyhqaddress5$"/><pii-enabled>false</pii-enabled><display-export-name>Company HQ - Address - 5</display-export-name><db-field-length>255</db-field-length><validation><validation-type>None</validation-type></validation></field><field summary="true"><field-name>_companyHqCity101276723204</field-name><display-name>Company HQ - City - 10</display-name><db-field>_COMPANY_HQ__CITY__10_1276723204</db-field><data-type>String</data-type><display-type>Text</display-type><db-field-length>255</db-field-length><validation><validation-type>None</validation-type></validation><section>1</section><is-active>yes</is-active><is-mandatory>false</is-mandatory><build-field>no</build-field><field-export>true</field-export><order-by>9</order-by><mailmerge is-active="true" keyword-name="$fimEntity_companyhqcity10$"/><pii-enabled>false</pii-enabled></field><field summary="true"><field-name>_companyRegisteredEmail12684400082</field-name><display-name>Company Registered email - 12</display-name><db-field>_COMPANY_REGISTERED_EMAIL__12_684400082</db-field><data-type>String</data-type><display-type>Text</display-type><db-field-length>255</db-field-length><validation><validation-type>None</validation-type></validation><section>1</section><is-active>yes</is-active><is-mandatory>false</is-mandatory><build-field>no</build-field><field-export>true</field-export><order-by>11</order-by><mailmerge is-active="true" keyword-name="$fimEntity_companyregisterede1305503710$"/><pii-enabled>false</pii-enabled></field><field summary="true"><field-name>_companyHqZipCode111292235396</field-name><display-name>Company HQ - ZIP code - 11</display-name><db-field>_COMPANY_HQ__ZIP_CODE__11_1292235396</db-field><data-type>String</data-type><display-type>Text</display-type><db-field-length>255</db-field-length><validation><validation-type>None</validation-type></validation><section>1</section><is-active>yes</is-active><is-mandatory>false</is-mandatory><build-field>no</build-field><field-export>true</field-export><order-by>10</order-by><mailmerge is-active="true" keyword-name="$fimEntity_companyhqzipcode11$"/><pii-enabled>false</pii-enabled></field></table>

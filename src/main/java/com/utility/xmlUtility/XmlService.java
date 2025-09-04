@@ -154,13 +154,25 @@ public class XmlService {
                     }
 
                     String sectionValue = XmlUtil.getSection(clonedSourceField);
+                    String fieldName = XmlUtil.getValue(clonedSourceField, "field-name");
+                    
+                    // Special handling for system fields without sections (idField and entityID)
+                    boolean isSystemField = sectionValue.isEmpty() && 
+                                          (fieldName.equals("idField") || fieldName.equals("entityID"));
+                    
+                    if (isSystemField) {
+                        System.out.println("Adding system field without section: " + elementValue + " (field-name: " + fieldName + ")");
+                        targetParent.appendChild(targetDoc.importNode(clonedSourceField, true));
+                        changesMade = true;
+                        continue;
+                    }
+                    
                     String headerName = XmlUtil.getHeaderNameBySection(sourceDoc, sectionValue);
                     Element headerInTarget = null;
                     if(updatedHeaders.containsKey(headerName))
                         headerName = updatedHeaders.get(headerName);
 
                     headerInTarget = XmlUtil.findHeaderByName(targetDoc, headerName);
-
 
                     if (headerInTarget == null) {
                         // Handling if "tabModules" : targetElements is empty
@@ -170,7 +182,7 @@ public class XmlService {
                             System.out.println("Added missing element to target: " + elementValue);
                             continue;
                         }else{
-                            System.out.println("Skipping: Header not found in target for section: " + sectionValue);
+                            System.out.println("Skipping: Header not found in target for section: " + sectionValue + " (field-name: " + fieldName + ")");
                             continue;
                         }
                     }

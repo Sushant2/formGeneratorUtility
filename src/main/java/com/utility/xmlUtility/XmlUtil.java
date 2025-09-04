@@ -701,8 +701,6 @@ public class XmlUtil {
             for (String fieldName : underscoreFieldsSet) {
                 String newField = "_" + fieldName;
                 query.append(System.lineSeparator());
-                query.append("UPDATE CLIENT_XMLS SET DATA = REPLACE(DATA, '" + fieldName + "', '" + newField + "');");
-                query.append(System.lineSeparator());
                 query.append("UPDATE SUMMARY_DISPLAY SET FIELD_NAME = REPLACE(FIELD_NAME, '" + fieldName + "', '" + newField + "');");
                 query.append(System.lineSeparator());
                 query.append("UPDATE SUMMARY_DISPLAY SET CUSTOM_FIELD_NAME = REPLACE(CUSTOM_FIELD_NAME, '" + fieldName + "', '" + newField + "');");
