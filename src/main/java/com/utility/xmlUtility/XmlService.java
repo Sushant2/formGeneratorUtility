@@ -76,16 +76,17 @@ public class XmlService {
             NodeList sourceForeignTables = sourceDoc.getElementsByTagName("foreign-table");
             NodeList sourceFields = sourceDoc.getElementsByTagName("field");
 
-            boolean headersUpdated = processMissingElements(sourceHeaders, targetHeaders, targetHeadersValue, sourceDoc, targetDoc, "header", "name", XmlUtil.findOrCreateParent(targetDoc, "table-header-map"), underscoreFieldsSet);
+            boolean headersUpdated = processMissingElements(sourceHeaders, targetHeaders, targetHeadersValue, sourceDoc, targetDoc, "header", "name", XmlUtil.findOrCreateParent(targetDoc, "table-header-map"), underscoreFieldsSet, sourcePath);
             if (headersUpdated) {
+                XmlUtil.setHeaderOrders(targetDoc);
                 XmlUtil.saveXmlDocument(targetDoc, targetPath);
             }
             boolean foreignTablesUpdated = processMissingElements(sourceForeignTables, targetForeignTables, null, sourceDoc,
-                    targetDoc, "foreign-table", "name", XmlUtil.findOrCreateParent(targetDoc, "foreign-tables"), underscoreFieldsSet);
+                    targetDoc, "foreign-table", "name", XmlUtil.findOrCreateParent(targetDoc, "foreign-tables"), underscoreFieldsSet, sourcePath);
             if (foreignTablesUpdated) {
                 XmlUtil.saveXmlDocument(targetDoc, targetPath);
             }
-            boolean fieldsUpdated = processMissingElements(sourceFields, targetDbFields, null, sourceDoc, targetDoc, "field", "db-field", targetDoc.getDocumentElement(), underscoreFieldsSet);
+            boolean fieldsUpdated = processMissingElements(sourceFields, targetDbFields, null, sourceDoc, targetDoc, "field", "db-field", targetDoc.getDocumentElement(), underscoreFieldsSet, sourcePath);
             if (fieldsUpdated) {
                 // fix order-by values in target XML
                 XmlUtil.fixOrderByPerSection(targetDoc);
@@ -99,12 +100,12 @@ public class XmlService {
         }
     }
 
-    private boolean processMissingElements(NodeList sourceElements, Set<String> targetElements, Set<String> targetHeaderValues, Document sourceDoc, Document targetDoc, String elementTag, String attribute, Element targetParent, Set<String> underscoreFieldsSet) {
+    private boolean processMissingElements(NodeList sourceElements, Set<String> targetElements, Set<String> targetHeaderValues, Document sourceDoc, Document targetDoc, String elementTag, String attribute, Element targetParent, Set<String> underscoreFieldsSet, String sourcePath) {
 
         boolean changesMade = false;
         Map<String, Integer> sectionOrderMap = new HashMap<>();
         Map<String, Element> targetFieldMap = XmlUtil.buildTargetFieldMap(targetDoc);
-
+        
         for (int i = 0; i < sourceElements.getLength(); i++) {
             Element sourceField = (Element) sourceElements.item(i);
             Element clonedSourceField = (Element) sourceField.cloneNode(true);
@@ -119,9 +120,8 @@ public class XmlService {
 
                 if (attribute.equals("db-field")) {
 
-                    String tableName = XmlUtil.getValue(sourceDoc.getDocumentElement(), "table-name");
                     // skip if <field-name>bestTimeToContact</field-name> is already in target
-                    if(tableName.equals("FS_LEAD_DETAILS")){
+                    if(sourcePath != null && (sourcePath.contains("fsLeadDetails.xml") || sourcePath.contains("fsLeadDetails_copy.xml"))){
                         boolean isBestTimeToContact = XmlUtil.getValue(clonedSourceField, "field-name").equals("bestTimeToContact");
                         if(isBestTimeToContact){
                             System.out.println("Skipping: bestTimeToContact field is already in target");
@@ -130,7 +130,7 @@ public class XmlService {
                     }
 
                     // skip if <field-name>typeOfOwnership</field-name> is already in target
-                    if(tableName.equals("FIM_OWNERS")){
+                    if(sourcePath != null && (sourcePath.contains("fimOwners.xml") || sourcePath.contains("fimOwners_copy.xml"))){
                         boolean isTypeOfOwnership = XmlUtil.getValue(clonedSourceField, "field-name").equals("typeOfOwnership");
                         if(isTypeOfOwnership){
                             System.out.println("Skipping: typeOfOwnership field is already in target");
@@ -230,14 +230,14 @@ public class XmlService {
                     // Clone and modify template
                     Element newField = updateXMLNode(clonedSourceField, displayType, isMultiSelect, nextOrderBy, targetDoc, template, targetParent, underscoreFieldsSet);
                     if(isAreaManager){
-                        newField.appendChild(createElement(targetDoc, "dropdown-option", "4"));
+                        newField.appendChild(XmlUtil.createElement(targetDoc, "dropdown-option", "4"));
                         
                         // Create combo element with proper nested structure
                         Element combo = targetDoc.createElement("combo");
-                        combo.appendChild(createElement(targetDoc, "combo-source-values-method", "fetchUserDataBasedOnRoleIds"));
+                        combo.appendChild(XmlUtil.createElement(targetDoc, "combo-source-values-method", "fetchUserDataBasedOnRoleIds"));
                         newField.appendChild(combo);
                         
-                        newField.appendChild(createElement(targetDoc, "transform-method", "fetchUserNameBasedOnUserIds"));
+                        newField.appendChild(XmlUtil.createElement(targetDoc, "transform-method", "fetchUserNameBasedOnUserIds"));
                         XmlUtil.replaceChildValue(newField, "data-type", "String");
                     }
 
@@ -276,6 +276,33 @@ public class XmlService {
                                 Element sectionElement = (Element) sectionNodes.item(0);
                                 sectionElement.setTextContent(elementValue);
                                 System.out.println("Updated section element value to: " + elementValue);
+                            }
+                        }
+                        if(sourcePath != null && (sourcePath.contains("franchisees.xml") || sourcePath.contains("franchisees_copy.xml"))){
+                            // Check if store timings header already exists before adding it
+                            Element existingStoreTimingsHeader = XmlUtil.findHeaderByName(targetDoc, "bSec_storetimings1282868853");
+                            if(existingStoreTimingsHeader == null){
+                                //adding this header to the target
+                                XmlUtil.addStoreTimingsHeader(targetDoc, targetParent);
+                                changesMade = true;
+                                System.out.println("Added store timings header to target: " + elementValue);
+                            } else {
+                                System.out.println("Store timings header already exists in target, skipping addition");
+                            }
+                        }
+                    }
+                    //Special handling for foreign-table
+                    if("foreign-table".equals(elementTag)){
+                        if(sourcePath != null && (sourcePath.contains("franchisees.xml") || sourcePath.contains("franchisees_copy.xml"))){
+                            // check if below foreign table already exists before adding it
+                            Element existingStoreTimingsForeignTable = XmlUtil.findForeignTableByName(targetDoc, "storehoursnd21214306162");
+                            if(existingStoreTimingsForeignTable == null){
+                                //adding this foreign table to the target
+                                XmlUtil.addStoreTimingsForeignTable(targetDoc, targetParent);
+                                changesMade = true;
+                                System.out.println("Added store timings foreign table to target: " + elementValue);
+                            } else {
+                                System.out.println("Store timings foreign table already exists in target, skipping addition");
                             }
                         }
                     }
@@ -385,31 +412,31 @@ public class XmlService {
                 field.setAttribute("summary", "true");
                 
                 // Add all child elements
-                field.appendChild(createElement(doc, "field-name", "_preferredCountry3"));
-                field.appendChild(createElement(doc, "display-name", "Preferred Country 3"));
-                field.appendChild(createElement(doc, "db-field", "PREFERRED_COUNTRY3"));
-                field.appendChild(createElement(doc, "data-type", "String"));
-                field.appendChild(createElement(doc, "display-type", "Combo"));
-                field.appendChild(createElement(doc, "group-by", "true"));
-                field.appendChild(createElement(doc, "section", "3"));
-                field.appendChild(createElement(doc, "is-active", "yes"));
-                field.appendChild(createElement(doc, "is-mandatory", "false"));
-                field.appendChild(createElement(doc, "build-field", "no"));
-                field.appendChild(createElement(doc, "field-export", "true"));
-                field.appendChild(createElement(doc, "order-by", "6"));
-                field.appendChild(createElement(doc, "dropdown-option", "2"));
+                field.appendChild(XmlUtil.createElement(doc, "field-name", "_preferredCountry3"));
+                field.appendChild(XmlUtil.createElement(doc, "display-name", "Preferred Country 3"));
+                field.appendChild(XmlUtil.createElement(doc, "db-field", "PREFERRED_COUNTRY3"));
+                field.appendChild(XmlUtil.createElement(doc, "data-type", "String"));
+                field.appendChild(XmlUtil.createElement(doc, "display-type", "Combo"));
+                field.appendChild(XmlUtil.createElement(doc, "group-by", "true"));
+                field.appendChild(XmlUtil.createElement(doc, "section", "3"));
+                field.appendChild(XmlUtil.createElement(doc, "is-active", "yes"));
+                field.appendChild(XmlUtil.createElement(doc, "is-mandatory", "false"));
+                field.appendChild(XmlUtil.createElement(doc, "build-field", "no"));
+                field.appendChild(XmlUtil.createElement(doc, "field-export", "true"));
+                field.appendChild(XmlUtil.createElement(doc, "order-by", "6"));
+                field.appendChild(XmlUtil.createElement(doc, "dropdown-option", "2"));
                 
                 // Create combo element
                 Element combo = doc.createElement("combo");
-                combo.appendChild(createElement(doc, "parent", "true"));
-                combo.appendChild(createElement(doc, "dependent-field", "_preferredStateId3"));
-                combo.appendChild(createElement(doc, "combo-source-values-method", "comboFimCountry"));
+                combo.appendChild(XmlUtil.createElement(doc, "parent", "true"));
+                combo.appendChild(XmlUtil.createElement(doc, "dependent-field", "_preferredStateId3"));
+                combo.appendChild(XmlUtil.createElement(doc, "combo-source-values-method", "comboFimCountry"));
                 field.appendChild(combo);
                 
-                field.appendChild(createElement(doc, "transform-method", "transformCountryFromId"));
-                field.appendChild(createElement(doc, "src-table", "countries"));
-                field.appendChild(createElement(doc, "src-field", "countryID"));
-                field.appendChild(createElement(doc, "src-value", "name"));
+                field.appendChild(XmlUtil.createElement(doc, "transform-method", "transformCountryFromId"));
+                field.appendChild(XmlUtil.createElement(doc, "src-table", "countries"));
+                field.appendChild(XmlUtil.createElement(doc, "src-field", "countryID"));
+                field.appendChild(XmlUtil.createElement(doc, "src-value", "name"));
                 
                 // Create mailmerge element
                 Element mailmerge = doc.createElement("mailmerge");
@@ -417,7 +444,7 @@ public class XmlService {
                 mailmerge.setAttribute("keyword-name", "$fsLeadDet_preferredCountry3$");
                 field.appendChild(mailmerge);
                 
-                field.appendChild(createElement(doc, "pii-enabled", "false"));
+                field.appendChild(XmlUtil.createElement(doc, "pii-enabled", "false"));
                 
                 return field;
                 
@@ -435,38 +462,38 @@ public class XmlService {
                 Element field = doc.createElement("field");
                 field.setAttribute("summary", "true");
         
-                field.appendChild(createElement(doc, "field-name", "_preferredStateId3"));
-                field.appendChild(createElement(doc, "display-name", "Preferred State / Province 3"));
-                field.appendChild(createElement(doc, "db-field", "PREFERRED_STATE_ID3"));
-                field.appendChild(createElement(doc, "group-by", "true"));
-                field.appendChild(createElement(doc, "data-type", "String"));
-                field.appendChild(createElement(doc, "display-type", "Combo"));
-                field.appendChild(createElement(doc, "section", "3"));
-                field.appendChild(createElement(doc, "is-active", "yes"));
-                field.appendChild(createElement(doc, "is-mandatory", "false"));
-                field.appendChild(createElement(doc, "build-field", "no"));
-                field.appendChild(createElement(doc, "field-export", "true"));
-                field.appendChild(createElement(doc, "order-by", "8"));
-                field.appendChild(createElement(doc, "dropdown-option", "2"));
+                field.appendChild(XmlUtil.createElement(doc, "field-name", "_preferredStateId3"));
+                field.appendChild(XmlUtil.createElement(doc, "display-name", "Preferred State / Province 3"));
+                field.appendChild(XmlUtil.createElement(doc, "db-field", "PREFERRED_STATE_ID3"));
+                field.appendChild(XmlUtil.createElement(doc, "group-by", "true"));
+                field.appendChild(XmlUtil.createElement(doc, "data-type", "String"));
+                field.appendChild(XmlUtil.createElement(doc, "display-type", "Combo"));
+                field.appendChild(XmlUtil.createElement(doc, "section", "3"));
+                field.appendChild(XmlUtil.createElement(doc, "is-active", "yes"));
+                field.appendChild(XmlUtil.createElement(doc, "is-mandatory", "false"));
+                field.appendChild(XmlUtil.createElement(doc, "build-field", "no"));
+                field.appendChild(XmlUtil.createElement(doc, "field-export", "true"));
+                field.appendChild(XmlUtil.createElement(doc, "order-by", "8"));
+                field.appendChild(XmlUtil.createElement(doc, "dropdown-option", "2"));
         
                 Element combo = doc.createElement("combo");
-                combo.appendChild(createElement(doc, "parent", "false"));
-                combo.appendChild(createElement(doc, "dependent-field", "_preferredCountry3"));
-                combo.appendChild(createElement(doc, "combo-source-values-method", "comboFimState"));
-                combo.appendChild(createElement(doc, "combo-method-param", "_preferredCountry3"));
+                combo.appendChild(XmlUtil.createElement(doc, "parent", "false"));
+                combo.appendChild(XmlUtil.createElement(doc, "dependent-field", "_preferredCountry3"));
+                combo.appendChild(XmlUtil.createElement(doc, "combo-source-values-method", "comboFimState"));
+                combo.appendChild(XmlUtil.createElement(doc, "combo-method-param", "_preferredCountry3"));
                 field.appendChild(combo);
         
-                field.appendChild(createElement(doc, "transform-method", "transformStateFromId"));
-                field.appendChild(createElement(doc, "src-table", "regions"));
-                field.appendChild(createElement(doc, "src-field", "regionNo"));
-                field.appendChild(createElement(doc, "src-value", "regionName"));
+                field.appendChild(XmlUtil.createElement(doc, "transform-method", "transformStateFromId"));
+                field.appendChild(XmlUtil.createElement(doc, "src-table", "regions"));
+                field.appendChild(XmlUtil.createElement(doc, "src-field", "regionNo"));
+                field.appendChild(XmlUtil.createElement(doc, "src-value", "regionName"));
         
                 Element mailmerge = doc.createElement("mailmerge");
                 mailmerge.setAttribute("is-active", "true");
                 mailmerge.setAttribute("keyword-name", "$fsLeadDet_preferredStateId3$");
                 field.appendChild(mailmerge);
         
-                field.appendChild(createElement(doc, "pii-enabled", "false"));
+                field.appendChild(XmlUtil.createElement(doc, "pii-enabled", "false"));
         
                 return field;
             } catch (Exception e) {
@@ -477,11 +504,4 @@ public class XmlService {
         
         return null;
     }
-    
-    private Element createElement(Document doc, String name, String value) {
-        Element element = doc.createElement(name);
-        element.setTextContent(value);
-        return element;
-    }
-
 }

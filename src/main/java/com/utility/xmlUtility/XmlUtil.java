@@ -93,6 +93,17 @@ public class XmlUtil {
         }
         return null; // No matching header found
     }
+
+    public static Element findForeignTableByName(Document doc, String foreignTableName) {
+        NodeList foreignTables = doc.getElementsByTagName("foreign-table");
+        for (int i = 0; i < foreignTables.getLength(); i++) {
+            Element foreignTable = (Element) foreignTables.item(i);
+            if (foreignTable.hasAttribute("name") && foreignTable.getAttribute("name").startsWith(foreignTableName)) {
+                return foreignTable; // Found the correct foreign table, return it
+            }
+        }
+        return null; // No matching foreign table found
+    }
     
 
     // Get the last order-by value in a section
@@ -377,6 +388,15 @@ public class XmlUtil {
             }
             // remove attribute if it exists
             field.removeAttribute("order-by");
+        }
+    }
+
+    public static void setHeaderOrders(Document targetDoc) {
+        NodeList headers = targetDoc.getElementsByTagName("header");
+        for (int i = 0; i < headers.getLength(); i++) {
+            Element header = (Element) headers.item(i);
+            // Set the order attribute directly on the header element
+            header.setAttribute("order", String.valueOf(i));
         }
     }
     
@@ -806,6 +826,44 @@ public class XmlUtil {
             query.append(System.lineSeparator());
         }
         return query.toString();
+    }
+
+    public static void addStoreTimingsHeader(Document targetDoc, Element targetParent) {
+        Element header = targetDoc.createElement("header");
+        header.setAttribute("name", "bSec_storetimings1282868853");
+        header.setAttribute("order", "5");
+        header.setAttribute("value", "Store Timings");
+        header.appendChild(createElement(targetDoc, "type", "0"));
+        header.appendChild(createElement(targetDoc, "section", "bSec_storetimings1282868853"));
+        header.appendChild(createElement(targetDoc, "is-build-section", "false"));
+        header.appendChild(createElement(targetDoc, "tabular-section-table-anchor", "storehoursnd21214306162"));
+        header.appendChild(createElement(targetDoc, "tabular-section-db-table", "_STOREHOURSND2_1214306162"));
+        header.appendChild(createElement(targetDoc, "is-tabular-section", "yes"));
+        targetParent.appendChild(header);
+    }
+
+    public static void addStoreTimingsForeignTable(Document targetDoc, Element targetParent) {
+        Element foreignTable = targetDoc.createElement("foreign-table");
+        foreignTable.setAttribute("name", "storehoursnd21214306162");
+        foreignTable.setAttribute("table-export", "true");
+    
+        Element linkField1 = targetDoc.createElement("link-field");
+        linkField1.setAttribute("foreignField", "tabPrimaryId");
+        linkField1.setAttribute("thisField", "franchiseeNo");
+        foreignTable.appendChild(linkField1);
+    
+        Element linkField2 = targetDoc.createElement("link-field");
+        linkField2.setAttribute("foreignField", "entityID");
+        linkField2.setAttribute("thisField", "entityID");
+        foreignTable.appendChild(linkField2);
+    
+        targetParent.appendChild(foreignTable);
+    }    
+
+    public static Element createElement(Document doc, String name, String value) {
+        Element element = doc.createElement(name);
+        element.setTextContent(value);
+        return element;
     }
     
     public static void writeToFile(String filePath, List<String> queryList) throws Exception {
