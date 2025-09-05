@@ -153,6 +153,24 @@ public class XmlService {
                         continue;
                     }
 
+                    // Special handling for franchise fee field when processing franchisees.xml
+                    if(sourcePath != null && (sourcePath.contains("franchisees.xml") || sourcePath.contains("franchisees_copy.xml"))){
+                        // Check if franchise fee field already exists before adding it
+                        Element existingFranchiseFeeField = XmlUtil.findFieldByDbField(targetDoc, "_FRANCHISE_FEE_1181443611");
+                        if(existingFranchiseFeeField == null){
+                            // Add franchise fee field to the target
+                            Node franchiseFeeFieldNode = getFranchiseFeeField();
+                            if(franchiseFeeFieldNode != null){
+                                Node adopted = targetDoc.importNode(franchiseFeeFieldNode, true);
+                                targetDoc.getDocumentElement().appendChild(adopted);
+                                changesMade = true;
+                                System.out.println("Added franchise fee field to target: _FRANCHISE_FEE_1181443611");
+                            }
+                        } else {
+                            System.out.println("Franchise fee field already exists in target, skipping addition");
+                        }
+                    }
+
                     String sectionValue = XmlUtil.getSection(clonedSourceField);
                     String fieldName = XmlUtil.getValue(clonedSourceField, "field-name");
                     
@@ -503,5 +521,101 @@ public class XmlService {
         }
         
         return null;
+    }
+
+    public Node getFranchiseFeeField(){
+        try {
+            // Create a new document to build the field node
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Document doc = docBuilder.newDocument();
+            
+            // Create the field element
+            Element field = doc.createElement("field");
+            field.setAttribute("summary", "true");
+            
+            // Add all child elements as specified in the user's request
+            field.appendChild(XmlUtil.createElement(doc, "field-name", "_franchiseFee1181443611"));
+            field.appendChild(XmlUtil.createElement(doc, "display-name", "Franchise Fee"));
+            field.appendChild(XmlUtil.createElement(doc, "db-field", "_FRANCHISE_FEE_1181443611"));
+            field.appendChild(XmlUtil.createElement(doc, "data-type", "String"));
+            field.appendChild(XmlUtil.createElement(doc, "display-type", "Text"));
+            field.appendChild(XmlUtil.createElement(doc, "db-field-length", "255"));
+            
+            // Create validation element
+            Element validation = doc.createElement("validation");
+            Element validationType = doc.createElement("validation-type");
+            validationType.setTextContent("None");
+            validation.appendChild(validationType);
+            field.appendChild(validation);
+            
+            field.appendChild(XmlUtil.createElement(doc, "section", "1"));
+            field.appendChild(XmlUtil.createElement(doc, "is-active", "yes"));
+            field.appendChild(XmlUtil.createElement(doc, "is-mandatory", "false"));
+            field.appendChild(XmlUtil.createElement(doc, "build-field", "no"));
+            field.appendChild(XmlUtil.createElement(doc, "field-export", "true"));
+            field.appendChild(XmlUtil.createElement(doc, "order-by", "31"));
+            
+            // Create mailmerge element
+            Element mailmerge = doc.createElement("mailmerge");
+            mailmerge.setAttribute("is-active", "true");
+            mailmerge.setAttribute("keyword-name", "$franchise_franchisefee$");
+            field.appendChild(mailmerge);
+            
+            field.appendChild(XmlUtil.createElement(doc, "pii-enabled", "false"));
+            field.appendChild(XmlUtil.createElement(doc, "center-info-display", "false"));
+            
+            return field;
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void processTabularSectionMappings(String sourcePath, String targetPath) {
+        try {
+            Document targetDoc = XmlUtil.loadXmlDocument(targetPath);
+            
+            // Extract table mappings from source and target documents
+            Map<String, String> sourceMappings = XmlUtil.readTableMappings(sourcePath);
+            Map<String, String> targetMappings = XmlUtil.readTableMappings(targetPath);
+            
+            boolean changesMade = false;
+            
+            // Find missing mappings in target that exist in source
+            for (Map.Entry<String, String> sourceEntry : sourceMappings.entrySet()) {
+                String tableAnchor = sourceEntry.getKey();
+                String fileLocation = sourceEntry.getValue();
+                
+                // Check if this mapping doesn't exist in target
+                if (!targetMappings.containsKey(tableAnchor)) {
+                    System.out.println("Missing table mapping found: " + tableAnchor + " -> " + fileLocation);
+                    
+                    // Create new table-mapping element
+                    Element newMapping = targetDoc.createElement("table-mapping");
+                    newMapping.setAttribute("filelocation", fileLocation);
+                    newMapping.setAttribute("table-anchor", tableAnchor);
+                    
+                    // Append to root element
+                    Element rootElement = targetDoc.getDocumentElement();
+                    rootElement.appendChild(newMapping);
+                    
+                    changesMade = true;
+                }
+            }
+            
+            // Save the updated target document if changes were made
+            if (changesMade) {
+                XmlUtil.saveXmlDocument(targetDoc, targetPath);
+                System.out.println("Updated tabular section mappings saved to: " + targetPath);
+            } else {
+                System.out.println("No missing table mappings found. Target document is up to date.");
+            }
+            
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

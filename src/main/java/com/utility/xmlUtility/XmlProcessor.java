@@ -164,7 +164,21 @@ public class XmlProcessor implements CommandLineRunner {
                     XmlUtil.writeToFile("src/main/resources/tableMappingsQueries.sql", queryList);
                 }
             }
-            
+
+            // For tabularSectionMappings.xml
+            if(requiredKeySet.contains("tabularSectionMappings")){
+                // Process the XML files
+                String sourceTabularSectionMappingsPath = BASE_PATH + "/tabularSectionMappings.xml";
+                String targetTabularSectionMappingsPath = TARGET_BASE + "/tabularSectionMappings.xml";
+                xmlService.processTabularSectionMappings(sourceTabularSectionMappingsPath, targetTabularSectionMappingsPath);
+                // Add storetimings1120613317 entry in tabularSectionMappings.xml
+                String targetKeyPath = targetTabularSectionMappingsPath;
+                String filePath = "/tabularSectionMappings.xml";
+                XmlUtil.addStoreTimingsEntry(targetKeyPath);
+                String query = XmlUtil.generateInsertQuery(targetKeyPath, filePath, null, new HashSet<>());
+                queryList.add(query);
+                XmlUtil.writeToFile("src/main/resources/tableMappingsQueries.sql", queryList);
+            }
             // For testing purpose only - single XML
             /*
             xmlService.processXmlFiles("src/main/resources/mbe.xml", "src/main/resources/sky.xml", underscoreFieldsSet);
