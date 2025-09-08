@@ -484,28 +484,56 @@ public class XmlUtil {
         Element targetField = targetFieldMap.get(sourceDbField);
 
         if (targetField != null) {
-            // Update display-name if different
-            String targetDisplayName = XmlUtil.getValue(targetField, "display-name").trim();
-            if (!targetDisplayName.equals(sourceDisplayName)) {
-                XmlUtil.replaceOrInsertChild(targetField, "display-name", sourceDisplayName);
-                System.out.println("Updated display-name of db-field '" + sourceDbField + "' from '" + targetDisplayName
-                        + "' to → '" + sourceDisplayName + "'");
-            }
+            // Special handling for AREA_ID field
+            if ("AREA_ID".equals(sourceDbField)) {
+                // Force display-name to be 'Area / Region' for AREA_ID field
+                String targetDisplayName = XmlUtil.getValue(targetField, "display-name").trim();
+                if (!"Area / Region".equals(targetDisplayName)) {
+                    XmlUtil.replaceOrInsertChild(targetField, "display-name", "Area / Region");
+                    System.out.println("Updated display-name of db-field '" + sourceDbField + "' from '" + targetDisplayName
+                            + "' to → 'Area / Region' (special handling for AREA_ID)");
+                }
+                
+                // Force is-active to be 'yes' for AREA_ID field
+                String targetIsActive = XmlUtil.getValue(targetField, "is-active").trim().toLowerCase();
+                if (!"yes".equals(targetIsActive)) {
+                    XmlUtil.replaceOrInsertChild(targetField, "is-active", "yes");
+                    System.out.println("Updated is-active of db-field '" + sourceDbField + "' from '" + targetIsActive
+                            + "' to → 'yes' (special handling for AREA_ID)");
+                }
+                
+                // Still update is-mandatory if different
+                String targetIsMandatory = XmlUtil.getValue(targetField, "is-mandatory").trim().toLowerCase();
+                if (!targetIsMandatory.equals(sourceIsMandatory)) {
+                    XmlUtil.replaceOrInsertChild(targetField, "is-mandatory", sourceIsMandatory);
+                    System.out.println("Updated is-mandatory of db-field '" + sourceDbField + "' from '" + targetIsMandatory
+                            + "' to → '" + sourceIsMandatory + "'");
+                }
+            } else {
+                // Regular handling for other fields
+                // Update display-name if different
+                String targetDisplayName = XmlUtil.getValue(targetField, "display-name").trim();
+                if (!targetDisplayName.equals(sourceDisplayName)) {
+                    XmlUtil.replaceOrInsertChild(targetField, "display-name", sourceDisplayName);
+                    System.out.println("Updated display-name of db-field '" + sourceDbField + "' from '" + targetDisplayName
+                            + "' to → '" + sourceDisplayName + "'");
+                }
 
-            // Update is-mandatory if different
-            String targetIsMandatory = XmlUtil.getValue(targetField, "is-mandatory").trim().toLowerCase();
-            if (!targetIsMandatory.equals(sourceIsMandatory)) {
-                XmlUtil.replaceOrInsertChild(targetField, "is-mandatory", sourceIsMandatory);
-                System.out.println("Updated is-mandatory of db-field '" + sourceDbField + "' from '" + targetIsMandatory
-                        + "' to → '" + sourceIsMandatory + "'");
-            }
+                // Update is-mandatory if different
+                String targetIsMandatory = XmlUtil.getValue(targetField, "is-mandatory").trim().toLowerCase();
+                if (!targetIsMandatory.equals(sourceIsMandatory)) {
+                    XmlUtil.replaceOrInsertChild(targetField, "is-mandatory", sourceIsMandatory);
+                    System.out.println("Updated is-mandatory of db-field '" + sourceDbField + "' from '" + targetIsMandatory
+                            + "' to → '" + sourceIsMandatory + "'");
+                }
 
-            // Update is-active if different
-            String targetIsActive = XmlUtil.getValue(targetField, "is-active").trim().toLowerCase();
-            if (!targetIsActive.equals(sourceIsActive)) {
-                XmlUtil.replaceOrInsertChild(targetField, "is-active", sourceIsActive);
-                System.out.println("Updated is-active of db-field '" + sourceDbField + "' from '" + targetIsActive
-                        + "' to → '" + sourceIsActive + "'");
+                // Update is-active if different
+                String targetIsActive = XmlUtil.getValue(targetField, "is-active").trim().toLowerCase();
+                if (!targetIsActive.equals(sourceIsActive)) {
+                    XmlUtil.replaceOrInsertChild(targetField, "is-active", sourceIsActive);
+                    System.out.println("Updated is-active of db-field '" + sourceDbField + "' from '" + targetIsActive
+                            + "' to → '" + sourceIsActive + "'");
+                }
             }
         }
     }    
