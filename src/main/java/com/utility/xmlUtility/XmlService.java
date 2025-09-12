@@ -169,6 +169,30 @@ public class XmlService {
                         } else {
                             System.out.println("Franchise fee field already exists in target, skipping addition");
                         }
+                        // Special handling for AF_ID field - change display name and set as inactive
+                        if(elementValue.equals("AF_ID")){
+                            // Change display name to "Area Franchise ID Old"
+                            NodeList displayNameNodes = clonedSourceField.getElementsByTagName("display-name");
+                            if (displayNameNodes.getLength() > 0) {
+                                Element displayNameElement = (Element) displayNameNodes.item(0);
+                                displayNameElement.setTextContent("Area Franchise ID Old");
+                                System.out.println("Updated AF_ID display name to: Area Franchise ID Old");
+                            }
+                            
+                            // Add is-active element with value "no"
+                            Element isActiveElement = sourceDoc.createElement("is-active");
+                            isActiveElement.setTextContent("no");
+                            clonedSourceField.appendChild(isActiveElement);
+                            System.out.println("Added is-active element with value 'no' to AF_ID field");
+                        }
+                        // Special handling for Supervisor field - set as inactive
+                        if(elementValue.equals("SUPERVISOR")){
+                            // Add is-active element with value "no"
+                            Element isActiveElement = sourceDoc.createElement("is-active");
+                            isActiveElement.setTextContent("no");
+                            clonedSourceField.appendChild(isActiveElement);
+                            System.out.println("Added is-active element with value 'no' to SUPERVISOR field");
+                        }
                     }
 
                     String sectionValue = XmlUtil.getSection(clonedSourceField);
