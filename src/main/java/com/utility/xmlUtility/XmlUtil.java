@@ -555,8 +555,10 @@ public class XmlUtil {
                 }else if ("FBC".equals(sourceDbField)) {
                     XmlUtil.replaceOrInsertChild(targetField, "display-name", "Superviser");
                     System.out.println("Updated display-name of db-field '" + sourceDbField + "' from '" + targetDisplayName + "' to → 'Superviser' (special handling for FBC)");
-                }
-                else if (!targetDisplayName.equals(sourceDisplayName)) {
+                }else if ("STATUS".equals(sourceDbField)) {
+                    XmlUtil.replaceOrInsertChild(targetField, "display-name", "Type");
+                    System.out.println("Updated display-name of db-field '" + sourceDbField + "' from '" + targetDisplayName + "' to → 'Type' (special handling for STATUS)");
+                }else if (!targetDisplayName.equals(sourceDisplayName)) {
                     XmlUtil.replaceOrInsertChild(targetField, "display-name", sourceDisplayName);
                     System.out.println("Updated display-name of db-field '" + sourceDbField + "' from '" + targetDisplayName + "' to → '" + sourceDisplayName + "'");
                 }
@@ -579,6 +581,12 @@ public class XmlUtil {
                         XmlUtil.replaceOrInsertChild(targetField, "is-active", sourceIsActive);
                         System.out.println("Updated is-active of db-field '" + sourceDbField + "' from '" + targetIsActive + "' to → '" + sourceIsActive + "'");
                     }
+                }
+
+                // Add is-non-editable tag for STORE_STATUS field
+                if ("STORE_STATUS".equals(sourceDbField)) {
+                    XmlUtil.replaceOrInsertChild(targetField, "is-non-editable", "true");
+                    System.out.println("Added is-non-editable 'true' to db-field '" + sourceDbField + "' (special handling for STORE_STATUS)");
                 }
             }
         }
