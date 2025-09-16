@@ -138,6 +138,18 @@ public class XmlService {
                         }
                     }
 
+                    // set is-active element with value "no" for legalEntityDetails section
+                    if(sourcePath != null && (sourcePath.contains("franchisees.xml") || sourcePath.contains("franchisees_copy.xml"))){
+                        // Special handling for legalEntityDetails section - set all fields as inactive
+                        String sectionValue = XmlUtil.getSection(clonedSourceField);
+                        String headerName = XmlUtil.getHeaderNameBySection(sourceDoc, sectionValue);
+                        // Check if this field belongs to legalEntityDetails section by checking if header name contains "legalEntityDetails"
+                        if(headerName != null && headerName.contains("legalEntityDetails")){ 
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "is-active", "no");
+                            System.out.println("Added is-active element with value 'no' to field in legalEntityDetails section.");
+                        }
+                    }
+
                     boolean isAreaManager = XmlUtil.getValue(clonedSourceField, "field-name").equals("areaManager");
 
                     //handle preferredStateId3, preferredStateId3
