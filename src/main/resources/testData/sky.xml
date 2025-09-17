@@ -1,0 +1,4193 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<table>
+  <connection-name>appnetix</connection-name>
+  <table-name>FRANCHISEE</table-name>
+  <module>fim</module>
+  <table-display-name>Franchisee</table-display-name>
+  <table-export-display-name>FIM Center Info</table-export-display-name>
+  <table-header-map>
+    <header name="franchiseLocationDetails" order="0" value="Center Details">
+      <type>0</type>
+      <section>1</section>
+      <dependent-table name="locationDivisionMapping" tableAnchor="locationDivisionMapping" tableWithalias="locationDivisionMapping">
+        <table-field center-info-display="true" colname="DIVISION_ID" colspan="2" display-name="Division Name" field-export="true" is-mandatory="false" isActive="yes" name="divisionID" order-by="97" section="1" source-field="true"/>
+      </dependent-table>
+      <dependent-table name="finFranchiseAgreementVersions_0" tableAnchor="finFranchiseAgreementVersions" tableWithalias="finFranchiseAgreementVersions_0">
+        <table-field center-info-display="true" colname="VERSION_ID" colspan="1" display-name="Agreement Version" field-export="true" is-mandatory="false" isActive="yes" name="versionID" order-by="98" section="1" source-field="true"/>
+      </dependent-table>
+      <dependent-table name="finFranchiseTaxRate_0" tableAnchor="finFranchiseTaxRate" tableWithalias="finFranchiseTaxRate_0">
+        <table-field center-info-display="true" colname="TAX_RATE_ID" colspan="2" display-name="Tax Rate" field-export="true" is-mandatory="false" isActive="yes" name="taxRateId" order-by="99" section="1" source-field="true"/>
+      </dependent-table>
+    </header>
+    <header name="contactInfo" order="1" value="Center Contact Details">
+      <type>0</type>
+      <section>2</section>
+    </header>
+    <header name="legalNoticDetails" order="2" value="Legal Notice Details">
+      <type>1</type>
+      <section>3</section>
+    </header>
+    <header name="bSec_storetimings1282868853" order="3" value="Store Timings">
+      <type>0</type>
+      <section>bSec_storetimings1282868853</section>
+      <is-build-section>false</is-build-section>
+      <tabular-section-table-anchor>storehoursnd21214306162</tabular-section-table-anchor>
+      <tabular-section-db-table>_STOREHOURSND2_1214306162</tabular-section-db-table>
+      <is-tabular-section>yes</is-tabular-section>
+    </header>
+    <header multiSection="false" name="bSec_dokumente" order="4" value="Dokumente">
+      <type>0</type>
+      <section>bSec_dokumente</section>
+      <is-build-section>false</is-build-section>
+      <documents name="fimDocuments1266095388" section="bSec_dokumente" tabName="FIM_DOCUMENTS" tableAnchor="fimDocuments">
+        <document count="0" doc-column="DOCUMENT_FIM_ATTACHMENT" doc-display="Document" doc-name="fimDocumentAttachment" doc-option="0" name="1956126737" title-column="DOCUMENT_FIM_TITLE" title-display="Vorvertrag" title-name="fimDocumentTitle"/>
+        <document count="1" doc-column="DOCUMENT_FIM_ATTACHMENT" doc-display="Document" doc-name="fimDocumentAttachment" doc-option="0" name="1001017355" title-column="DOCUMENT_FIM_TITLE" title-display=" Vorvertragliche Aufklärungspflicht" title-name="fimDocumentTitle"/>
+        <document count="2" doc-column="DOCUMENT_FIM_ATTACHMENT" doc-display="Document" doc-name="fimDocumentAttachment" doc-option="0" name="497809156" title-column="DOCUMENT_FIM_TITLE" title-display="Franchisevertrag" title-name="fimDocumentTitle"/>
+        <document count="3" doc-column="DOCUMENT_FIM_ATTACHMENT" doc-display="Document" doc-name="fimDocumentAttachment" doc-option="0" name="1594885782" title-column="DOCUMENT_FIM_TITLE" title-display=" IT-Technologie-Plattform" title-name="fimDocumentTitle"/>
+      </documents>
+    </header>
+    <header multiSection="false" name="bSec_dokumenteslfürgfpsichtbarsr" order="5" value="Dokumente (für GFP sichtbar)">
+      <type>0</type>
+      <section>bSec_dokumenteslfürgfpsichtbarsr</section>
+      <is-build-section>false</is-build-section>
+      <documents name="fimDocuments2043415285" section="bSec_dokumenteslfürgfpsichtbarsr" tabName="FIM_DOCUMENTS" tableAnchor="fimDocuments">
+        <document count="4" doc-column="DOCUMENT_FIM_ATTACHMENT" doc-display="Document" doc-name="fimDocumentAttachment" doc-option="0" name="1747518148" title-column="DOCUMENT_FIM_TITLE" title-display="Gebietskarte" title-name="fimDocumentTitle"/>
+      </documents>
+    </header>
+    <header multiSection="false" name="bSec_invoicing" order="6" value="Invoicing">
+      <type>0</type>
+      <section>bSec_invoicing</section>
+      <is-build-section>false</is-build-section>
+    </header>
+    <header name="bSec_storeHours1844448" order="7" value="Store Hours">
+      <type>2</type>
+      <section>bSec_storeHours1844448</section>
+    </header>
+    <header name="bSec_temporaryClosures2725450" order="8" value="Temporary Closures">
+      <type>0</type>
+      <section>bSec_temporaryClosures2725450</section>
+    </header>
+    <header name="bSec_legalEntityDetails7678396" order="9" value="Legal Entity Details">
+      <type>0</type>
+      <section>bSec_legalEntityDetails7678396</section>
+    </header>
+    <header name="bSec_royalty1572761327" order="10" value="Royalty">
+      <type>0</type>
+      <section>bSec_royalty1572761327</section>
+      <is-build-section>false</is-build-section>
+    </header>
+  </table-header-map>
+  <id-field>franchiseeNo</id-field>
+  <foreign-tables>
+    <foreign-table name="fimfranchiseeMapping">
+      <link-field foreignField="franchiseeID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="locationDivisionMapping">
+      <link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimBrandMapping">
+      <link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="franchiseeMailmergeTemplateRel">
+      <link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimExternalMail">
+      <link-field foreignField="franNo" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="franchiseeCall">
+      <link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="amProfile">
+      <link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimTasks">
+      <link-field foreignField="foreignID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimfranchiseeRemarks">
+      <link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="messageDetail">
+      <link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="outlookMails">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimContract">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimComplaint">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimTermination">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimDocuments">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+      <link-field foreignField="tabPrimaryId" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimEntityDetail">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimEmployees">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimEvents">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimFinancial">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimFinancialExport">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimFinancialIfFinancialsExport">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimGuarantor">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimInsurance">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimLegalViolation">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimLender">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimMarketing">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimMysteryShopper">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="owners">
+      <link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimOwners">
+      <link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimAddress">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimPicture">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimQa">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimRealEstate">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimRenewal">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimTerritory">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimTraining">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimTrainingParticipantExport">
+      <link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimTransfer">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <!--<foreign-table name="fimCustomTab">
+            <link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+        </foreign-table>-->
+    <foreign-table name="loginDetails" table-export="false">
+      <link-field foreignField="userIp" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimLicenseAgreement">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="users" table-export="false">
+      <link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="franchiseeUsers" table-export="false">
+      <link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="finFranchiseAgreementVersions" table-export="false">
+      <link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+    </foreign-table>
+    <!-- P_ADMIN_E_MUID -->
+    <foreign-table name="franchiseeMuid" table-export="false">
+      <link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+    </foreign-table>
+    <!-- P_ADMIN_E_MUID -->
+    <!-- Valvol-20140310-006 -->
+    <foreign-table name="fimEntityLocationMapping" table-export="false">
+      <link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+    </foreign-table>
+    <!-- Valvol-20140310-006  -->
+    <!-- <foreign-table name="fimRequiring">
+			<link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+		</foreign-table> -->
+    <!--
+			P_FIM_B_40262 Start By Ram Avtar for transfer checkbox for Picture
+		-->
+    <!--P_FIM_B_40262 Ends-->
+    <!-- BB-20150430-350 starts foreign table entry -->
+    <foreign-table name="finFranchiseTaxRate" table-export="false">
+      <link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+    </foreign-table>
+    <!-- BB-20150430-350 ends -->
+    <foreign-table name="fimPromissoryNote">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimEmployeesMapping">
+      <link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimFranchiseeEFTDetails">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimTemporaryClosure">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="franchiseeLifecycle">
+      <link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimCustomProfileValues">
+      <link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="storehoursnd21214306162" table-export="true">
+      <link-field foreignField="tabPrimaryId" thisField="franchiseeNo"/>
+      <link-field foreignField="entityID" thisField="entityID"/>
+    </foreign-table>
+    <foreign-table name="fsLeadDetailExportFimFo">
+      <link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="franchiseesFo">
+      <link-field foreignField="fimFranchiseeNo" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimStaff" table-export="false">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimStaffExport">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="tasks" table-export="false">
+      <link-field foreignField="foreignID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="tasksExport">
+      <link-field foreignField="foreignID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="outlookMailsExport">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimFinancialIfFinancials" table-export="false">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimCenterTerms" table-export="false">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimCenterTermsExport">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimProcessStaffMapping" table-export="true">
+      <link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimCustomTab2">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimCustomTab3">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimCustomTab1">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimCustomTab4">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimCustomTab5">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimCustomTab6">
+      <link-field foreignField="entityID" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="fimCustomTab">
+      <link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+    </foreign-table>
+    <foreign-table name="auditVisits">
+      <link-field foreignField="franchiseeNo" thisField="franchiseeNo"/>
+    </foreign-table>
+  </foreign-tables>
+  <!-- *****************************Center Details starts***************************** -->
+  <field summary="true">
+    <field-name>franchiseeNo</field-name>
+    <display-name>Franchisee No</display-name>
+    <db-field>FRANCHISEE_NO</db-field>
+    <data-type>Integer</data-type>
+  </field>
+  <field summary="true">
+    <field-name>status</field-name>
+    <display-name>Type</display-name>
+    <display-export-name>Franchisee Type</display-export-name>
+    <db-field>STATUS</db-field>
+    <is-mandatory/>
+    <eligible-for-rolebased>false</eligible-for-rolebased>
+    <eligible-rolebased-for-modify>true</eligible-rolebased-for-modify>
+    <data-type>String</data-type>
+    <transform-method>transformFranchiseeStatus</transform-method>
+    <field-export>true</field-export>
+    <group-by>true</group-by>
+    <transform-export-method>transformFranchiseeType</transform-export-method>
+    <search>
+      <search-field>multiarray</search-field>
+      <search-source-values-method>getFranchiseeTypeCombo</search-source-values-method>
+    </search>
+    <section>1</section>
+    <order-by>0</order-by>
+    <display-type>Combo</display-type>
+    <combo>
+      <combo-source-values-method>getFranchiseeStatusCombo</combo-source-values-method>
+      <combo-method-param>status</combo-method-param>
+    </combo>
+    <source-field>true</source-field>
+  </field>
+  <field colspan-export="1" summary="true">
+    <field-name>franchiseeName</field-name>
+    <display-name>Store ID</display-name>
+    <db-field>FRANCHISEE_NAME</db-field>
+    <data-type>String</data-type>
+    <section>1</section>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <sortable>true</sortable>
+    <display-type>Text</display-type>
+    <order-by>1</order-by>
+    <is-mandatory>true</is-mandatory>
+    <eligible-for-rolebased>false</eligible-for-rolebased>
+    <source-field>true</source-field>
+    <mailmerge is-active="true" keyword-name="$fim_franchiseid$"/>
+    <dropdown-in-filter>true</dropdown-in-filter>
+  </field>
+  <field colspan-export="3" summary="true">
+    <field-name>centerName</field-name>
+    <display-name>Center Name</display-name>
+    <db-field>CENTER_NAME</db-field>
+    <data-type>String</data-type>
+    <section>1</section>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <sortable>true</sortable>
+    <display-type>Text</display-type>
+    <order-by>2</order-by>
+    <is-mandatory>false</is-mandatory>
+    <eligible-for-rolebased>false</eligible-for-rolebased>
+    <eligible-rolebased-for-modify>true</eligible-rolebased-for-modify>
+    <source-field>true</source-field>
+    <mailmerge is-active="true" keyword-name="$fim_centername$"/>
+    <center-info-display>true</center-info-display>
+    <is-active>yes</is-active>
+  </field>
+  <field colspan="2" colspan-export="3" summary="true">
+    <field-name>areaID</field-name>
+    <display-name>Area Franchise ID</display-name>
+    <db-field>AREA_ID</db-field>
+    <data-type>String</data-type>
+    <section>1</section>
+    <field-export>true</field-export>
+    <jScriptFunct onChange="getAreaOwners(this.value);changeFbcCombo(this.value,true)"/>
+    <group-by>true</group-by>
+    <combo>
+      <combo-source-values-method>getAllRegionsInfo</combo-source-values-method>
+    </combo>
+    <field-method>getAllRegionsInfo</field-method>
+    <transform-method>transformAreaName</transform-method>
+    <src-table>areas</src-table>
+    <src-field>areaID</src-field>
+    <src-value>areaName</src-value>
+    <search>
+      <search-field>array</search-field>
+      <search-source-values-method>getSearchRegionCombo</search-source-values-method>
+    </search>
+    <is-mandatory/>
+    <eligible-for-rolebased>false</eligible-for-rolebased>
+    <eligible-rolebased-for-modify>true</eligible-rolebased-for-modify>
+    <source-field>true</source-field>
+    <order-by>3</order-by>
+    <display-type>Combo</display-type>
+    <mailmerge is-active="true" keyword-name="$fim_centerarearegion$"/>
+    <center-info-display>true</center-info-display>
+  </field>
+  <field summary="true">
+    <field-name>licenseNo</field-name>
+    <display-name>License Number</display-name>
+    <db-field>LICENSE_NO</db-field>
+    <data-type>String</data-type>
+    <section>1</section>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <display-type>Text</display-type>
+    <order-by>100</order-by>
+    <mailmerge is-active="true" keyword-name="$fim_licenseno$"/>
+    <center-info-display>true</center-info-display>
+    <is-active>no</is-active>
+  </field>
+  <field summary="true">
+    <field-name>transactionType</field-name>
+    <display-name>License Type</display-name>
+    <db-field>TRANSACTION_TYPE</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <group-by>true</group-by>
+    <transform-method>transformIdToValue</transform-method>
+    <src-table>masterData</src-table>
+    <src-field>masterDataID</src-field>
+    <src-value>dataValue</src-value>
+    <internationalization>yes</internationalization>
+    <search>
+      <search-field>array</search-field>
+      <search-source-values-method>getSearchMDCombo</search-source-values-method>
+      <search-source-method-args>8015</search-source-method-args>
+    </search>
+    <section>1</section>
+    <display-type>Combo</display-type>
+    <combo>
+      <combo-source-values-method>getSearchMDCombo</combo-source-values-method>
+      <combo-source-method-args>8015</combo-source-method-args>
+    </combo>
+    <order-by>101</order-by>
+    <mailmerge is-active="true" keyword-name="$fim_centerlicensetype$"/>
+    <center-info-display>true</center-info-display>
+    <is-active>no</is-active>
+  </field>
+  <field summary="true">
+    <field-name>reportPeriodStartDate</field-name>
+    <display-name>Royalty Reporting Start Date</display-name>
+    <db-field>REPORT_PERIOD_START_DATE</db-field>
+    <data-type>Date</data-type>
+    <section>1</section>
+    <search>
+      <search-field>dateRange</search-field>
+    </search>
+    <field-export>true</field-export>
+    <group-by>true</group-by>
+    <sortable>true</sortable>
+    <source-field>true</source-field>
+    <is-mandatory>true</is-mandatory>
+    <display-type>Date</display-type>
+    <order-by>4</order-by>
+    <mailmerge is-active="true" keyword-name="$fim_royaltyreportingstartdate$"/>
+    <center-info-display>true</center-info-display>
+  </field>
+  <field summary="true">
+    <field-name>fbc</field-name>
+    <display-name>Superviser</display-name>
+    <db-field>FBC</db-field>
+    <data-type>Integer</data-type>
+    <display-type>Combo</display-type>
+    <section>1</section>
+    <transform-method>transformfbc</transform-method>
+    <search>
+      <search-field>array</search-field>
+      <search-source-values-method>getSearchFbcCombo</search-source-values-method>
+    </search>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <field-export>true</field-export>
+    <order-by>5</order-by>
+    <mailmerge is-active="true" keyword-name="$franchisees_fbcname$"/>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field colspan="2" colspan-export="1" summary="true">
+    <field-name>grandStoreOpeningDate</field-name>
+    <display-name>Expected Opening Date</display-name>
+    <db-field>GRAND_STORE_OPENING_DATE</db-field>
+    <data-type>Date</data-type>
+    <section>1</section>
+    <group-by>true</group-by>
+    <search>
+      <search-field>dateRange</search-field>
+    </search>
+    <sortable>true</sortable>
+    <is-mandatory/>
+    <eligible-for-rolebased>false</eligible-for-rolebased>
+    <eligible-rolebased-for-modify>true</eligible-rolebased-for-modify>
+    <source-field>true</source-field>
+    <field-export>true</field-export>
+    <display-type>Date</display-type>
+    <order-by>6</order-by>
+    <mailmerge is-active="true" keyword-name="$fim_grandstoreopeningdate$"/>
+    <center-info-display>true</center-info-display>
+  </field>
+  <field colspan="2" colspan-export="1" summary="true">
+    <field-name>openingDate</field-name>
+    <display-name>Opening Date</display-name>
+    <db-field>OPENING_DATE</db-field>
+    <data-type>Date</data-type>
+    <section>1</section>
+    <field-export>true</field-export>
+    <group-by>true</group-by>
+    <search>
+      <search-field>dateRange</search-field>
+    </search>
+    <sortable>true</sortable>
+    <is-mandatory>true</is-mandatory>
+    <eligible-for-rolebased>false</eligible-for-rolebased>
+    <eligible-rolebased-for-modify>true</eligible-rolebased-for-modify>
+    <source-field>true</source-field>
+    <field-export>true</field-export>
+    <display-type>Date</display-type>
+    <order-by>102</order-by>
+    <mailmerge is-active="true" keyword-name="$fim_openingdate$"/>
+    <center-info-display>true</center-info-display>
+    <is-active>no</is-active>
+  </field>
+  <field summary="true">
+    <field-name>projectId</field-name>
+    <display-name>projectId</display-name>
+    <db-field>PROJECT_ID</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <search>
+      <search-field>array</search-field>
+      <search-source-values-method>getSearchProjectStatusCombo</search-source-values-method>
+    </search>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active/>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>7</order-by>
+    <mailmerge is-active="true" keyword-name="$franchisees_projectstatus$"/>
+  </field>
+  <field summary="true">
+    <field-name>projectStartDate</field-name>
+    <display-name>Project Start Date</display-name>
+    <db-field>PROJECT_START_DATE</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>8</order-by>
+    <mailmerge is-active="true" keyword-name="$franchisees_projectstartdate$"/>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>storeStatus</field-name>
+    <display-name>Status</display-name>
+    <db-field>STORE_STATUS</db-field>
+    <eligible-for-rolebased>false</eligible-for-rolebased>
+    <eligible-rolebased-for-modify>true</eligible-rolebased-for-modify>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <group-by>true</group-by>
+    <transform-method>transformIdToValue</transform-method>
+    <src-table>masterData</src-table>
+    <src-field>masterDataID</src-field>
+    <src-value>dataValue</src-value>
+    <internationalization>yes</internationalization>
+    <search>
+      <search-field>array</search-field>
+      <search-source-values-method>getSearchMDCombo</search-source-values-method>
+      <search-source-method-args>8016</search-source-method-args>
+    </search>
+    <section>1</section>
+    <order-by>9</order-by>
+    <display-type>Combo</display-type>
+    <combo>
+      <combo-source-values-method>getSearchMDCombo</combo-source-values-method>
+      <combo-source-method-args>8016</combo-source-method-args>
+    </combo>
+    <mailmerge is-active="true" keyword-name="$fim_centerstatus$"/>
+    <center-info-display>true</center-info-display>
+    <is-non-editable>true</is-non-editable>
+  </field>
+  <field summary="true">
+    <field-name>storeTypeId</field-name>
+    <display-name>Store Type</display-name>
+    <db-field>ST_ID</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <group-by>true</group-by>
+    <transform-method>transformStoreType</transform-method>
+    <src-table>storeType</src-table>
+    <src-field>storeTypeId</src-field>
+    <src-value>stName</src-value>
+    <sortable>true</sortable>
+    <search>
+      <search-field>array</search-field>
+      <search-source-values-method>getStoreTypeCombo</search-source-values-method>
+    </search>
+    <section>1</section>
+    <order-by>10</order-by>
+    <display-type>Combo</display-type>
+    <combo>
+      <combo-source-values-method>getStoreTypeCombo</combo-source-values-method>
+    </combo>
+    <is-mandatory>true</is-mandatory>
+    <eligible-for-rolebased>false</eligible-for-rolebased>
+    <eligible-rolebased-for-modify>true</eligible-rolebased-for-modify>
+    <source-field>true</source-field>
+    <mailmerge is-active="true" keyword-name="$fim_storetype$"/>
+    <center-info-display>true</center-info-display>
+    <internationalization>yes</internationalization>
+  </field>
+  <field colspan="2" colspan-export="1" summary="true">
+    <field-name>address</field-name>
+    <display-name>Adresse</display-name>
+    <db-field>ADDRESS</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <section>1</section>
+    <order-by>11</order-by>
+    <display-type>TextArea</display-type>
+    <mailmerge is-active="true" keyword-name="$fim_centeraddress$"/>
+    <is-active>yes</is-active>
+  </field>
+  <field colspan="2" colspan-export="1" summary="true">
+    <field-name>address2</field-name>
+    <display-name>Address2</display-name>
+    <db-field>ADDRESS2</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <section>1</section>
+    <order-by>103</order-by>
+    <display-type>TextArea</display-type>
+    <mailmerge is-active="true" keyword-name="$fim_centeraddress2$"/>
+    <center-info-display>true</center-info-display>
+    <is-active>no</is-active>
+  </field>
+  <field summary="true">
+    <field-name>city</field-name>
+    <display-name>City</display-name>
+    <db-field>CITY</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <sortable>true</sortable>
+    <section>1</section>
+    <order-by>12</order-by>
+    <is-mandatory>true</is-mandatory>
+    <eligible-for-rolebased>false</eligible-for-rolebased>
+    <eligible-rolebased-for-modify>true</eligible-rolebased-for-modify>
+    <source-field>true</source-field>
+    <display-type>Text</display-type>
+    <mailmerge is-active="true" keyword-name="$fim_centercity$"/>
+  </field>
+  <field summary="true">
+    <field-name>country</field-name>
+    <display-name>Country</display-name>
+    <db-field>COUNTRY</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <internationalization>yes</internationalization>
+    <group-by>true</group-by>
+    <sortable>true</sortable>
+    <transform-method>transformCountryFromName</transform-method>
+    <transform-method-param>countryID</transform-method-param>
+    <transform-method-export-param>COUNTRY_ID</transform-method-export-param>
+    <mailmerge is-active="true" keyword-name="$fim_Country$"/>
+    <!--Sperry-20140113-125-->
+  </field>
+  <field summary="true">
+    <field-name>state</field-name>
+    <display-name>State / Province</display-name>
+    <db-field>STATE</db-field>
+    <data-type>String</data-type>
+    <is-mandatory/>
+    <eligible-for-rolebased>false</eligible-for-rolebased>
+    <eligible-rolebased-for-modify>true</eligible-rolebased-for-modify>
+    <field-export>true</field-export>
+    <internationalization>yes</internationalization>
+    <group-by>true</group-by>
+    <sortable>true</sortable>
+    <transform-method>transformStateFromName</transform-method>
+    <transform-method-param>regionNo</transform-method-param>
+    <transform-method-export-param>REGION_NO</transform-method-export-param>
+  </field>
+  <field summary="true">
+    <field-name>countryID</field-name>
+    <display-name>Country</display-name>
+    <db-field>COUNTRY_ID</db-field>
+    <data-type>Integer</data-type>
+    <field-export>false</field-export>
+    <eligible-for-rolebased>false</eligible-for-rolebased>
+    <eligible-rolebased-for-modify>true</eligible-rolebased-for-modify>
+    <search>
+      <search-field>comboFimCountry</search-field>
+    </search>
+    <section>1</section>
+    <order-by>13</order-by>
+    <source-field>true</source-field>
+    <display-type>Combo</display-type>
+    <dropdown-option>-1</dropdown-option>
+    <combo>
+      <parent>true</parent>
+      <dependent-field>regionNo</dependent-field>
+      <combo-source-values-method>comboFimCountry</combo-source-values-method>
+    </combo>
+    <transform-method>transformCountryFromId</transform-method>
+    <center-info-display>true</center-info-display>
+    <internationalization>yes</internationalization>
+    <is-mandatory>true</is-mandatory>
+    <source-field>true</source-field>
+  </field>
+  <field summary="true">
+    <field-name>regionNo</field-name>
+    <display-name>State / Province</display-name>
+    <db-field>REGION_NO</db-field>
+    <data-type>Integer</data-type>
+    <transform-method>transformStateFromId</transform-method>
+    <section>1</section>
+    <order-by>14</order-by>
+    <is-mandatory>false</is-mandatory>
+    <eligible-for-rolebased>false</eligible-for-rolebased>
+    <eligible-rolebased-for-modify>true</eligible-rolebased-for-modify>
+    <source-field>true</source-field>
+    <display-type>Combo</display-type>
+    <field-export>false</field-export>
+    <src-table>regions</src-table>
+    <src-field>regionNo</src-field>
+    <src-value>regionName</src-value>
+    <search>
+      <search-field>comboFimState</search-field>
+    </search>
+    <dropdown-option>-1</dropdown-option>
+    <combo>
+      <parent>false</parent>
+      <dependent-field>countryID</dependent-field>
+      <combo-source-values-method>comboFimState</combo-source-values-method>
+      <combo-method-param>countryID</combo-method-param>
+    </combo>
+    <mailmerge is-active="true" keyword-name="$fim_centerstate$"/>
+    <center-info-display>true</center-info-display>
+  </field>
+  <field summary="true">
+    <field-name>zipcode</field-name>
+    <display-name>Zip / Postal Code</display-name>
+    <db-field>ZIPCODE</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <section>1</section>
+    <display-type>Text</display-type>
+    <order-by>15</order-by>
+    <mailmerge is-active="true" keyword-name="$fim_centerzip$"/>
+  </field>
+  <field summary="true">
+    <field-name>storePhone</field-name>
+    <display-name>Tel.</display-name>
+    <display-export-name>Center Phone</display-export-name>
+    <db-field>STORE_PHONE</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <validation>
+      <validation-type>Phone</validation-type>
+    </validation>
+    <transform-method>transformPhoneFim</transform-method>
+    <transform-method-param>countryID</transform-method-param>
+    <transform-method-export-param>COUNTRY_ID</transform-method-export-param>
+    <section>1</section>
+    <order-by>16</order-by>
+    <is-mandatory>true</is-mandatory>
+    <eligible-for-rolebased>false</eligible-for-rolebased>
+    <eligible-rolebased-for-modify>true</eligible-rolebased-for-modify>
+    <source-field>true</source-field>
+    <display-type>Text</display-type>
+    <mailmerge is-active="true" keyword-name="$fim_centerphone$"/>
+    <center-info-display>true</center-info-display>
+  </field>
+  <field summary="true">
+    <field-name>storePhoneExtn</field-name>
+    <display-name>Center Phone Extension</display-name>
+    <display-export-name>Center Phone Extension</display-export-name>
+    <db-field>STORE_PHONE_EXTN</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <validation>
+      <validation-type>Phone</validation-type>
+    </validation>
+    <section>1</section>
+    <order-by>17</order-by>
+    <display-type>Text</display-type>
+    <center-info-display>true</center-info-display>
+  </field>
+  <field summary="true">
+    <field-name>storeFax</field-name>
+    <display-name>Fax</display-name>
+    <display-export-name>Center Fax</display-export-name>
+    <db-field>STORE_FAX</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <validation>
+      <validation-type>Phone</validation-type>
+    </validation>
+    <transform-method>transformPhoneFim</transform-method>
+    <transform-method-param>countryID</transform-method-param>
+    <transform-method-export-param>COUNTRY_ID</transform-method-export-param>
+    <section>1</section>
+    <order-by>18</order-by>
+    <display-type>Text</display-type>
+    <mailmerge is-active="true" keyword-name="$fim_centerfax$"/>
+    <center-info-display>true</center-info-display>
+  </field>
+  <field summary="true">
+    <field-name>storeMobile</field-name>
+    <display-name>Mobile</display-name>
+    <display-export-name>Center Mobile</display-export-name>
+    <db-field>STORE_MOBILE</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <search>
+      <search-field>text</search-field>
+    </search>
+    <validation>
+      <validation-type>Phone</validation-type>
+    </validation>
+    <transform-method>transformPhoneFim</transform-method>
+    <transform-method-param>countryID</transform-method-param>
+    <transform-method-export-param>COUNTRY_ID</transform-method-export-param>
+    <section>1</section>
+    <order-by>19</order-by>
+    <display-type>Text</display-type>
+    <mailmerge is-active="true" keyword-name="$fim_centermobile$"/>
+    <center-info-display>true</center-info-display>
+    <is-active>yes</is-active>
+  </field>
+  <field summary="true">
+    <field-name>storeEmail</field-name>
+    <display-name>Email</display-name>
+    <display-export-name>Center Email</display-export-name>
+    <db-field>STORE_EMAIL</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <validation>
+      <validation-type>Email</validation-type>
+      <include-in-campaign>0</include-in-campaign>
+    </validation>
+    <section>1</section>
+    <display-type>Text</display-type>
+    <order-by>20</order-by>
+    <mailmerge is-active="true" keyword-name="$fim_centeremail$"/>
+    <center-info-display>true</center-info-display>
+  </field>
+  <field summary="true">
+    <field-name>storeWebsite</field-name>
+    <display-name>Website</display-name>
+    <display-export-name>Center Website</display-export-name>
+    <db-field>STORE_WEBSITE</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <validation>
+      <validation-type>Url</validation-type>
+      <include-in-campaign>0</include-in-campaign>
+    </validation>
+    <section>1</section>
+    <display-type>Text</display-type>
+    <order-by>21</order-by>
+    <mailmerge is-active="true" keyword-name="$fim_centerwebsite$"/>
+    <center-info-display>false</center-info-display>
+    <is-active>yes</is-active>
+  </field>
+  <field colspan="2" colspan-export="1" summary="true">
+    <field-name>comments</field-name>
+    <display-name>Comments</display-name>
+    <db-field>FRANCHISEE_COMMENTS</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <is-active>no</is-active>
+    <build-field>yes</build-field>
+    <section>1</section>
+    <order-by>104</order-by>
+    <display-type>TextArea</display-type>
+  </field>
+  <field summary="true">
+    <field-name>operatedBy</field-name>
+    <display-name>Operated By</display-name>
+    <db-field>OPERATED_BY</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <is-active>no</is-active>
+    <build-field>yes</build-field>
+    <section>1</section>
+    <display-type>Text</display-type>
+    <order-by>105</order-by>
+    <center-info-display>false</center-info-display>
+  </field>
+  <!-- *****************************center details ends***************************** -->
+  <!-- *****************************Center Contact Details starts***************************** -->
+  <field colspan="2" colspan-export="1" summary="true">
+    <field-name>contactTitle</field-name>
+    <display-name>Title</display-name>
+    <combined-display-name>Name</combined-display-name>
+    <display-export-name>Contact Title</display-export-name>
+    <db-field>CONTACT_TITLE</db-field>
+    <data-type>Integer</data-type>
+    <field-export>true</field-export>
+    	`
+        
+    <group-by>true</group-by>
+    <transform-method>transformIdToValue</transform-method>
+    <src-table>masterData</src-table>
+    <src-field>masterDataID</src-field>
+    <src-value>dataValue</src-value>
+    <internationalization>yes</internationalization>
+    <search>
+      <search-field>array</search-field>
+      <search-source-values-method>getSearchMDCombo</search-source-values-method>
+      <search-source-method-args>2009</search-source-method-args>
+    </search>
+    <section>2</section>
+    <combo>
+      <combo-source-values-method>getSearchMDCombo</combo-source-values-method>
+      <combo-source-method-args>2009</combo-source-method-args>
+    </combo>
+    <display-type>Combo</display-type>
+    <order-by>6</order-by>
+    <mailmerge is-active="true" keyword-name="$fim_contacttitle$"/>
+    <center-info-display>true</center-info-display>
+    <is-active>no</is-active>
+  </field>
+  <field summary="true">
+    <field-name>contactFirstName</field-name>
+    <display-name>First Name</display-name>
+    <combined-display-name>Name</combined-display-name>
+    <display-export-name>Contact First Name</display-export-name>
+    <db-field>CONTACT_FIRST_NAME</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <sortable>true</sortable>
+    <section>2</section>
+    <order-by>0</order-by>
+    <display-type>Text</display-type>
+    <mailmerge is-active="true" keyword-name="$fim_contactfirstname$"/>
+    <center-info-display>true</center-info-display>
+  </field>
+  <!--  <field summary="true">
+		<field-name>contactMiddleName</field-name>
+		<display-name>Middle Name123</display-name>
+		<combined-display-name>Name</combined-display-name>
+		<display-export-name>Contact Middle Name</display-export-name>
+		<db-field>CONTACT_MIDDLE_NAME</db-field>
+		<data-type>String</data-type>
+		<field-export>true</field-export>
+		<search>
+			<search-field>textlike</search-field>
+		</search>
+		<section>2</section>
+		<order-by>2</order-by>
+		<display-type>Text</display-type>
+		<mailmerge is-active="true" keyword-name="$fim_contactmiddlename$"/>
+	</field>   -->
+  <field summary="true">
+    <field-name>contactLastName</field-name>
+    <display-name>Last Name</display-name>
+    <combined-display-name>Name</combined-display-name>
+    <display-export-name>Contact Last Name</display-export-name>
+    <db-field>CONTACT_LAST_NAME</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <sortable>true</sortable>
+    <section>2</section>
+    <order-by>1</order-by>
+    <display-type>Text</display-type>
+    <mailmerge is-active="true" keyword-name="$fim_contactlastname$"/>
+    <center-info-display>true</center-info-display>
+    <is-active>yes</is-active>
+  </field>
+  <field summary="true">
+    <field-name>phone1</field-name>
+    <display-name>Phone</display-name>
+    <display-export-name>Contact Phone</display-export-name>
+    <db-field>PHONE1</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <validation>
+      <validation-type>Phone</validation-type>
+    </validation>
+    <transform-method>transformPhoneFim</transform-method>
+    <transform-method-param>countryID</transform-method-param>
+    <transform-method-export-param>COUNTRY_ID</transform-method-export-param>
+    <section>2</section>
+    <order-by>2</order-by>
+    <display-type>Text</display-type>
+    <mailmerge is-active="true" keyword-name="$fim_contactphone$"/>
+    <center-info-display>true</center-info-display>
+    <is-active>yes</is-active>
+  </field>
+  <field summary="true">
+    <field-name>phone1Extn</field-name>
+    <display-name>Phone Extension</display-name>
+    <display-export-name>Contact Phone Extension</display-export-name>
+    <db-field>PHONE1_EXTN</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <validation>
+      <validation-type>Phone</validation-type>
+    </validation>
+    <section>2</section>
+    <order-by>3</order-by>
+    <display-type>Text</display-type>
+    <center-info-display>true</center-info-display>
+  </field>
+  <field summary="true">
+    <field-name>fax</field-name>
+    <display-name>Fax</display-name>
+    <display-export-name>Contact Fax</display-export-name>
+    <db-field>FAX</db-field>
+    <data-type>String</data-type>
+    <validation>
+      <validation-type>Phone</validation-type>
+    </validation>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <transform-method>transformPhoneFim</transform-method>
+    <transform-method-param>countryID</transform-method-param>
+    <transform-method-export-param>COUNTRY_ID</transform-method-export-param>
+    <section>2</section>
+    <order-by>7</order-by>
+    <display-type>Text</display-type>
+    <mailmerge is-active="true" keyword-name="$fim_contactfax$"/>
+    <center-info-display>true</center-info-display>
+    <is-active>no</is-active>
+  </field>
+  <field summary="true">
+    <field-name>mobile</field-name>
+    <display-name>Mobile</display-name>
+    <display-export-name>Contact Mobile</display-export-name>
+    <db-field>MOBILE</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <validation>
+      <validation-type>Phone</validation-type>
+    </validation>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <transform-method>transformPhoneFim</transform-method>
+    <transform-method-param>countryID</transform-method-param>
+    <transform-method-export-param>COUNTRY_ID</transform-method-export-param>
+    <section>2</section>
+    <order-by>4</order-by>
+    <display-type>Text</display-type>
+    <mailmerge is-active="true" keyword-name="$fim_contactmobile$"/>
+    <center-info-display>true</center-info-display>
+    <is-active>yes</is-active>
+  </field>
+  <field summary="true">
+    <field-name>emailID</field-name>
+    <display-name>Email</display-name>
+    <display-export-name>Contact Email</display-export-name>
+    <db-field>EMAIL_ID</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <validation>
+      <validation-type>Email</validation-type>
+      <include-in-campaign>0</include-in-campaign>
+    </validation>
+    <section>2</section>
+    <order-by>5</order-by>
+    <display-type>Text</display-type>
+    <mailmerge is-active="true" keyword-name="$fim_contactemail$"/>
+    <center-info-display>true</center-info-display>
+    <is-active>yes</is-active>
+  </field>
+  <!-- *****************************Center Contact Details ends***************************** -->
+  <!-- *****************************Legal Notice Details ends***************************** -->
+  <field colspan="2" colspan-export="1" summary="true">
+    <field-name>LegalNoticeTitle</field-name>
+    <display-name>Title</display-name>
+    <combined-display-name>Name</combined-display-name>
+    <display-export-name>Legal Notice Title</display-export-name>
+    <db-field>LEGAL_NOTICE_TITLE</db-field>
+    <data-type>Integer</data-type>
+    <transform-method>transformIdToValue</transform-method>
+    <src-table>masterData</src-table>
+    <src-field>masterDataID</src-field>
+    <src-value>dataValue</src-value>
+    <field-export>true</field-export>
+    <group-by>true</group-by>
+    <internationalization>yes</internationalization>
+    <search>
+      <search-field>array</search-field>
+      <search-source-values-method>getSearchMDCombo</search-source-values-method>
+      <search-source-method-args>2009</search-source-method-args>
+    </search>
+    <section>3</section>
+    <order-by>1</order-by>
+    <display-type>Combo</display-type>
+    <combo>
+      <combo-source-values-method>getSearchMDCombo</combo-source-values-method>
+      <combo-source-method-args>2009</combo-source-method-args>
+    </combo>
+    <mailmerge is-active="true" keyword-name="$fim_legalNoticeTitle$"/>
+    <is-active>no</is-active>
+  </field>
+  <field summary="true">
+    <field-name>legalNoticeFirstName</field-name>
+    <display-name>First Name</display-name>
+    <combined-display-name>Name</combined-display-name>
+    <display-export-name>Legal Notice First Name</display-export-name>
+    <db-field>LEGAL_NOTICE_FIRST_NAME</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <sortable>true</sortable>
+    <section>3</section>
+    <order-by>2</order-by>
+    <display-type>Text</display-type>
+    <mailmerge is-active="true" keyword-name="$fim_legalNoticeFirstName$"/>
+    <is-active>no</is-active>
+  </field>
+  <field summary="true">
+    <field-name>legalNoticeLastName</field-name>
+    <display-name>Last Name</display-name>
+    <combined-display-name>Name</combined-display-name>
+    <display-export-name>Legal Notice Last Name</display-export-name>
+    <db-field>LEGAL_NOTICE_LAST_NAME</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <sortable>true</sortable>
+    <section>3</section>
+    <order-by>3</order-by>
+    <display-type>Text</display-type>
+    <mailmerge is-active="true" keyword-name="$fim_legalNoticeLastName$"/>
+    <is-active>no</is-active>
+  </field>
+  <field summary="true">
+    <field-name>legalNoticeAddress</field-name>
+    <display-name>Address</display-name>
+    <display-export-name>Legal Notice Street Address</display-export-name>
+    <db-field>LEGAL_NOTICE_ADDRESS</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <section>3</section>
+    <order-by>4</order-by>
+    <display-type>TextArea</display-type>
+    <mailmerge is-active="true" keyword-name="$fim_legalNoticeAddress$"/>
+    <is-active>no</is-active>
+  </field>
+  <field summary="true">
+    <field-name>legalNoticeCity</field-name>
+    <display-name>City</display-name>
+    <display-export-name>Legal Notice City</display-export-name>
+    <db-field>LEGAL_NOTICE_CITY</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <sortable>true</sortable>
+    <section>3</section>
+    <order-by>5</order-by>
+    <display-type>Text</display-type>
+    <mailmerge is-active="true" keyword-name="$fim_legalNoticeCity$"/>
+    <is-active>no</is-active>
+  </field>
+  <field summary="true">
+    <field-name>legalNoticeCountry</field-name>
+    <display-name>Country</display-name>
+    <display-export-name>Legal Notice Country</display-export-name>
+    <db-field>LEGAL_NOTICE_COUNTRY</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <group-by>true</group-by>
+    <transform-method>transformCountryFromId</transform-method>
+    <src-table>countries</src-table>
+    <src-field>countryID</src-field>
+    <src-value>name</src-value>
+    <search>
+      <search-field>comboFimCountry</search-field>
+    </search>
+    <section>3</section>
+    <order-by>6</order-by>
+    <display-type>Combo</display-type>
+    <dropdown-option>-1</dropdown-option>
+    <combo>
+      <parent>true</parent>
+      <dependent-field>legalNoticeState</dependent-field>
+      <combo-source-values-method>comboFimCountry</combo-source-values-method>
+    </combo>
+    <mailmerge is-active="true" keyword-name="$fim_legalNoticeCountry$"/>
+    <internationalization>yes</internationalization>
+    <is-active>no</is-active>
+  </field>
+  <field summary="true">
+    <field-name>legalNoticeState</field-name>
+    <display-name>State / Province</display-name>
+    <display-export-name>Legal Notice State / Province</display-export-name>
+    <db-field>LEGAL_NOTICE_STATE</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <src-table>regions</src-table>
+    <src-field>regionNo</src-field>
+    <src-value>regionName</src-value>
+    <group-by>true</group-by>
+    <search>
+      <search-field>comboFimState</search-field>
+    </search>
+    <transform-method>transformStateFromId</transform-method>
+    <transform-method-export-param>LEGAL_NOTICE_COUNTRY</transform-method-export-param>
+    <section>3</section>
+    <order-by>7</order-by>
+    <display-type>Combo</display-type>
+    <dropdown-option>-1</dropdown-option>
+    <combo>
+      <parent>false</parent>
+      <dependent-field>legalNoticeCountry</dependent-field>
+      <combo-source-values-method>comboFimState</combo-source-values-method>
+      <combo-method-param>legalNoticeCountry</combo-method-param>
+    </combo>
+    <mailmerge is-active="true" keyword-name="$fim_legalNoticeState$"/>
+    <is-active>no</is-active>
+  </field>
+  <field summary="true">
+    <field-name>legalNoticeZipcode</field-name>
+    <display-name>Zip / Postal Code</display-name>
+    <display-export-name>Legal Notice Zip / Postal Code</display-export-name>
+    <db-field>LEGAL_NOTICE_ZIPCODE</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <section>3</section>
+    <order-by>8</order-by>
+    <display-type>Text</display-type>
+    <mailmerge is-active="true" keyword-name="$fim_legalNoticeZipcode$"/>
+    <is-active>no</is-active>
+  </field>
+  <field summary="true">
+    <field-name>legalNoticePhone</field-name>
+    <display-name>Phone</display-name>
+    <display-export-name>Legal Notice Phone</display-export-name>
+    <db-field>LEGAL_NOTICE_PHONE</db-field>
+    <data-type>String</data-type>
+    <validation>
+      <validation-type>Phone</validation-type>
+    </validation>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <transform-method>transformPhoneFim</transform-method>
+    <transform-method-param>legalNoticeCountry</transform-method-param>
+    <transform-method-export-param>LEGAL_NOTICE_COUNTRY</transform-method-export-param>
+    <section>3</section>
+    <order-by>9</order-by>
+    <display-type>Text</display-type>
+    <mailmerge is-active="true" keyword-name="$fim_legalNoticePhone$"/>
+    <is-active>no</is-active>
+  </field>
+  <field summary="true">
+    <field-name>legalNoticePhoneExtn</field-name>
+    <display-name>Phone Extension</display-name>
+    <display-export-name>Legal Notice Phone Extension</display-export-name>
+    <db-field>LEGAL_NOTICE_PHONE_EXTN</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <validation>
+      <validation-type>Phone</validation-type>
+    </validation>
+    <section>3</section>
+    <order-by>0</order-by>
+    <display-type>Text</display-type>
+  </field>
+  <field summary="true">
+    <field-name>legalNoticeFax</field-name>
+    <display-name>Fax</display-name>
+    <display-export-name>Legal Notice Fax</display-export-name>
+    <db-field>LEGAL_NOTICE_FAX</db-field>
+    <data-type>String</data-type>
+    <validation>
+      <validation-type>Phone</validation-type>
+    </validation>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <transform-method>transformPhoneFim</transform-method>
+    <transform-method-param>legalNoticeCountry</transform-method-param>
+    <transform-method-export-param>LEGAL_NOTICE_COUNTRY</transform-method-export-param>
+    <section>3</section>
+    <order-by>10</order-by>
+    <display-type>Text</display-type>
+    <mailmerge is-active="true" keyword-name="$fim_legalNoticeFax$"/>
+    <is-active>no</is-active>
+  </field>
+  <field summary="true">
+    <field-name>legalNoticeMobile</field-name>
+    <display-name>Mobile</display-name>
+    <display-export-name>Legal Notice Mobile</display-export-name>
+    <db-field>LEGAL_NOTICE_MOBILE</db-field>
+    <data-type>String</data-type>
+    <validation>
+      <validation-type>Phone</validation-type>
+    </validation>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <transform-method>transformPhoneFim</transform-method>
+    <transform-method-param>legalNoticeCountry</transform-method-param>
+    <transform-method-export-param>LEGAL_NOTICE_COUNTRY</transform-method-export-param>
+    <section>3</section>
+    <order-by>11</order-by>
+    <display-type>Text</display-type>
+    <mailmerge is-active="true" keyword-name="$fim_legalNoticeMobile$"/>
+    <is-active>no</is-active>
+  </field>
+  <field summary="true">
+    <field-name>legalNoticeEmail</field-name>
+    <display-name>Email</display-name>
+    <display-export-name>Legal Notice Email</display-export-name>
+    <db-field>LEGAL_NOTICE_EMAIL</db-field>
+    <data-type>String</data-type>
+    <validation>
+      <validation-type>Email</validation-type>
+      <include-in-campaign>0</include-in-campaign>
+    </validation>
+    <field-export>true</field-export>
+    <search>
+      <search-field>textlike</search-field>
+    </search>
+    <section>3</section>
+    <order-by>12</order-by>
+    <display-type>Text</display-type>
+    <mailmerge is-active="true" keyword-name="$fim_legalNoticeEmail$"/>
+    <is-active>no</is-active>
+  </field>
+  <!-- *****************************Legal Notice Details ends***************************** -->
+  <field summary="true">
+    <field-name>deactivatedDate</field-name>
+    <display-name>Deactivated Date</display-name>
+    <db-field>DEACTIVATION_DATE</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <field-export>false</field-export>
+    <section>1</section>
+    <order-by>22</order-by>
+    <active>yes</active>
+    <is-mandatory/>
+    <pii-enabled>false</pii-enabled>
+    <group-by>true</group-by>
+  </field>
+  <field summary="true">
+    <field-name>firstName</field-name>
+    <display-name>First Name</display-name>
+    <db-field>FIRST_NAME</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <field-export>false</field-export>
+  </field>
+  <field summary="true">
+    <field-name>lastName</field-name>
+    <display-name>Last Name</display-name>
+    <db-field>LAST_NAME</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <field-export>false</field-export>
+  </field>
+  <field summary="true">
+    <field-name>phone2</field-name>
+    <display-name>Phone</display-name>
+    <db-field>PHONE2</db-field>
+    <data-type>String</data-type>
+    <validation>
+      <validation-type>Phone</validation-type>
+    </validation>
+    <display-type>Text</display-type>
+    <field-export>false</field-export>
+  </field>
+  <field summary="true">
+    <field-name>phone2Extn</field-name>
+    <display-name>Phone Extension</display-name>
+    <db-field>PHONE2_EXTN</db-field>
+    <data-type>String</data-type>
+    <field-export>false</field-export>
+    <validation>
+      <validation-type>Phone</validation-type>
+    </validation>
+    <display-type>Text</display-type>
+  </field>
+  <field summary="true">
+    <field-name>isAdmin</field-name>
+    <display-name>Is Admin</display-name>
+    <db-field>IS_ADMIN</db-field>
+    <data-type>String</data-type>
+    <field-export>false</field-export>
+  </field>
+  <field summary="true">
+    <field-name>isFranchisee</field-name>
+    <display-name>Is Franchisee</display-name>
+    <db-field>IS_FRANCHISEE</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+  </field>
+  <field summary="true">
+    <field-name>isBaseAdmin</field-name>
+    <display-name>Is Base Admin</display-name>
+    <db-field>IS_BASE_ADMIN</db-field>
+    <data-type>String</data-type>
+  </field>
+  <field summary="true">
+    <field-name>creationDate</field-name>
+    <display-name>Creation Date</display-name>
+    <db-field>CREATION_DATE</db-field>
+    <data-type>Date</data-type>
+    <field-export>false</field-export>
+    <section>1</section>
+    <order-by>23</order-by>
+    <display-type>Date</display-type>
+    <active>yes</active>
+    <is-mandatory/>
+    <pii-enabled>false</pii-enabled>
+    <group-by>true</group-by>
+  </field>
+  <field summary="true">
+    <field-name>leadID</field-name>
+    <display-name>Lead Id</display-name>
+    <db-field>FIM_FS_LEAD_ID</db-field>
+    <data-type>Integer</data-type>
+    <field-export>false</field-export>
+  </field>
+  <field summary="true">
+    <field-name>transferFlag</field-name>
+    <display-name>Transfer Flag</display-name>
+    <db-field>TRANSFER_FLAG</db-field>
+    <data-type>String</data-type>
+  </field>
+  <field summary="true">
+    <field-name>previousFranchisee</field-name>
+    <display-name>Previous Franchisee</display-name>
+    <db-field>PREVIOUS_FRANCHISEE</db-field>
+    <data-type>Integer</data-type>
+    <field-export>false</field-export>
+  </field>
+  <field summary="true">
+    <field-name>previousOwners</field-name>
+    <display-name>Previous Owners</display-name>
+    <db-field>PREVIOUS_OWNERS</db-field>
+    <data-type>Integer</data-type>
+    <field-export>false</field-export>
+  </field>
+  <field summary="true">
+    <field-name>triggerSent</field-name>
+    <display-name>Trigger Sent</display-name>
+    <db-field>TRIGGER_SENT</db-field>
+    <data-type>String</data-type>
+    <field-export>false</field-export>
+  </field>
+  <field summary="true">
+    <field-name>storeOpeningDate</field-name>
+    <display-name>Store Opening Date</display-name>
+    <db-field>STORE_OPENING_DATE</db-field>
+    <data-type>Date</data-type>
+    <group-by>true</group-by>
+    <field-export>false</field-export>
+    <mailmerge is-active="true" keyword-name="$fim_AgreementOpeningDate$"/>
+    <section>1</section>
+    <order-by>24</order-by>
+    <display-type>Date</display-type>
+    <active>yes</active>
+    <is-mandatory/>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>transferDate</field-name>
+    <display-name>Transfer Date</display-name>
+    <db-field>TRANSFER_DATE</db-field>
+    <data-type>Date</data-type>
+    <field-export>true</field-export>
+    <field-export>false</field-export>
+    <section>1</section>
+    <order-by>25</order-by>
+    <display-type>Date</display-type>
+    <active>yes</active>
+    <is-mandatory/>
+    <pii-enabled>false</pii-enabled>
+    <group-by>true</group-by>
+  </field>
+  <field summary="true">
+    <field-name>transfer</field-name>
+    <display-name>Transfer </display-name>
+    <db-field>TRANSFER</db-field>
+    <data-type>Integer</data-type>
+    <field-export>false</field-export>
+  </field>
+  <field summary="true">
+    <field-name>isStore</field-name>
+    <display-name>Is Store</display-name>
+    <db-field>IS_STORE</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+  </field>
+  <field summary="true">
+    <field-name>isStoreArchive</field-name>
+    <display-name>Is Store Archive</display-name>
+    <db-field>IS_STORE_ARCHIVED</db-field>
+    <data-type>String</data-type>
+  </field>
+  <field summary="true">
+    <field-name>entityName</field-name>
+    <display-name>Entity Name</display-name>
+    <db-field>ENTITY_NAME</db-field>
+    <data-type>String</data-type>
+  </field>
+  <field summary="true">
+    <field-name>blackberryMail</field-name>
+    <display-name>BlackBerry Mail</display-name>
+    <db-field>BLACKBERRY_EMAIL</db-field>
+    <data-type>String</data-type>
+  </field>
+  <!--
+		<field summary="true"> <field-name>muID</field-name>
+		<display-name>Multi Unit</display-name> <db-field>MU_ID</db-field>
+		<data-type>Integer</data-type> <field-export>true</field-export>
+		<transform-method>transformMUIdToValue</transform-method> </field>
+	-->
+  <field summary="true">
+    <field-name>smsEmail</field-name>
+    <display-name>Sms Email</display-name>
+    <db-field>SMS_EMAIL</db-field>
+    <data-type>String</data-type>
+  </field>
+  <field summary="true">
+    <field-name>jobTitle</field-name>
+    <display-name>Job Title</display-name>
+    <db-field>JOB_TITLE</db-field>
+    <data-type>String</data-type>
+  </field>
+  <field summary="true">
+    <field-name>regionalType</field-name>
+    <display-name>Regional Type</display-name>
+    <db-field>REGIONAL_TYPE</db-field>
+    <data-type>String</data-type>
+  </field>
+  <field summary="true">
+    <field-name>terminationReason</field-name>
+    <display-name>Termination Reason</display-name>
+    <db-field>TERMINATION_REASON</db-field>
+    <data-type>Integer</data-type>
+    <field-export>false</field-export>
+    <section>1</section>
+    <order-by>26</order-by>
+    <display-type>Text</display-type>
+    <active>yes</active>
+    <is-mandatory/>
+    <pii-enabled>false</pii-enabled>
+    <group-by>true</group-by>
+  </field>
+  <field summary="true">
+    <field-name>franchiseeC1</field-name>
+    <display-name>Franchisee-1</display-name>
+    <db-field>FRANCHISEE_C1</db-field>
+    <data-type>String</data-type>
+  </field>
+  <field summary="true">
+    <field-name>franchiseeC2</field-name>
+    <display-name>Franchisee-2</display-name>
+    <db-field>FRANCHISEE_C2</db-field>
+    <data-type>String</data-type>
+  </field>
+  <field summary="true">
+    <field-name>franchiseeC3</field-name>
+    <display-name>Franchisee-3</display-name>
+    <db-field>FRANCHISEE_C3</db-field>
+    <data-type>String</data-type>
+  </field>
+  <field summary="true">
+    <field-name>franchiseeC4</field-name>
+    <display-name>Franchisee-4</display-name>
+    <db-field>FRANCHISEE_C4</db-field>
+    <data-type>String</data-type>
+  </field>
+  <field summary="true">
+    <field-name>franchiseeC5</field-name>
+    <display-name>Franchisee-5</display-name>
+    <db-field>FRANCHISEE_C5</db-field>
+    <data-type>String</data-type>
+  </field>
+  <field summary="true">
+    <field-name>franchiseeC6</field-name>
+    <display-name>Franchisee-6</display-name>
+    <db-field>FRANCHISEE_C6</db-field>
+    <data-type>String</data-type>
+  </field>
+  <field summary="true">
+    <field-name>franchiseeC7</field-name>
+    <display-name>Franchisee-7</display-name>
+    <db-field>FRANCHISEE_C7</db-field>
+    <data-type>String</data-type>
+  </field>
+  <field summary="true">
+    <field-name>franchiseeC8</field-name>
+    <display-name>Franchisee-8</display-name>
+    <db-field>FRANCHISEE_C8</db-field>
+    <data-type>String</data-type>
+  </field>
+  <field summary="true">
+    <field-name>franchiseeC9</field-name>
+    <display-name>Franchisee-9</display-name>
+    <db-field>FRANCHISEE_C9</db-field>
+    <data-type>String</data-type>
+  </field>
+  <field summary="true">
+    <field-name>franchiseeC10</field-name>
+    <display-name>Franchisee-10</display-name>
+    <db-field>FRANCHISEE_C10</db-field>
+    <data-type>String</data-type>
+  </field>
+  <field summary="true">
+    <field-name>foCustomFieldC1</field-name>
+    <display-name>FO Custom Field-1</display-name>
+    <db-field>FO_CUSTOM_FIELD_C1</db-field>
+    <data-type>String</data-type>
+    <custom-field>true</custom-field>
+    <custom-field-table>FO_CUSTOMIZATION_FIELD</custom-field-table>
+    <field-export>true</field-export>
+  </field>
+  <field summary="true">
+    <field-name>foCustomFieldC2</field-name>
+    <display-name>FO Custom Field-2</display-name>
+    <db-field>FO_CUSTOM_FIELD_C2</db-field>
+    <data-type>String</data-type>
+    <custom-field>true</custom-field>
+    <custom-field-table>FO_CUSTOMIZATION_FIELD</custom-field-table>
+    <field-export>true</field-export>
+  </field>
+  <field summary="true">
+    <field-name>foCustomFieldC3</field-name>
+    <display-name>FO Custom Field-3</display-name>
+    <db-field>FO_CUSTOM_FIELD_C3</db-field>
+    <data-type>String</data-type>
+    <custom-field>true</custom-field>
+    <custom-field-table>FO_CUSTOMIZATION_FIELD</custom-field-table>
+    <field-export>true</field-export>
+  </field>
+  <field summary="true">
+    <field-name>foCustomFieldC4</field-name>
+    <display-name>FO Custom Field-4</display-name>
+    <db-field>FO_CUSTOM_FIELD_C4</db-field>
+    <data-type>String</data-type>
+    <custom-field>true</custom-field>
+    <custom-field-table>FO_CUSTOMIZATION_FIELD</custom-field-table>
+    <field-export>true</field-export>
+  </field>
+  <field summary="true">
+    <field-name>foCustomFieldC5</field-name>
+    <display-name>FO Custom Field-5</display-name>
+    <db-field>FO_CUSTOM_FIELD_C5</db-field>
+    <data-type>String</data-type>
+    <custom-field>true</custom-field>
+    <custom-field-table>FO_CUSTOMIZATION_FIELD</custom-field-table>
+    <field-export>true</field-export>
+  </field>
+  <field summary="true">
+    <field-name>foCustomFieldC6</field-name>
+    <display-name>FO Custom Field-6</display-name>
+    <db-field>FO_CUSTOM_FIELD_C6</db-field>
+    <data-type>String</data-type>
+    <custom-field>true</custom-field>
+    <custom-field-table>FO_CUSTOMIZATION_FIELD</custom-field-table>
+    <field-export>true</field-export>
+  </field>
+  <field summary="true">
+    <field-name>foCustomFieldC7</field-name>
+    <display-name>FO Custom Field-7</display-name>
+    <db-field>FO_CUSTOM_FIELD_C7</db-field>
+    <data-type>String</data-type>
+    <custom-field>true</custom-field>
+    <custom-field-table>FO_CUSTOMIZATION_FIELD</custom-field-table>
+    <field-export>true</field-export>
+  </field>
+  <field summary="true">
+    <field-name>foCustomFieldC8</field-name>
+    <display-name>FO Custom Field-8</display-name>
+    <db-field>FO_CUSTOM_FIELD_C8</db-field>
+    <data-type>String</data-type>
+    <custom-field>true</custom-field>
+    <custom-field-table>FO_CUSTOMIZATION_FIELD</custom-field-table>
+    <field-export>true</field-export>
+  </field>
+  <field summary="true">
+    <field-name>foCustomFieldC9</field-name>
+    <display-name>FO Custom Field-9</display-name>
+    <db-field>FO_CUSTOM_FIELD_C9</db-field>
+    <data-type>String</data-type>
+    <custom-field>true</custom-field>
+    <custom-field-table>FO_CUSTOMIZATION_FIELD</custom-field-table>
+    <field-export>true</field-export>
+  </field>
+  <field summary="true">
+    <field-name>foCustomFieldC10</field-name>
+    <display-name>FO Custom Field-10</display-name>
+    <db-field>FO_CUSTOM_FIELD_C10</db-field>
+    <data-type>String</data-type>
+    <custom-field>true</custom-field>
+    <custom-field-table>FO_CUSTOMIZATION_FIELD</custom-field-table>
+    <field-export>true</field-export>
+  </field>
+  <!-- REFERENCE_DATE_ENH starts-->
+  <field summary="true">
+    <field-name>foCustomFieldC11</field-name>
+    <display-name>FO Custom Field-11</display-name>
+    <db-field>FO_CUSTOM_FIELD_C11</db-field>
+    <data-type>String</data-type>
+    <custom-field>true</custom-field>
+    <custom-field-table>FO_CUSTOMIZATION_FIELD</custom-field-table>
+    <field-export>true</field-export>
+  </field>
+  <field summary="true">
+    <field-name>foCustomFieldC12</field-name>
+    <display-name>FO Custom Field-12</display-name>
+    <db-field>FO_CUSTOM_FIELD_C12</db-field>
+    <data-type>String</data-type>
+    <custom-field>true</custom-field>
+    <custom-field-table>FO_CUSTOMIZATION_FIELD</custom-field-table>
+    <field-export>true</field-export>
+  </field>
+  <field summary="true">
+    <field-name>foCustomFieldC13</field-name>
+    <display-name>FO Custom Field-13</display-name>
+    <db-field>FO_CUSTOM_FIELD_C13</db-field>
+    <data-type>String</data-type>
+    <custom-field>true</custom-field>
+    <custom-field-table>FO_CUSTOMIZATION_FIELD</custom-field-table>
+    <field-export>true</field-export>
+  </field>
+  <field summary="true">
+    <field-name>foCustomFieldC14</field-name>
+    <display-name>FO Custom Field-14</display-name>
+    <db-field>FO_CUSTOM_FIELD_C14</db-field>
+    <data-type>String</data-type>
+    <custom-field>true</custom-field>
+    <custom-field-table>FO_CUSTOMIZATION_FIELD</custom-field-table>
+    <field-export>true</field-export>
+  </field>
+  <field summary="true">
+    <field-name>foCustomFieldC15</field-name>
+    <display-name>FO Custom Field-15</display-name>
+    <db-field>FO_CUSTOM_FIELD_C15</db-field>
+    <data-type>String</data-type>
+    <custom-field>true</custom-field>
+    <custom-field-table>FO_CUSTOMIZATION_FIELD</custom-field-table>
+    <field-export>true</field-export>
+  </field>
+  <!-- REFERENCE_DATE_ENH ends-->
+  <field summary="true">
+    <field-name>lastUpdate</field-name>
+    <display-name>Last Updated On</display-name>
+    <db-field>LAST_UPDATE</db-field>
+    <field-export>true</field-export>
+    <transform-method>transformDateTimeFormat</transform-method>
+    <search>
+      <search-field>dateRange</search-field>
+    </search>
+    <group-by>true</group-by>
+    <data-type>String</data-type>
+    <display-type>DateTime</display-type>
+  </field>
+  <field summary="true">
+    <field-name>lastAttended</field-name>
+    <display-name>Last Contacted</display-name>
+    <db-field>LAST_ATTENDED</db-field>
+    <data-type>String</data-type>
+    <field-export>true</field-export>
+    <transform-method>transformDateTimeFormat</transform-method>
+    <search>
+      <search-field>dateRange</search-field>
+    </search>
+    <group-by>true</group-by>
+    <display-type>DateTime</display-type>
+  </field>
+  <field summary="true">
+    <field-name>latitude</field-name>
+    <display-name>Latitude</display-name>
+    <db-field>LATITUDE</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <section>1</section>
+    <order-by>27</order-by>
+    <active>yes</active>
+    <build-field>yes</build-field>
+    <is-mandatory>false</is-mandatory>
+    <pii-enabled>false</pii-enabled>
+    <group-by>true</group-by>
+  </field>
+  <field summary="true">
+    <field-name>longitude</field-name>
+    <display-name>Longitude</display-name>
+    <db-field>LONGITUDE</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <section>1</section>
+    <order-by>28</order-by>
+    <active>yes</active>
+    <build-field>yes</build-field>
+    <is-mandatory>false</is-mandatory>
+    <pii-enabled>false</pii-enabled>
+    <group-by>true</group-by>
+  </field>
+  <field summary="true">
+    <field-name>recordCreatedBy</field-name>
+    <display-name>Created By</display-name>
+    <db-field>RECORD_CREATED_BY</db-field>
+    <data-type>Integer</data-type>
+  </field>
+  <field summary="true">
+    <field-name>lastModifiedBy</field-name>
+    <display-name>Last Modified By</display-name>
+    <db-field>LOCATION_LAST_MODIFIED_BY</db-field>
+    <data-type>Integer</data-type>
+  </field>
+  <field summary="true">
+    <field-name>complianceSupport</field-name>
+    <display-name>Compliance Support</display-name>
+    <db-field>COMPLIANCE_SUPPORT</db-field>
+    <data-type>Integer</data-type>
+    <display-type>Combo</display-type>
+    <section>1</section>
+    <transform-method>transformfbc</transform-method>
+    <search>
+      <search-field>array</search-field>
+      <search-source-values-method>getSearchFbcCombo</search-source-values-method>
+    </search>
+    <is-active>no</is-active>
+    <is-mandatory>false</is-mandatory>
+    <field-export>true</field-export>
+    <order-by>106</order-by>
+    <mailmerge is-active="true" keyword-name="$franchisees_compliancesupport$"/>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>driveThrough</field-name>
+    <display-name>Drive-Thru</display-name>
+    <db-field>DRIVE_THROUGH</db-field>
+    <data-type>Integer</data-type>
+    <field-export>true</field-export>
+    <group-by>true</group-by>
+    <transform-method>transformIdToValue</transform-method>
+    <src-table>masterData</src-table>
+    <src-field>masterDataID</src-field>
+    <src-value>dataValue</src-value>
+    <internationalization>yes</internationalization>
+    <search>
+      <search-field>array</search-field>
+      <search-source-values-method>getSearchMDCombo</search-source-values-method>
+      <search-source-method-args>104222</search-source-method-args>
+    </search>
+    <section>1</section>
+    <display-type>Combo</display-type>
+    <combo>
+      <combo-source-values-method>getSearchMDCombo</combo-source-values-method>
+      <combo-source-method-args>104222</combo-source-method-args>
+    </combo>
+    <is-active>no</is-active>
+    <order-by>107</order-by>
+    <mailmerge is-active="true" keyword-name="$fim_centerDriveThru$"/>
+  </field>
+  <field summary="true">
+    <field-name>_franchiseFee1181443611</field-name>
+    <display-name>Franchise Fee</display-name>
+    <db-field>_FRANCHISE_FEE_1181443611</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>29</order-by>
+    <mailmerge is-active="true" keyword-name="$franchise_franchisefee$"/>
+    <pii-enabled>false</pii-enabled>
+    <center-info-display>false</center-info-display>
+  </field>
+  <field summary="true">
+    <field-name>_dataContrattoDiAffiliazioneInVigore1086391043</field-name>
+    <display-name>06A - Current franchising contract date</display-name>
+    <db-field>_DATA_CONTRATTO_DI_AFFILIAZIONE_IN_VIGORE_1086391043</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>30</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_datacontrattodiaffiliazion$"/>
+  </field>
+  <field summary="true">
+    <field-name>_regionId</field-name>
+    <display-name>Region</display-name>
+    <db-field>REGION_ID</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active/>
+    <is-mandatory>true</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>31</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$fim_centerarearegion$"/>
+  </field>
+  <field summary="true">
+    <field-name>_territoryId</field-name>
+    <display-name>Territory</display-name>
+    <db-field>TERRITORY_ID</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active/>
+    <is-mandatory>true</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>32</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_afId</field-name>
+    <display-name>Area Franchise ID Old</display-name>
+    <db-field>AF_ID</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>no</is-active>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>108</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_statusName</field-name>
+    <display-name>Sub Status</display-name>
+    <db-field>STATUS_NAME</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active/>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>33</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_storeClosingDate</field-name>
+    <display-name>Store Closing Date</display-name>
+    <db-field>STORE_CLOSING_DATE</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active/>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>34</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_storeReOpeningDate</field-name>
+    <display-name>Store Re-opening Date</display-name>
+    <db-field>STORE_RE_OPENING_DATE</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active/>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>35</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_reOpeningDate</field-name>
+    <display-name>Store Re-opening Report Date</display-name>
+    <db-field>RE_OPENING_DATE</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active/>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>36</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_dateOfSale</field-name>
+    <display-name>Date of Sale</display-name>
+    <db-field>DATE_OF_SALE</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active/>
+    <is-mandatory>true</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>37</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_renewalDate</field-name>
+    <display-name>06C - Renewal Date</display-name>
+    <db-field>RENEWAL_DATE</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active/>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>38</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_reopenReason</field-name>
+    <display-name>Neueröffnung Begründung</display-name>
+    <db-field>REOPEN_REASON</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active/>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>39</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_contactEndDate</field-name>
+    <display-name>06B - Contract End Date</display-name>
+    <db-field>CONTACT_END_DATE</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active/>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>40</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_smallMailBox</field-name>
+    <display-name>Small Mailbox</display-name>
+    <db-field>SMALL_MAIL_BOX</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>no</is-active>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>109</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_mediumMamilBox</field-name>
+    <display-name>Medium Mailbox</display-name>
+    <db-field>MEDIUM_MAIL_BOX</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>no</is-active>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>110</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_largeMailBox</field-name>
+    <display-name>Large Mailbox</display-name>
+    <db-field>LARGE_MAIL_BOX</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>no</is-active>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>111</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_virtualMailBox</field-name>
+    <display-name>Virtual Mailbox</display-name>
+    <db-field>VIRTUAL_MAIL_BOX</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>no</is-active>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>112</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_eBox</field-name>
+    <display-name>e-box</display-name>
+    <db-field>E_BOX</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>no</is-active>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>113</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_totalMailBox</field-name>
+    <display-name>Total</display-name>
+    <db-field>TOTAL_MAIL_BOX</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>no</is-active>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>114</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_contactMiddleName</field-name>
+    <display-name>Middle Name</display-name>
+    <db-field>CONTACT_MIDDLE_NAME</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>2</section>
+    <is-active>no</is-active>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>8</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$fim_contactmiddlename$"/>
+  </field>
+  <field summary="true">
+    <field-name>_legalNoticeMiddleName</field-name>
+    <display-name>Middle Name</display-name>
+    <db-field>LEGAL_NOTICE_MIDDLE_NAME</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>3</section>
+    <is-active>no</is-active>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>13</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$fim_legalNoticeMiddleName$"/>
+  </field>
+  <field summary="true">
+    <field-name>_storeHoursopeningHoursMonToFri</field-name>
+    <display-name>Opening Hours( Monday To Friday )</display-name>
+    <db-field>OPENING_HOURS_MON_TO_FRI</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>bSec_storeHours1844448</section>
+    <is-active/>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>0</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_storeHoursopeningHoursSat</field-name>
+    <display-name>Opening Hours( Saturday )</display-name>
+    <db-field>OPENING_HOURS_SAT</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>bSec_storeHours1844448</section>
+    <is-active/>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>1</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_storeHoursopeningHoursComments</field-name>
+    <display-name>Opening Hours( Comments )</display-name>
+    <db-field>OPENING_HOURS_COMMENTS</db-field>
+    <data-type>String</data-type>
+    <display-type>TextArea</display-type>
+    <no-of-column>60</no-of-column>
+    <no-of-row>5</no-of-row>
+    <section>bSec_storeHours1844448</section>
+    <is-active/>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>2</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_centerUPSAccountNumber</field-name>
+    <display-name>Store UPS Account Number</display-name>
+    <db-field>CENTER_UPS_ACCOUNT_NUMBER</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>41</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_tel21379372811</field-name>
+    <display-name>Tel.2</display-name>
+    <db-field>_TEL2_1379372811</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>42</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_tel2$"/>
+  </field>
+  <field summary="true">
+    <field-name>_firma1481191171</field-name>
+    <display-name>Firma</display-name>
+    <db-field>_FIRMA_1481191171</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>43</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_firma$"/>
+  </field>
+  <field summary="true">
+    <field-name>_franchisename11947033467</field-name>
+    <display-name>Franchisename 1</display-name>
+    <db-field>_FRANCHISENAME_1_1947033467</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>44</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_franchisename1$"/>
+  </field>
+  <field summary="true">
+    <field-name>_franchisename21830304840</field-name>
+    <display-name>Franchisename 2</display-name>
+    <db-field>_FRANCHISENAME_2_1830304840</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>45</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_franchisename2$"/>
+  </field>
+  <field summary="true">
+    <field-name>_bemerkung1038894150</field-name>
+    <display-name>Bemerkung</display-name>
+    <db-field>_BEMERKUNG_1038894150</db-field>
+    <data-type>String</data-type>
+    <display-type>TextArea</display-type>
+    <no-of-column>60</no-of-column>
+    <no-of-row>5</no-of-row>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>46</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_bemerkung$"/>
+  </field>
+  <field summary="true">
+    <field-name>_finanzamtId910851990</field-name>
+    <display-name>Finanzamt ID</display-name>
+    <db-field>_FINANZAMT_ID_910851990</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>47</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_finanzamtid$"/>
+  </field>
+  <field summary="true">
+    <field-name>_quadratmeter1731942187</field-name>
+    <display-name>Mietfläche</display-name>
+    <db-field>_QUADRATMETER_1731942187</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>48</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_quadratmeter$"/>
+  </field>
+  <field summary="true">
+    <field-name>_centerStatus928333656</field-name>
+    <display-name>Center Status</display-name>
+    <db-field>_CENTER_STATUS_928333656</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>49</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_centerstatus$"/>
+  </field>
+  <field summary="true">
+    <field-name>_hauptansprechpartnerFdd744097642</field-name>
+    <display-name>Hauptansprechpartner FDD</display-name>
+    <db-field>_HAUPTANSPRECHPARTNER_FDD_744097642</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>50</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_hauptansprechpartnerfdd$"/>
+  </field>
+  <field summary="true">
+    <field-name>_kopieGeschaftsplan1998336981</field-name>
+    <display-name>Kopie Businessplan</display-name>
+    <db-field>_KOPIE_GESCHAFTSPLAN_1998336981</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>51</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_kopiegeschaftsplan$"/>
+  </field>
+  <field summary="true">
+    <field-name>_kopieGesellschaftervertrag1683981381</field-name>
+    <display-name>Kopie Gesellschaftervertrag</display-name>
+    <db-field>_KOPIE_GESELLSCHAFTERVERTRAG_1683981381</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>52</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_kopiegesellschaftervertrag$"/>
+  </field>
+  <field summary="true">
+    <field-name>_kopieMietvertrag25777267</field-name>
+    <display-name>Kopie Mietvertrag</display-name>
+    <db-field>_KOPIE_MIETVERTRAG_25777267</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>53</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_kopiemietvertrag$"/>
+  </field>
+  <field summary="true">
+    <field-name>_handelsregisternummer885467650</field-name>
+    <display-name>Handelsregisternummer</display-name>
+    <db-field>_HANDELSREGISTERNUMMER_885467650</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>54</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_handelsregisternummer$"/>
+  </field>
+  <field summary="true">
+    <field-name>_kopieHandelregisterauszug2101756537</field-name>
+    <display-name>Kopie Handelregisterauszug</display-name>
+    <db-field>_KOPIE_HANDELREGISTERAUSZUG_2101756537</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>55</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_kopiehandelregisterauszug$"/>
+  </field>
+  <field summary="true">
+    <field-name>_handelsregisterOrt1402922307</field-name>
+    <display-name>Handelsregister Ort</display-name>
+    <db-field>_HANDELSREGISTER_ORT_1402922307</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>56</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_handelsregisterort$"/>
+  </field>
+  <field summary="true">
+    <field-name>_gebietsschutzFestgelegt259273119</field-name>
+    <display-name>Gebietsschutz festgelegt</display-name>
+    <db-field>_GEBIETSSCHUTZ_FESTGELEGT_259273119</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>57</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_gebietsschutzfestgelegt$"/>
+  </field>
+  <field summary="true">
+    <field-name>_andienungsrechtFurGebietslizenz1323503938</field-name>
+    <display-name>Andienungsrecht für Gebietslizenz</display-name>
+    <db-field>_ANDIENUNGSRECHT_FUR_GEBIETSLIZENZ_1323503938</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>58</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_andienungsrechtfurgebietsl$"/>
+  </field>
+  <field summary="true">
+    <field-name>_andienung2Pkt61648239139</field-name>
+    <display-name>Andienung §2 Pkt.6</display-name>
+    <db-field>_ANDIENUNG_2_PKT6_1648239139</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>59</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_andienung2pkt6$"/>
+  </field>
+  <field summary="true">
+    <field-name>_andienungsrechtFurWeiteresCenter331384482</field-name>
+    <display-name>Andienungsrecht für weiteres Center</display-name>
+    <db-field>_ANDIENUNGSRECHT_FUR_WEITERES_CENTER_331384482</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>60</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_andienungsrechtfurweiteres$"/>
+  </field>
+  <field summary="true">
+    <field-name>_sontigeVetragssonderheiten520060100</field-name>
+    <display-name>Sontige Vetragssonderheiten</display-name>
+    <db-field>_SONTIGE_VETRAGSSONDERHEITEN_520060100</db-field>
+    <data-type>String</data-type>
+    <display-type>TextArea</display-type>
+    <no-of-column>60</no-of-column>
+    <no-of-row>5</no-of-row>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>61</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_sontigevetragssonderheiten$"/>
+  </field>
+  <field summary="true">
+    <field-name>_mietvertragsabschluss1965113571</field-name>
+    <display-name>MV Abschluss/ Standortgen. erteilt</display-name>
+    <db-field>_MIETVERTRAGSABSCHLUSS_1965113571</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>62</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_mietvertragsabschluss$"/>
+  </field>
+  <field summary="true">
+    <field-name>_mietdauerverlangerungsoptionen2100982585</field-name>
+    <display-name>Mietdauer/Verlängerungsoptionen</display-name>
+    <db-field>_MIETDAUERVERLANGERUNGSOPTIONEN_2100982585</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>63</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_mietdauerverlangerungsopti$"/>
+  </field>
+  <field summary="true">
+    <field-name>_mietpreisKalt955169631</field-name>
+    <display-name>Mietpreis kalt</display-name>
+    <db-field>_MIETPREIS_KALT_955169631</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>64</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_mietpreiskalt$"/>
+  </field>
+  <field summary="true">
+    <field-name>_ausbaukosten1109769626</field-name>
+    <display-name>Ausbaukosten</display-name>
+    <db-field>_AUSBAUKOSTEN_1109769626</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>65</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_ausbaukosten$"/>
+  </field>
+  <field summary="true">
+    <field-name>_geschaftsfuhrerinhaber1804201459</field-name>
+    <display-name>Geschäftsführer/Inhaber</display-name>
+    <db-field>_GESCHAFTSFUHRERINHABER_1804201459</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>66</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_geschaftsfuhrerinhaber$"/>
+  </field>
+  <field summary="true">
+    <field-name>_transferVomHqEmpfohlen2100319350</field-name>
+    <display-name>Transfer vom HQ empfohlen</display-name>
+    <db-field>_TRANSFER_VOM_HQ_EMPFOHLEN_2100319350</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>67</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_transfervomhqempfohlen$"/>
+  </field>
+  <field summary="true">
+    <field-name>_transferauftrag1197557671</field-name>
+    <display-name>Transferauftrag</display-name>
+    <db-field>_TRANSFERAUFTRAG_1197557671</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>68</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_transferauftrag$"/>
+  </field>
+  <field summary="true">
+    <field-name>_kopieGewerbeanmeldung180796852</field-name>
+    <display-name>Kopie Gewerbeanmeldung</display-name>
+    <db-field>_KOPIE_GEWERBEANMELDUNG_180796852</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>69</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_kopiegewerbeanmeldung$"/>
+  </field>
+  <field summary="true">
+    <field-name>_gebietsfranchisepartnerVertrag919899497</field-name>
+    <display-name>Gebietsfranchisepartner Vertragsende</display-name>
+    <db-field>_GEBIETSFRANCHISEPARTNER_VERTRAG_919899497</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>70</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_gebietsfranchisepartnerver$"/>
+  </field>
+  <field summary="true">
+    <field-name>_gebietsfranchisepartnerGebiet1739549736</field-name>
+    <display-name>Gebietsfranchisepartner Gebiet</display-name>
+    <db-field>_GEBIETSFRANCHISEPARTNER_GEBIET_1739549736</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>71</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_gebietsfranchisepartnergeb$"/>
+  </field>
+  <field summary="true">
+    <field-name>_standortgenehmigung531025647</field-name>
+    <display-name>Standortgenehmigung</display-name>
+    <db-field>_STANDORTGENEHMIGUNG_531025647</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>72</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_standortgenehmigung$"/>
+  </field>
+  <field summary="true">
+    <field-name>_hqCoach769343175</field-name>
+    <display-name>HQ Coach</display-name>
+    <db-field>_HQ_COACH_769343175</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>73</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_hqcoach$"/>
+  </field>
+  <field summary="true">
+    <field-name>_itHelpdeskStart1661006709</field-name>
+    <display-name>IT Helpdesk Startdatum</display-name>
+    <db-field>_IT_HELPDESK_START_1661006709</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>74</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_ithelpdeskstart$"/>
+  </field>
+  <field summary="true">
+    <field-name>_itHelpdeskEnddatum712453696</field-name>
+    <display-name>IT Helpdesk Enddatum</display-name>
+    <db-field>_IT_HELPDESK_ENDDATUM_712453696</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>75</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_ithelpdeskenddatum$"/>
+  </field>
+  <field summary="true">
+    <field-name>_transferBusinessActivityStartDate</field-name>
+    <display-name>Transfer - Business Activity Start Date</display-name>
+    <db-field>TRANSFER_BUSINESS_ACTIVITY_START_DATE</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>76</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_transferbusinessactivityst$"/>
+  </field>
+  <field summary="true">
+    <field-name>_gebiet2102930840</field-name>
+    <display-name>Gebiet</display-name>
+    <db-field>_GEBIET_2102930840</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>77</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_gebiet$"/>
+  </field>
+  <field summary="true">
+    <field-name>_multifranchisepartner1331138026</field-name>
+    <display-name>Multifranchisepartner</display-name>
+    <db-field>_MULTIFRANCHISEPARTNER_1331138026</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>78</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_multifranchisepartner$"/>
+  </field>
+  <field summary="true">
+    <field-name>_mulitfpCenter1642932302</field-name>
+    <display-name>Multi-FP Center</display-name>
+    <db-field>_MULITFP_CENTER_1642932302</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>79</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_mulitfpcenter$"/>
+  </field>
+  <field summary="true">
+    <field-name>_superVisor</field-name>
+    <display-name>Supervisor</display-name>
+    <db-field>SUPERVISOR</db-field>
+    <data-type>Integer</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>no</is-active>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>115</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_areaManager</field-name>
+    <display-name>Area Manager</display-name>
+    <db-field>AREA_MANAGER</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <is-multiselect>true</is-multiselect>
+    <section>1</section>
+    <is-active/>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>80</order-by>
+    <pii-enabled>false</pii-enabled>
+    <dropdown-option>4</dropdown-option>
+    <combo>
+      <combo-source-values-method>fetchUserDataBasedOnRoleIds</combo-source-values-method>
+    </combo>
+    <transform-method>fetchUserNameBasedOnUserIds</transform-method>
+  </field>
+  <field summary="true">
+    <field-name>_skypeId</field-name>
+    <display-name>Skype ID</display-name>
+    <db-field>SKYPE_ID</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>81</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_skypeid$"/>
+  </field>
+  <field summary="true">
+    <field-name>_finalContractDate</field-name>
+    <display-name>Final Contract Date</display-name>
+    <db-field>FINAL_CONTRACT_DATE</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>82</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_finalcontractdate$"/>
+  </field>
+  <field summary="true">
+    <field-name>_helpdeskMonatlicheGebuhr861679693</field-name>
+    <display-name>Helpdesk monatliche Gebühr</display-name>
+    <db-field>_HELPDESK_MONATLICHE_GEBUHR_861679693</db-field>
+    <data-type>String</data-type>
+    <display-type>Numeric</display-type>
+    <allow-null-values>true</allow-null-values>
+    <validation>
+      <validation-type>Integer</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>83</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_helpdeskmonatlichegebuhr$"/>
+  </field>
+  <field summary="true">
+    <field-name>_helpdeskZahlungsfrist705383334</field-name>
+    <display-name>Helpdesk Zahlungsfrist</display-name>
+    <db-field>_HELPDESK_ZAHLUNGSFRIST_705383334</db-field>
+    <data-type>String</data-type>
+    <display-type>Numeric</display-type>
+    <allow-null-values>true</allow-null-values>
+    <validation>
+      <validation-type>Integer</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>84</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_helpdeskzahlungsfrist$"/>
+  </field>
+  <field summary="true">
+    <field-name>_royaltiesExemptionUntil1268450451</field-name>
+    <display-name>Royalties exemption until</display-name>
+    <db-field>_ROYALTIES_EXEMPTION_UNTIL_1268450451</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>bSec_invoicing</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>0</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_royaltiesexemptionuntil$"/>
+  </field>
+  <field summary="true">
+    <field-name>_nmfExemptionUntil1764636032</field-name>
+    <display-name>NMF exemption until</display-name>
+    <db-field>_NMF_EXEMPTION_UNTIL_1764636032</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>bSec_invoicing</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>1</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_nmfexemptionuntil$"/>
+  </field>
+  <field summary="true">
+    <field-name>_mfExemptionUntil1554555600</field-name>
+    <display-name>MF exemption until</display-name>
+    <db-field>_MF_EXEMPTION_UNTIL_1554555600</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>bSec_invoicing</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>2</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_mfexemptionuntil$"/>
+  </field>
+  <field summary="true">
+    <field-name>_helpDeskExemptionUntil1647811105</field-name>
+    <display-name>Help Desk exemption until</display-name>
+    <db-field>_HELP_DESK_EXEMPTION_UNTIL_1647811105</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>bSec_invoicing</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>3</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_helpdeskexemptionuntil$"/>
+  </field>
+  <field summary="true">
+    <field-name>_mbeSafevalueExemptionUntil1982716148</field-name>
+    <display-name>MBE SafeValue exemption until</display-name>
+    <db-field>_MBE_SAFEVALUE_EXEMPTION_UNTIL_1982716148</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>bSec_invoicing</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>4</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_mbesafevalueexemptionuntil$"/>
+  </field>
+  <field summary="true">
+    <field-name>_accountingNumber1029282879</field-name>
+    <display-name>Accounting Number</display-name>
+    <db-field>_ACCOUNTING_NUMBER_1029282879</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>bSec_invoicing</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>5</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_accountingnumber$"/>
+  </field>
+  <field summary="true">
+    <field-name>_informationOfCostCarrier513084547</field-name>
+    <display-name>Information of Cost Carrier</display-name>
+    <db-field>_INFORMATION_OF_COST_CARRIER_513084547</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>bSec_invoicing</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>6</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_informationofcostcarrier$"/>
+  </field>
+  <field summary="true">
+    <field-name>_royalty693065507</field-name>
+    <display-name>Royalty</display-name>
+    <db-field>_ROYALTY_693065507</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>bSec_invoicing</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>7</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_royalty$"/>
+  </field>
+  <field summary="true">
+    <field-name>_marketingFeeMf956811527</field-name>
+    <display-name>Marketing Fee - MF</display-name>
+    <db-field>_MARKETING_FEE_MF_956811527</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>bSec_invoicing</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>8</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_marketingfeemf$"/>
+  </field>
+  <field summary="true">
+    <field-name>_nationalMediaFundNmf1272454994</field-name>
+    <display-name>National Media Fund - NMF</display-name>
+    <db-field>_NATIONAL_MEDIA_FUND_NMF_1272454994</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>bSec_invoicing</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>9</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_nationalmediafundnmf$"/>
+  </field>
+  <field summary="true">
+    <field-name>_1TemporaresSchlieungsdatum1274470450</field-name>
+    <display-name>1 - Temporäres Schließungsdatum</display-name>
+    <db-field>_1_TEMPORARES_SCHLIEUNGSDATUM_1274470450</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>no</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>116</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_1temporaresschlieungsdatum$"/>
+  </field>
+  <field summary="true">
+    <field-name>_1DatumWiedereroffnung890764928</field-name>
+    <display-name>1 - Datum Wiedereröffnung</display-name>
+    <db-field>_1_DATUM_WIEDEREROFFNUNG_890764928</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>no</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>117</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_1datumwiedereroffnung$"/>
+  </field>
+  <field summary="true">
+    <field-name>_2TemporaresSchlieungsdatum2010278005</field-name>
+    <display-name>2 - Temporäres Schließungsdatum</display-name>
+    <db-field>_2_TEMPORARES_SCHLIEUNGSDATUM_2010278005</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>no</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>118</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_2temporaresschlieungsdatum$"/>
+  </field>
+  <field summary="true">
+    <field-name>_2DatumWiedereroffnung162797456</field-name>
+    <display-name>2 - Datum Wiedereröffnung</display-name>
+    <db-field>_2_DATUM_WIEDEREROFFNUNG_162797456</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>no</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>119</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_2datumwiedereroffnung$"/>
+  </field>
+  <field summary="true">
+    <field-name>_3TemporaresSchlieungsdatum979580503</field-name>
+    <display-name>3 - Temporäres Schließungsdatum</display-name>
+    <db-field>_3_TEMPORARES_SCHLIEUNGSDATUM_979580503</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>no</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>120</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_3temporaresschlieungsdatum$"/>
+  </field>
+  <field summary="true">
+    <field-name>_3DatumWiedereroffnung904387344</field-name>
+    <display-name>3 - Datum Wiedereröffnung</display-name>
+    <db-field>_3_DATUM_WIEDEREROFFNUNG_904387344</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>no</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>121</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_3datumwiedereroffnung$"/>
+  </field>
+  <field summary="true">
+    <field-name>_underConstructionStartingDate</field-name>
+    <display-name>Under Construction Starting Date</display-name>
+    <db-field>UNDER_CONSTRUCTION_STARTING_DATE</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>85</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_underconstructionstartingd$"/>
+  </field>
+  <field summary="true">
+    <field-name>_nutztMbeSafevalue1768013181</field-name>
+    <display-name>nutzt MBE SafeValue</display-name>
+    <db-field>_NUTZT_MBE_SAFEVALUE_1768013181</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>86</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_nutztmbesafevalue$"/>
+  </field>
+  <field summary="true">
+    <field-name>_nutzungVonMbeSafevalueKommentar455899348</field-name>
+    <display-name>Nutzung von MBE SafeValue (Kommentar)</display-name>
+    <db-field>_NUTZUNG_VON_MBE_SAFEVALUE_KOMMENTAR_455899348</db-field>
+    <data-type>String</data-type>
+    <display-type>TextArea</display-type>
+    <no-of-column>60</no-of-column>
+    <no-of-row>5</no-of-row>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>87</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_nutzungvonmbesafevaluekomm$"/>
+  </field>
+  <field summary="true">
+    <field-name>_nutztOnlinembe258385985</field-name>
+    <display-name>nutzt OnlineMBE</display-name>
+    <db-field>_NUTZT_ONLINEMBE_258385985</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>88</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_nutztonlinembe$"/>
+  </field>
+  <field summary="true">
+    <field-name>_nutzungVonOnlinembeKommentar592274986</field-name>
+    <display-name>Nutzung von OnlineMBE (Kommentar)</display-name>
+    <db-field>_NUTZUNG_VON_ONLINEMBE_KOMMENTAR_592274986</db-field>
+    <data-type>String</data-type>
+    <display-type>TextArea</display-type>
+    <no-of-column>60</no-of-column>
+    <no-of-row>5</no-of-row>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>89</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_nutzungvononlinembekomment$"/>
+  </field>
+  <field summary="true">
+    <field-name>_nutztElink417200889</field-name>
+    <display-name>nutzt e-Link</display-name>
+    <db-field>_NUTZT_ELINK_417200889</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>90</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_nutztelink$"/>
+  </field>
+  <field summary="true">
+    <field-name>_nutzungVonElinkKommentar722415502</field-name>
+    <display-name>Nutzung von e-Link (Kommentar)</display-name>
+    <db-field>_NUTZUNG_VON_ELINK_KOMMENTAR_722415502</db-field>
+    <data-type>String</data-type>
+    <display-type>TextArea</display-type>
+    <no-of-column>60</no-of-column>
+    <no-of-row>5</no-of-row>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>91</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_nutzungvonelinkkommentar$"/>
+  </field>
+  <field summary="true">
+    <field-name>_mbeWineExemptionUntil1863813321</field-name>
+    <display-name>MBE Wine exemption until</display-name>
+    <db-field>_MBE_WINE_EXEMPTION_UNTIL_1863813321</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>bSec_invoicing</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>10</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_mbewineexemptionuntil$"/>
+  </field>
+  <field summary="true">
+    <field-name>_vorigesFranchisevertragsdatum799767503</field-name>
+    <display-name>Neues Franchisevertragsdatum</display-name>
+    <db-field>_VORIGES_FRANCHISEVERTRAGSDATUM_799767503</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>92</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_vorigesfranchisevertragsda$"/>
+  </field>
+  <field summary="true">
+    <field-name>_temporaryClosure1</field-name>
+    <display-name>Temporary closure 1</display-name>
+    <db-field>TEMPORARY_CLOSURE1</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>bSec_temporaryClosures2725450</section>
+    <is-active/>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>0</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_temporaryClosure2</field-name>
+    <display-name>Temporary closure 2</display-name>
+    <db-field>TEMPORARY_CLOSURE2</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>bSec_temporaryClosures2725450</section>
+    <is-active/>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>1</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_temporaryClosure3</field-name>
+    <display-name>Temporary closure 3</display-name>
+    <db-field>TEMPORARY_CLOSURE3</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>bSec_temporaryClosures2725450</section>
+    <is-active/>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>2</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_reopenAfterTemporaryClosure1</field-name>
+    <display-name>Reopen after temporary closure 1</display-name>
+    <db-field>REOPEN_AFTER_TEMPORARY_CLOSURE1</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>bSec_temporaryClosures2725450</section>
+    <is-active/>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>3</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_reopenAfterTemporaryClosure2</field-name>
+    <display-name>Reopen after temporary closure 2</display-name>
+    <db-field>REOPEN_AFTER_TEMPORARY_CLOSURE2</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>bSec_temporaryClosures2725450</section>
+    <is-active/>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>4</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_reopenAfterTemporaryClosure3</field-name>
+    <display-name>Reopen after temporary closure 3</display-name>
+    <db-field>REOPEN_AFTER_TEMPORARY_CLOSURE3</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>bSec_temporaryClosures2725450</section>
+    <is-active/>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>5</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_companyName</field-name>
+    <display-name>1 - Company Name</display-name>
+    <db-field>COMPANY_NAME</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>bSec_legalEntityDetails7678396</section>
+    <is-active>no</is-active>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>0</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_companyLegalForm</field-name>
+    <display-name>2 - Company legal form</display-name>
+    <db-field>COMPANY_LEGAL_FORM</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>bSec_legalEntityDetails7678396</section>
+    <is-active>no</is-active>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>1</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_companyVATNumber</field-name>
+    <display-name>3 - Company VAT number</display-name>
+    <db-field>COMPANY_VAT_NO</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>bSec_legalEntityDetails7678396</section>
+    <is-active>no</is-active>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>2</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_companyTaxpayerNumber</field-name>
+    <display-name>4 - Company TAXPAYER number</display-name>
+    <db-field>COMPANY_TAXPAYER_NO</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>bSec_legalEntityDetails7678396</section>
+    <is-active>no</is-active>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>3</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_companyHQAddress</field-name>
+    <display-name>5 - Company HQ - Address</display-name>
+    <db-field>COMPANY_HQ_ADDRESS</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>bSec_legalEntityDetails7678396</section>
+    <is-active>no</is-active>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>4</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_companyLegalRepresentative</field-name>
+    <display-name>6 - Company Legal Representative</display-name>
+    <db-field>COMPANY_LEGAL_REPRESENTATIVE</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>bSec_legalEntityDetails7678396</section>
+    <is-active>no</is-active>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>5</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_companyEstablishmentStartDate</field-name>
+    <display-name>7 - Company establishment Start date</display-name>
+    <db-field>COMPANY_ESTABLISHMENT_START_DATE</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>bSec_legalEntityDetails7678396</section>
+    <is-active>no</is-active>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>6</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_companyHQCountry</field-name>
+    <display-name>8 - Company HQ - Country</display-name>
+    <db-field>COMPANY_HQ_COUNTRY</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>bSec_legalEntityDetails7678396</section>
+    <is-active>no</is-active>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>7</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_companyHQStateProvince</field-name>
+    <display-name>9 - Company HQ - State/Province</display-name>
+    <db-field>COMPANY_HQ_STATE</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>bSec_legalEntityDetails7678396</section>
+    <is-active>no</is-active>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>8</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_companyHQCity</field-name>
+    <display-name>10 - Company HQ - City</display-name>
+    <db-field>COMPANY_HQ_CITY</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>bSec_legalEntityDetails7678396</section>
+    <is-active>no</is-active>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>9</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_companyHQZIPCode</field-name>
+    <display-name>11 - Company HQ - ZIP code</display-name>
+    <db-field>COMPANY_HQ_ZIPCODE</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>bSec_legalEntityDetails7678396</section>
+    <is-active>no</is-active>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>10</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_companyRegisteredEmail</field-name>
+    <display-name>12 - Company Registered email</display-name>
+    <db-field>COMPANY_REGISTERED_EMAIL</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>bSec_legalEntityDetails7678396</section>
+    <is-active>no</is-active>
+    <is-mandatory/>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>11</order-by>
+    <pii-enabled>false</pii-enabled>
+  </field>
+  <field summary="true">
+    <field-name>_royalty708595409</field-name>
+    <display-name>Royalty</display-name>
+    <db-field>_ROYALTY_708595409</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>bSec_royalty1572761327</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>0</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_royalty$"/>
+  </field>
+  <field summary="true">
+    <field-name>_fnm919616588</field-name>
+    <display-name>National Media Fund - NMF</display-name>
+    <db-field>_FNM_919616588</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>bSec_royalty1572761327</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>1</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_fnm$"/>
+  </field>
+  <field summary="true">
+    <field-name>_fondoMarketing999347461</field-name>
+    <display-name>Marketing Fee - MF</display-name>
+    <db-field>_FONDO_MARKETING_999347461</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>bSec_royalty1572761327</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>2</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_fondomarketing$"/>
+  </field>
+  <field summary="true">
+    <field-name>_emailAmministrazione1613858938</field-name>
+    <display-name>Finance email address</display-name>
+    <db-field>_EMAIL_AMMINISTRAZIONE_1613858938</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>bSec_royalty1572761327</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>3</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_emailamministrazione$"/>
+  </field>
+  <field summary="true">
+    <field-name>_esenteRoyaltiesFinoAl23801067</field-name>
+    <display-name>Royalty exemption expiry date</display-name>
+    <db-field>_ESENTE_ROYALTIES_FINO_AL_23801067</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>bSec_royalty1572761327</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>4</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_esenteroyaltiesfinoal$"/>
+  </field>
+  <field summary="true">
+    <field-name>_esenteNmfFinoAl2002707832</field-name>
+    <display-name>NMF exemption expiry date</display-name>
+    <db-field>_ESENTE_NMF_FINO_AL_2002707832</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>bSec_royalty1572761327</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>5</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_esentenmffinoal$"/>
+  </field>
+  <field summary="true">
+    <field-name>_esenteMfFinoAl1032617309</field-name>
+    <display-name>MF exemption expiry date</display-name>
+    <db-field>_ESENTE_MF_FINO_AL_1032617309</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>bSec_royalty1572761327</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>6</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_esentemffinoal$"/>
+  </field>
+  <field summary="true">
+    <field-name>_codiceAliquotaIvaSigla1199692981</field-name>
+    <display-name>VAT Code</display-name>
+    <db-field>_CODICE_ALIQUOTA_IVA_SIGLA_1199692981</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>bSec_royalty1572761327</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>7</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_codicealiquotaivasigla$"/>
+  </field>
+  <field summary="true">
+    <field-name>_directStoreGroup1153629404</field-name>
+    <display-name>Direct Store - Group</display-name>
+    <db-field>_DIRECT_STORE__GROUP_1153629404</db-field>
+    <data-type>String</data-type>
+    <display-type>Combo</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>93</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_directstoregroup$"/>
+  </field>
+  <field summary="true">
+    <field-name>_directStoreFrom889079686</field-name>
+    <display-name>Direct Store from</display-name>
+    <db-field>_DIRECT_STORE_FROM_889079686</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>94</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_directstorefrom$"/>
+  </field>
+  <field summary="true">
+    <field-name>_notDirectStoreAnyLongerFrom1362430173</field-name>
+    <display-name>Not Direct Store any longer from</display-name>
+    <db-field>_NOT_DIRECT_STORE_ANY_LONGER_FROM_1362430173</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>no</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>122</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_notdirectstoreanylongerfrom$"/>
+  </field>
+  <field summary="true">
+    <field-name>_lastUpdatedForAllTabs</field-name>
+    <display-name>Last Updated</display-name>
+    <db-field>_LAST_UPDATED_FOR_ALL_TABS</db-field>
+    <data-type>Date</data-type>
+    <display-type>Date</display-type>
+    <group-by>true</group-by>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>95</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_lastUpdatedForAllTabs$"/>
+  </field>
+  <field summary="true">
+    <field-name>_franchiseeEmailForTriggerAlert</field-name>
+    <display-name>Franchisee Email For Trigger Alert</display-name>
+    <db-field>FRAN_EMAIL_TRIGGER_ALERT</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>1</section>
+    <is-active>no</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>123</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_email_for_trigger_alert$"/>
+  </field>
+  <field summary="true">
+    <field-name>_reasonForTemporaryClosure1501384564</field-name>
+    <display-name>Reason for temporary closure 1</display-name>
+    <db-field>_REASON_FOR_TEMPORARY_CLOSURE_1_501384564</db-field>
+    <data-type>String</data-type>
+    <display-type>TextArea</display-type>
+    <no-of-column>60</no-of-column>
+    <no-of-row>5</no-of-row>
+    <section>bSec_temporaryClosures2725450</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>6</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_reasonfortemporaryclosure1$"/>
+  </field>
+  <field summary="true">
+    <field-name>_reasonForTemporaryClosure21168784706</field-name>
+    <display-name>Reason for temporary closure 2</display-name>
+    <db-field>_REASON_FOR_TEMPORARY_CLOSURE_2_1168784706</db-field>
+    <data-type>String</data-type>
+    <display-type>TextArea</display-type>
+    <no-of-column>60</no-of-column>
+    <no-of-row>5</no-of-row>
+    <section>bSec_temporaryClosures2725450</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>7</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_reasonfortemporaryclosure2$"/>
+  </field>
+  <field summary="true">
+    <field-name>_reasonForTemporaryClosure31724966869</field-name>
+    <display-name>Reason for temporary closure 3</display-name>
+    <db-field>_REASON_FOR_TEMPORARY_CLOSURE_3_1724966869</db-field>
+    <data-type>String</data-type>
+    <display-type>TextArea</display-type>
+    <no-of-column>60</no-of-column>
+    <no-of-row>5</no-of-row>
+    <section>bSec_temporaryClosures2725450</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>8</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_reasonfortemporaryclosure3$"/>
+  </field>
+  <field summary="true">
+    <field-name>_paymentMethod1245182125</field-name>
+    <display-name>Accounting - Payment Method</display-name>
+    <db-field>_PAYMENT_METHOD_1245182125</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>bSec_royalty1572761327</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>8</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_paymentmethod$"/>
+  </field>
+  <field summary="true">
+    <field-name>_sddCode462064533</field-name>
+    <display-name>SDD Code</display-name>
+    <db-field>_SDD_CODE_462064533</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>bSec_royalty1572761327</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>9</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_sddcode$"/>
+  </field>
+  <field summary="true">
+    <field-name>_accountingCustomerCode114974345</field-name>
+    <display-name>Accounting - Customer Code</display-name>
+    <db-field>_ACCOUNTING__CUSTOMER_CODE_114974345</db-field>
+    <data-type>String</data-type>
+    <display-type>Text</display-type>
+    <db-field-length>255</db-field-length>
+    <validation>
+      <validation-type>None</validation-type>
+    </validation>
+    <section>bSec_invoicing</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>11</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_accountingcustomercode$"/>
+  </field>
+  <field summary="true">
+    <field-name>_listingDescription873847244</field-name>
+    <display-name>Listing Description</display-name>
+    <db-field>_LISTING_DESCRIPTION_873847244</db-field>
+    <data-type>String</data-type>
+    <display-type>TextArea</display-type>
+    <no-of-column>60</no-of-column>
+    <no-of-row>5</no-of-row>
+    <section>1</section>
+    <is-active>yes</is-active>
+    <is-mandatory>false</is-mandatory>
+    <build-field>no</build-field>
+    <field-export>true</field-export>
+    <order-by>96</order-by>
+    <pii-enabled>false</pii-enabled>
+    <mailmerge is-active="true" keyword-name="$franchisees_listingdescription$"/>
+  </field>
+</table>

@@ -36,6 +36,9 @@ public class XmlService {
                 // Ensure the targetPath is relative to the base directory
                 if (targetPath != null && targetPath.startsWith("/tabModulesXml")) {
                     targetPath = baseDir + targetPath.substring("/tabModulesXml".length());
+                } else if (targetPath != null && targetPath.startsWith("/tabularSectionMappingsXml")) {
+                    baseDir = "src/main/resources/tabularSectionMappingsXml";
+                    targetPath = baseDir + targetPath.substring("/tabularSectionMappingsXml".length());
                 }
 
                 // Check if the target path exists

@@ -655,6 +655,29 @@ public class XmlUtil {
         return tabModuleElements;
     }
 
+    public static Map<String, Element> readTabularSectionMappings(String xmlFilePath) {
+        Map<String, Element> tabularSectionElements = new HashMap<>();
+
+        try {
+            Document tabularSectionDoc = XmlUtil.loadXmlDocument(xmlFilePath);
+
+            NodeList tableMappings = tabularSectionDoc.getElementsByTagName("table-mapping");
+
+            for (int i = 0; i < tableMappings.getLength(); i++) {
+                Element element = (Element) tableMappings.item(i);
+                String tableAnchor = element.getAttribute("table-anchor");
+                if (tableAnchor == null || tableAnchor.isEmpty()) continue;
+            
+                tabularSectionElements.put(tableAnchor, element);
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Error reading tabular section mappings: " + e.getMessage());
+        }
+
+        return tabularSectionElements;
+    }
+
     public static void processCustomModulesXml(Map<String, Element> sourceTabModuleElements, Map<String, Element> targetTabModuleElements, String sourceTabModulesPath, String targetTabModulesPath) {
         try {
 
@@ -691,6 +714,42 @@ public class XmlUtil {
         }
     }
 
+    public static void processTabularSectionMappingsXml(Map<String, Element> sourceTabularSectionElements, Map<String, Element> targetTabularSectionElements, String sourceTabularSectionPath, String targetTabularSectionPath) {
+        try {
+
+            Document targetDoc = XmlUtil.loadXmlDocument(targetTabularSectionPath);
+            Element targetRoot = targetDoc.getDocumentElement();
+            boolean updated = false;
+
+            for (Map.Entry<String, Element> entry : sourceTabularSectionElements.entrySet()) {
+                String tableAnchor = entry.getKey();
+                Element sourceTabularElement = entry.getValue();
+
+                if (!targetTabularSectionElements.containsKey(tableAnchor)) {
+                    Node importedNode = targetDoc.importNode(sourceTabularElement, true);
+                    targetRoot.appendChild(importedNode);
+                    updated = true;
+                    System.out.println("Added missing <table-mapping> with table-anchor: " + tableAnchor);
+                }
+            }
+
+            // add custom store timings entry
+            boolean customAdded = addCustomStoreTimingsEntry(targetDoc, targetRoot, targetTabularSectionElements);
+            updated = updated || customAdded;
+
+            if (updated) {
+                XmlUtil.saveXmlDocument(targetDoc, targetTabularSectionPath); // Overwrite or write to new file
+                System.out.println("Target tabularSectionMappings.xml updated with new entries.");
+            } else {
+                System.out.println("No updates required. All table-mappings are already present.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to sync table-mappings: " + e.getMessage());
+        }
+    }
+
     private static boolean addCustomTrainingModule(Document targetDoc, Element targetRoot,
                                                Map<String, Element> targetTabModuleElements) {
         String trainingDbTable = "_TRAINING_1851313017";
@@ -723,6 +782,24 @@ public class XmlUtil {
 
         targetRoot.appendChild(customModule);
         System.out.println("Added custom <module-tab> entry for training.");
+        return true;
+    }
+
+    private static boolean addCustomStoreTimingsEntry(Document targetDoc, Element targetRoot,
+                                                   Map<String, Element> targetTabularSectionElements) {
+        String storeTimingsTableAnchor = "storetimings1120613317";
+
+        if (targetTabularSectionElements.containsKey(storeTimingsTableAnchor)) {
+            System.out.println("Custom <table-mapping> entry already exists for store timings.");
+            return false;
+        }
+
+        Element customMapping = targetDoc.createElement("table-mapping");
+        customMapping.setAttribute("filelocation", "tables/buildertabs/storetimings1120613317.xml");
+        customMapping.setAttribute("table-anchor", storeTimingsTableAnchor);
+
+        targetRoot.appendChild(customMapping);
+        System.out.println("Added custom <table-mapping> entry for store timings.");
         return true;
     }
 
@@ -952,41 +1029,6 @@ public class XmlUtil {
         foreignTable.appendChild(linkField2);
     
         targetParent.appendChild(foreignTable);
-    }    
-
-    public static void addStoreTimingsEntry(String targetTabularSectionPath) {
-        try {
-            // Load the target XML document
-            Document doc = XmlUtil.loadXmlDocument(targetTabularSectionPath);
-            Element rootElement = doc.getDocumentElement();
-            
-            // Check if the entry already exists
-            NodeList existingMappings = doc.getElementsByTagName("table-mapping");
-            for (int i = 0; i < existingMappings.getLength(); i++) {
-                Element mapping = (Element) existingMappings.item(i);
-                String tableAnchor = mapping.getAttribute("table-anchor");
-                if ("storetimings1120613317".equals(tableAnchor)) {
-                    System.out.println("Store timings entry already exists in tabularSectionMappings.xml");
-                    return;
-                }
-            }
-            
-            // Create the new table-mapping element
-            Element newMapping = doc.createElement("table-mapping");
-            newMapping.setAttribute("filelocation", "tables/buildertabs/storetimings1120613317.xml");
-            newMapping.setAttribute("table-anchor", "storetimings1120613317");
-            
-            // Append the new mapping to the root element
-            rootElement.appendChild(newMapping);
-            
-            // Save the updated document
-            XmlUtil.saveXmlDocument(doc, targetTabularSectionPath);
-            System.out.println("Added storetimings1120613317 entry to tabularSectionMappings.xml");
-            
-        } catch (Exception e) {
-            System.err.println("Error adding store timings entry: " + e.getMessage());
-            e.printStackTrace();
-        }
     }
 
     public static Element createElement(Document doc, String name, String value) {
