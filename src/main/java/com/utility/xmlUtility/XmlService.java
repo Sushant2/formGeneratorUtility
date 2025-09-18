@@ -168,7 +168,7 @@ public class XmlService {
                         continue;
                     }
 
-                    // Special handling for franchise fee field when processing franchisees.xml
+                    // Special handling for franchisees.xml
                     if(sourcePath != null && (sourcePath.contains("franchisees.xml") || sourcePath.contains("franchisees_copy.xml"))){
                         // Check if franchise fee field already exists before adding it
                         Element existingFranchiseFeeField = XmlUtil.findFieldByDbField(targetDoc, "_FRANCHISE_FEE_1181443611");

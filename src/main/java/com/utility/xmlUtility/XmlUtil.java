@@ -547,7 +547,7 @@ public class XmlUtil {
                 // Update display-name if different
                 String targetDisplayName = XmlUtil.getValue(targetField, "display-name").trim();
                 if ("GRAND_STORE_OPENING_DATE".equals(sourceDbField)) {
-                    XmlUtil.replaceOrInsertChild(targetField, "display-name", "Expected Opening Date");
+                    XmlUtil.replaceOrInsertChild(targetField, "display-name", "Expected Store Opening Date");
                     System.out.println("Updated display-name of db-field '" + sourceDbField + "' from '" + targetDisplayName + "' to → 'Expected Opening Date' (special handling for GRAND_STORE_OPENING_DATE)");
                 }else if ("AREA_ID".equals(sourceDbField)) {
                     XmlUtil.replaceOrInsertChild(targetField, "display-name", "Area Franchise ID");
