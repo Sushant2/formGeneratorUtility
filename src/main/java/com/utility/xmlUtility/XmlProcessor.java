@@ -40,11 +40,14 @@ public class XmlProcessor implements CommandLineRunner {
             List<String> queryList = new ArrayList<>();
 
             // update the custom field set based on sales or fim query result
-            //FIM - SELECT GROUP_CONCAT(XML_KEY) FROM CLIENT_XMLS WHERE MODULE IN ('fim', 'admin') AND XML_KEY NOT LIKE '%copy';
-            //SALES - SELECT GROUP_CONCAT(XML_KEY) FROM CLIENT_XMLS WHERE MODULE IN ('fs', 'fsales') AND XML_KEY NOT LIKE '%copy';
-            // remove centerInfoDisplay xml key from the list
+            /*FIM :
+           SELECT GROUP_CONCAT(CONCAT('"', XML_KEY, '"') ORDER BY XML_KEY) FROM CLIENT_XMLS WHERE MODULE IN ('fim', 'admin') AND XML_KEY NOT LIKE '%copy' AND XML_KEY NOT LIKE '%Export' AND XML_KEY != 'centerInfoDisplay' AND XML_KEY NOT LIKE 'mu%' AND XML_KEY NOT LIKE 'fimMu%' AND XML_KEY NOT LIKE 'area%' AND XML_KEY NOT LIKE 'fimArea%' AND XML_KEY NOT IN ('fimTerritory','fimGroupsArchived','fimLender','fimMarketing','fimMysteryShopper','fimPicture','fimQa','fimReacquiring','fimRealEstate','fimTermination','fimUsers','fimGroups','fimInsurance','fimLegalViolation','fimGuarantor','fimContract','fimEmployees','fimEntityDetail','fimCampaign','fimConfigureOptOutMessage','fimCustomTab','fimCustomTabFields','fimCustomTabSections','fimSCToDoList','fimEntityOwnerMapping','fimSCFranchiseToDoList','fimEntityLocationMapping','entityDisplayDetail','entityCall','fimCapturePopServer','fimBrandMapping','fimAddress','fimLicenseAgreement','fimDocuments','fimfranchiseeMapping''fimCampaignTemplates','fimCampaignEmailCampaign','fimContractAdditional''fimEmployeesMapping','fimBuilderField','fimCampaignTemplates','fimContractAdditional','fimEmployeesMapping','fimfranchiseeMapping','tabmodules');
 
-            Set<String> customFieldTabSet = new HashSet<>(Arrays.asList(""));
+            SALES :
+            SELECT GROUP_CONCAT(CONCAT('"', XML_KEY, '"')) FROM CLIENT_XMLS WHERE MODULE IN ('fs', 'fsales') AND XML_KEY NOT LIKE '%copy' AND XML_KEY NOT LIKE '%Export' AND XML_KEY NOT IN ('fsLeadSchedule','fsLeadScheduleVisitors','fsLeadComplianceAdditional','fsVisitTaskMapping','fsLeadSMS','fsSubscriptionSMSData','fsSmsTemplates','fsBqual','fsLeadBusinessProfile','fsSubscriptionMailData','fsFranchiseDevelopment','fsLeadRating','fsSubscriptionLogs','fsLeadQualification','fsFranchiseeQualification');
+            */
+
+            Set<String> customFieldTabSet = new HashSet<>(Arrays.asList());
 
             String sourcePath = BASE_PATH + "/tablemappings.xml" + "/";
             String targetPath = TARGET_BASE + "/tablemappings.xml" + "/";
@@ -145,8 +148,6 @@ public class XmlProcessor implements CommandLineRunner {
                 }
 
                 // Process the XML files
-                // first process this - xmlService.processXmlFiles(sourceKeyPath, targetKeyPath);
-                // then process this - xmlService.processXmlFiles(targetKeyPath, targetKeyPath);
                 if(customFieldTabSet.contains(key)) {
                     xmlService.processXmlFiles(sourceKeyPath, targetKeyPath);
                 }
