@@ -147,7 +147,7 @@ public class XmlService {
                         String sectionValue = XmlUtil.getSection(clonedSourceField);
                         String headerName = XmlUtil.getHeaderNameBySection(sourceDoc, sectionValue);
                         // Check if this field belongs to legalEntityDetails section by checking if header name contains "legalEntityDetails"
-                        if(headerName != null && headerName.contains("legalEntityDetails")){ 
+                        if(headerName != null && headerName.toLowerCase().contains("legalentitydetails")){ 
                             XmlUtil.replaceOrInsertChild(clonedSourceField, "is-active", "no");
                             System.out.println("Added is-active element with value 'no' to field in legalEntityDetails section.");
                         }
@@ -209,6 +209,21 @@ public class XmlService {
                             System.out.println("Added is-active element with value 'no' to SUPERVISOR field");
                         }
                     }
+
+                    if(sourcePath != null && (sourcePath.contains("testTabqqqqq1117944734.xml") || sourcePath.contains("testTabqqqqq1117944734_copy.xml"))){
+                        Node idFieldNode = clonedSourceField.getElementsByTagName("id-field").item(0);
+                        if(idFieldNode != null){
+                            idFieldNode.setTextContent("idField");
+                            System.out.println("Updated id-field element to: idField");
+                        }
+                        Node idFieldNewNode = getIdField();
+                        if(idFieldNewNode != null){
+                            Node adopted = targetDoc.importNode(idFieldNewNode, true);
+                            targetDoc.getDocumentElement().appendChild(adopted);
+                            System.out.println("Added idField element to target: " + elementValue);
+                        }
+                    }
+
 
                     String sectionValue = XmlUtil.getSection(clonedSourceField);
                     String fieldName = XmlUtil.getValue(clonedSourceField, "field-name");
@@ -603,6 +618,31 @@ public class XmlService {
             
             field.appendChild(XmlUtil.createElement(doc, "pii-enabled", "false"));
             field.appendChild(XmlUtil.createElement(doc, "center-info-display", "false"));
+            
+            return field;
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Node getIdField(){
+        try {
+            // Create a new document to build the field node
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Document doc = docBuilder.newDocument();
+            
+            // Create the field element
+            Element field = doc.createElement("field");
+            field.setAttribute("summary", "true");
+            
+            // Add all child elements as specified in the user's request
+            field.appendChild(XmlUtil.createElement(doc, "field-name", "idField"));
+            field.appendChild(XmlUtil.createElement(doc, "display-name", "ID"));
+            field.appendChild(XmlUtil.createElement(doc, "db-field", "ID_FIELD"));
+            field.appendChild(XmlUtil.createElement(doc, "data-type", "Integer"));
             
             return field;
             
