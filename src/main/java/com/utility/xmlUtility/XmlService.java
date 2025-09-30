@@ -213,14 +213,21 @@ public class XmlService {
                     if(sourcePath != null && (sourcePath.contains("testTabqqqqq1117944734.xml") || sourcePath.contains("testTabqqqqq1117944734_copy.xml"))){
                         Node idFieldNode = clonedSourceField.getElementsByTagName("id-field").item(0);
                         if(idFieldNode != null){
-                            idFieldNode.setTextContent("idField");
-                            System.out.println("Updated id-field element to: idField");
+                            idFieldNode.setTextContent("centerTermsID");
+                            System.out.println("Updated id-field element to: centerTermsID");
                         }
-                        Node idFieldNewNode = getIdField();
-                        if(idFieldNewNode != null){
-                            Node adopted = targetDoc.importNode(idFieldNewNode, true);
-                            targetDoc.getDocumentElement().appendChild(adopted);
-                            System.out.println("Added idField element to target: " + elementValue);
+                        
+                        // Check if idField already exists in target before adding
+                        Element existingIdField = XmlUtil.findFieldByDbField(targetDoc, "ID_FIELD");
+                        if(existingIdField == null){
+                            Node idFieldNewNode = getIdField();
+                            if(idFieldNewNode != null){
+                                Node adopted = targetDoc.importNode(idFieldNewNode, true);
+                                targetDoc.getDocumentElement().appendChild(adopted);
+                                System.out.println("Added idField element to target: " + elementValue);
+                            }
+                        } else {
+                            System.out.println("idField already exists in target, skipping addition");
                         }
                     }
 
@@ -639,9 +646,9 @@ public class XmlService {
             field.setAttribute("summary", "true");
             
             // Add all child elements as specified in the user's request
-            field.appendChild(XmlUtil.createElement(doc, "field-name", "idField"));
-            field.appendChild(XmlUtil.createElement(doc, "display-name", "ID"));
-            field.appendChild(XmlUtil.createElement(doc, "db-field", "ID_FIELD"));
+            field.appendChild(XmlUtil.createElement(doc, "field-name", "centerTermsID"));
+            field.appendChild(XmlUtil.createElement(doc, "display-name", "Center Terms ID"));
+            field.appendChild(XmlUtil.createElement(doc, "db-field", "CENTER_TERMS_ID"));
             field.appendChild(XmlUtil.createElement(doc, "data-type", "Integer"));
             
             return field;
