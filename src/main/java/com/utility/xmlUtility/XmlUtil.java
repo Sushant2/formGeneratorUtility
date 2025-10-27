@@ -529,6 +529,12 @@ public class XmlUtil {
                     XmlUtil.replaceOrInsertChild(targetField, "build-field", sourceBuildField);
                     System.out.println("Added build-field '" + sourceBuildField + "' to db-field '" + sourceDbField + "'");
                 }
+
+                // Add display-name tag
+                if (!sourceDisplayName.isEmpty()) {
+                    XmlUtil.replaceOrInsertChild(targetField, "display-name", sourceDisplayName);
+                    System.out.println("Added display-name '" + sourceDisplayName + "' to db-field '" + sourceDbField + "'");
+                }
                 
                 // Add is-mandatory tag
                 XmlUtil.replaceOrInsertChild(targetField, "is-mandatory", sourceIsMandatory);
@@ -553,7 +559,7 @@ public class XmlUtil {
                     XmlUtil.replaceOrInsertChild(targetField, "display-name", "Area Franchise ID");
                     System.out.println("Updated display-name of db-field '" + sourceDbField + "' from '" + targetDisplayName + "' to → 'Area Franchise ID' (special handling for AREA_ID)");
                 }else if ("FBC".equals(sourceDbField)) {
-                    XmlUtil.replaceOrInsertChild(targetField, "display-name", "Superviser");
+                    XmlUtil.replaceOrInsertChild(targetField, "display-name", "Supervisor");
                     System.out.println("Updated display-name of db-field '" + sourceDbField + "' from '" + targetDisplayName + "' to → 'Superviser' (special handling for FBC)");
                 }else if ("STATUS".equals(sourceDbField)) {
                     XmlUtil.replaceOrInsertChild(targetField, "display-name", "Type");

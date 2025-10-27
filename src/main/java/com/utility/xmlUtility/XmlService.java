@@ -335,7 +335,60 @@ public class XmlService {
                     if ("header".equals(elementTag)) {
                         String sourceHeaderValue = clonedSourceField.getAttribute("value");
                         if(targetHeaderValues != null && targetHeaderValues.contains(sourceHeaderValue)){
-                            System.out.println("Skipping: Header already exists in target with value: " + sourceHeaderValue);
+                            System.out.println("Header already exists in target with value: " + sourceHeaderValue);
+                            
+                            // Check and copy document elements from source to target header
+                            NodeList sourceDocuments = clonedSourceField.getElementsByTagName("documents");
+                            if (sourceDocuments.getLength() > 0) {
+                                Element sourceDocumentsElement = (Element) sourceDocuments.item(0);
+                                
+                                // Find the corresponding header in target
+                                NodeList targetHeaders = targetDoc.getElementsByTagName("header");
+                                for (int j = 0; j < targetHeaders.getLength(); j++) {
+                                    Element targetHeader = (Element) targetHeaders.item(j);
+                                    if (sourceHeaderValue.equals(targetHeader.getAttribute("value"))) {
+                                        // Check if target header has documents element
+                                        NodeList targetDocumentsList = targetHeader.getElementsByTagName("documents");
+                                        
+                                        if (targetDocumentsList.getLength() == 0) {
+                                            // Target header has no documents, copy from source
+                                            Node importedDocuments = targetDoc.importNode(sourceDocumentsElement, true);
+                                            targetHeader.appendChild(importedDocuments);
+                                            changesMade = true;
+                                            System.out.println("Added documents element to existing header: " + sourceHeaderValue);
+                                        } else {
+                                            // Target header has documents, check if we need to add missing document children
+                                            Element targetDocumentsElement = (Element) targetDocumentsList.item(0);
+                                            NodeList sourceDocumentChildren = sourceDocumentsElement.getElementsByTagName("document");
+                                            
+                                            for (int k = 0; k < sourceDocumentChildren.getLength(); k++) {
+                                                Element sourceDocument = (Element) sourceDocumentChildren.item(k);
+                                                String sourceDocName = sourceDocument.getAttribute("name");
+                                                
+                                                // Check if this document already exists in target
+                                                boolean documentExists = false;
+                                                NodeList targetDocumentChildren = targetDocumentsElement.getElementsByTagName("document");
+                                                for (int l = 0; l < targetDocumentChildren.getLength(); l++) {
+                                                    Element targetDocument = (Element) targetDocumentChildren.item(l);
+                                                    if (sourceDocName.equals(targetDocument.getAttribute("name"))) {
+                                                        documentExists = true;
+                                                        break;
+                                                    }
+                                                }
+                                                
+                                                if (!documentExists) {
+                                                    // Add missing document to target
+                                                    Node importedDocument = targetDoc.importNode(sourceDocument, true);
+                                                    targetDocumentsElement.appendChild(importedDocument);
+                                                    changesMade = true;
+                                                    System.out.println("Added document '" + sourceDocName + "' to existing documents element");
+                                                }
+                                            }
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
                             continue;
                         }
                         //if headerName not starts with "bSec_" then append bSec_ in front of headerName
@@ -395,6 +448,62 @@ public class XmlService {
                     // db-field exists, so just update display-name if mismatch
                     XmlUtil.updateTagsIfDiff(clonedSourceField, targetFieldMap);
                     changesMade = true;
+                } else if ("header".equals(elementTag)) {
+                    // Handle document elements for existing headers
+                    String sourceHeaderValue = clonedSourceField.getAttribute("value");
+                    
+                    // Check and copy document elements from source to target header
+                    NodeList sourceDocuments = clonedSourceField.getElementsByTagName("documents");
+                    if (sourceDocuments.getLength() > 0) {
+                        Element sourceDocumentsElement = (Element) sourceDocuments.item(0);
+                        
+                        // Find the corresponding header in target
+                        NodeList targetHeaders = targetDoc.getElementsByTagName("header");
+                        for (int j = 0; j < targetHeaders.getLength(); j++) {
+                            Element targetHeader = (Element) targetHeaders.item(j);
+                            if (sourceHeaderValue.equals(targetHeader.getAttribute("value"))) {
+                                // Check if target header has documents element
+                                NodeList targetDocumentsList = targetHeader.getElementsByTagName("documents");
+                                
+                                if (targetDocumentsList.getLength() == 0) {
+                                    // Target header has no documents, copy from source
+                                    Node importedDocuments = targetDoc.importNode(sourceDocumentsElement, true);
+                                    targetHeader.appendChild(importedDocuments);
+                                    changesMade = true;
+                                    System.out.println("Added documents element to existing header: " + sourceHeaderValue);
+                                } else {
+                                    // Target header has documents, check if we need to add missing document children
+                                    Element targetDocumentsElement = (Element) targetDocumentsList.item(0);
+                                    NodeList sourceDocumentChildren = sourceDocumentsElement.getElementsByTagName("document");
+                                    
+                                    for (int k = 0; k < sourceDocumentChildren.getLength(); k++) {
+                                        Element sourceDocument = (Element) sourceDocumentChildren.item(k);
+                                        String sourceDocName = sourceDocument.getAttribute("name");
+                                        
+                                        // Check if this document already exists in target
+                                        boolean documentExists = false;
+                                        NodeList targetDocumentChildren = targetDocumentsElement.getElementsByTagName("document");
+                                        for (int l = 0; l < targetDocumentChildren.getLength(); l++) {
+                                            Element targetDocument = (Element) targetDocumentChildren.item(l);
+                                            if (sourceDocName.equals(targetDocument.getAttribute("name"))) {
+                                                documentExists = true;
+                                                break;
+                                            }
+                                        }
+                                        
+                                        if (!documentExists) {
+                                            // Add missing document to target
+                                            Node importedDocument = targetDoc.importNode(sourceDocument, true);
+                                            targetDocumentsElement.appendChild(importedDocument);
+                                            changesMade = true;
+                                            System.out.println("Added document '" + sourceDocName + "' to existing documents element");
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }
