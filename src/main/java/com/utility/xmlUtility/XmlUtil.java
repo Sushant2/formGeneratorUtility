@@ -397,6 +397,13 @@ public class XmlUtil {
             NodeList orderByNodes = field.getElementsByTagName("order-by");
             if (orderByNodes.getLength() > 0) {
                 orderByNodes.item(0).setTextContent(String.valueOf(value));
+            } else {
+                // Create new order-by element if it doesn't exist
+                Document doc = field.getOwnerDocument();
+                Element orderByElement = doc.createElement("order-by");
+                orderByElement.setTextContent(String.valueOf(value));
+                field.appendChild(orderByElement);
+                System.out.println("Created new <order-by> element with value: " + value);
             }
             // remove attribute if it exists
             field.removeAttribute("order-by");
