@@ -208,6 +208,24 @@ public class XmlService {
                             clonedSourceField.appendChild(isActiveElement);
                             System.out.println("Added is-active element with value 'no' to SUPERVISOR field");
                         }
+                        // Special handling for REGION_ID field - set as not mandatory
+                        if(elementValue.equals("REGION_ID")){
+                            NodeList isMandatoryNodes = clonedSourceField.getElementsByTagName("is-mandatory");
+                            if (isMandatoryNodes.getLength() > 0) {
+                                Element isMandatoryElement = (Element) isMandatoryNodes.item(0);
+                                isMandatoryElement.setTextContent("false");
+                                System.out.println("Updated is-mandatory element with value 'false' to REGION_ID field");
+                            }
+                        }
+                        // Special handling for territoryId field - set as not mandatory
+                        if(elementValue.equals("TERRITORY_ID")){
+                            NodeList isMandatoryNodes = clonedSourceField.getElementsByTagName("is-mandatory");
+                            if (isMandatoryNodes.getLength() > 0) {
+                                Element isMandatoryElement = (Element) isMandatoryNodes.item(0);
+                                isMandatoryElement.setTextContent("false");
+                                System.out.println("Updated is-mandatory element with value 'false' to TERRITORY_ID field");
+                            }
+                        }
                     }
 
                     if(sourcePath != null && (sourcePath.contains("testTabqqqqq1117944734.xml") || sourcePath.contains("testTabqqqqq1117944734_copy.xml"))){
