@@ -97,6 +97,17 @@ public class XmlUtil {
         return null; // No matching header found
     }
 
+    public static Element findHeaderByValue(Document doc, String headerValue) {
+        NodeList headers = doc.getElementsByTagName("header");
+        for (int i = 0; i < headers.getLength(); i++) {
+            Element header = (Element) headers.item(i);
+            if (header.hasAttribute("value") && headerValue.equals(header.getAttribute("value"))) {
+                return header; // Found the correct header by value, return it
+            }
+        }
+        return null; // No matching header found
+    }
+
     public static Element findForeignTableByName(Document doc, String foreignTableName) {
         NodeList foreignTables = doc.getElementsByTagName("foreign-table");
         for (int i = 0; i < foreignTables.getLength(); i++) {

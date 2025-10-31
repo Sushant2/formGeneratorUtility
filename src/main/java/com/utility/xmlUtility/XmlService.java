@@ -271,6 +271,18 @@ public class XmlService {
 
                     headerInTarget = XmlUtil.findHeaderByName(targetDoc, headerName);
 
+                    // If header not found by name, try to find by value (same value but different name)
+                    if (headerInTarget == null) {
+                        Element sourceHeader = XmlUtil.findHeaderByName(sourceDoc, headerName);
+                        if (sourceHeader != null && sourceHeader.hasAttribute("value")) {
+                            String sourceHeaderValue = sourceHeader.getAttribute("value");
+                            headerInTarget = XmlUtil.findHeaderByValue(targetDoc, sourceHeaderValue);
+                            if (headerInTarget != null) {
+                                System.out.println("Found header by value (different name but same value): " + sourceHeaderValue + " (field-name: " + fieldName + ")");
+                            }
+                        }
+                    }
+
                     if (headerInTarget == null) {
                         // Handling if "tabModules" : targetElements is empty
                         if(targetElements.isEmpty()){
