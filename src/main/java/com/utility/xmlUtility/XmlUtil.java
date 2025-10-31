@@ -27,6 +27,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 public class XmlUtil {
+
+    // Tracks which fields already produced UPDATE statements to avoid duplicates.
+    private static final Set<String> processedUnderscoreFields = new HashSet<>();
     public static String elementToString(Element element) {
         try {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -902,7 +905,14 @@ public class XmlUtil {
             query.append("CURRENT_TIMESTAMP);");
 
             // Query to update all the fields with underscore
+            List<String> pendingFields = new ArrayList<>();
             for (String fieldName : underscoreFieldsSet) {
+                if (!processedUnderscoreFields.contains(fieldName)) {
+                    pendingFields.add(fieldName);
+                }
+            }
+
+            for (String fieldName : pendingFields) {
                 String newField = "_" + fieldName;
                 query.append(System.lineSeparator());
                 query.append("UPDATE SUMMARY_DISPLAY SET FIELD_NAME = REPLACE(FIELD_NAME, '" + fieldName + "', '" + newField + "');");
@@ -927,6 +937,8 @@ public class XmlUtil {
                 query.append("  CUSTOM_REPORT_SELECT_FIELDS = REPLACE(CUSTOM_REPORT_SELECT_FIELDS, '" + fieldName + "', '" + newField + "'),");
                 query.append("  CUSTOM_REPORT_WHERE_FIELDS = REPLACE(CUSTOM_REPORT_WHERE_FIELDS, '" + fieldName + "', '" + newField + "'),");
                 query.append("  CUSTOM_REPORT_SELECT_FIELDS_WITH_TABLES = REPLACE(CUSTOM_REPORT_SELECT_FIELDS_WITH_TABLES, '#####" + fieldName + "', '#####" + newField + "');");
+
+                processedUnderscoreFields.add(fieldName);
             }
 
             String insertQuery = query.toString();
