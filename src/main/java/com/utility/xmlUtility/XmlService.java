@@ -207,6 +207,13 @@ public class XmlService {
                             isActiveElement.setTextContent("no");
                             clonedSourceField.appendChild(isActiveElement);
                             System.out.println("Added is-active element with value 'no' to SUPERVISOR field");
+                            // Change display name to "Area Franchise ID Old"
+                            NodeList displayNameNodes = clonedSourceField.getElementsByTagName("display-name");
+                            if (displayNameNodes.getLength() > 0) {
+                                Element displayNameElement = (Element) displayNameNodes.item(0);
+                                displayNameElement.setTextContent("Supervisor Old");
+                                System.out.println("Updated SUPERVISOR display name to: Supervisor Old");
+                            }
                         }
                         // Special handling for REGION_ID field - set as not mandatory
                         if(elementValue.equals("REGION_ID")){

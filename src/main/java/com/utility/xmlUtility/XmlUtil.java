@@ -581,7 +581,7 @@ public class XmlUtil {
                     System.out.println("Updated display-name of db-field '" + sourceDbField + "' from '" + targetDisplayName + "' to → 'Area Franchise ID' (special handling for AREA_ID)");
                 }else if ("FBC".equals(sourceDbField)) {
                     XmlUtil.replaceOrInsertChild(targetField, "display-name", "Supervisor");
-                    System.out.println("Updated display-name of db-field '" + sourceDbField + "' from '" + targetDisplayName + "' to → 'Superviser' (special handling for FBC)");
+                    System.out.println("Updated display-name of db-field '" + sourceDbField + "' from '" + targetDisplayName + "' to → 'Supervisor' (special handling for FBC)");
                 }else if ("STATUS".equals(sourceDbField)) {
                     XmlUtil.replaceOrInsertChild(targetField, "display-name", "Type");
                     System.out.println("Updated display-name of db-field '" + sourceDbField + "' from '" + targetDisplayName + "' to → 'Type' (special handling for STATUS)");
