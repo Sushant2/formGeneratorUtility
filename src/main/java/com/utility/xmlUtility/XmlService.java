@@ -168,6 +168,24 @@ public class XmlService {
                         continue;
                     }
 
+                    // Special handling for service11844788279.xml
+                    if(sourcePath != null && sourcePath.contains("service11844788279")){
+                        // Check if TAB_PRIMARY_ID field already exists before adding it
+                        Element existingTabPrimaryIdField = XmlUtil.findFieldByDbField(targetDoc, "TAB_PRIMARY_ID");
+                        if(existingTabPrimaryIdField == null){
+                            // Add tab primary id field to the target
+                            Node tabPrimaryIdFieldNode = getTabPrimaryIdField();
+                            if(tabPrimaryIdFieldNode != null){
+                                Node adopted = targetDoc.importNode(tabPrimaryIdFieldNode, true);
+                                targetDoc.getDocumentElement().appendChild(adopted);
+                                changesMade = true;
+                                System.out.println("Added tab primary id field to target: TAB_PRIMARY_ID");
+                            }
+                        } else {
+                            System.out.println("Tab primary id field already exists in target, skipping addition");
+                        }
+                    }
+
                     // Special handling for franchisees.xml
                     if(sourcePath != null && (sourcePath.contains("franchisees.xml") || sourcePath.contains("franchisees_copy.xml"))){
                         // Check if franchise fee field already exists before adding it
@@ -795,6 +813,31 @@ public class XmlService {
             field.appendChild(XmlUtil.createElement(doc, "field-name", "centerTermsID"));
             field.appendChild(XmlUtil.createElement(doc, "display-name", "Center Terms ID"));
             field.appendChild(XmlUtil.createElement(doc, "db-field", "CENTER_TERMS_ID"));
+            field.appendChild(XmlUtil.createElement(doc, "data-type", "Integer"));
+            
+            return field;
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Node getTabPrimaryIdField(){
+        try {
+            // Create a new document to build the field node
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Document doc = docBuilder.newDocument();
+            
+            // Create the field element
+            Element field = doc.createElement("field");
+            field.setAttribute("summary", "true");
+            
+            // Add all child elements as specified in the user's request
+            field.appendChild(XmlUtil.createElement(doc, "field-name", "tabPrimaryId"));
+            field.appendChild(XmlUtil.createElement(doc, "display-name", "Tab Primary Id"));
+            field.appendChild(XmlUtil.createElement(doc, "db-field", "TAB_PRIMARY_ID"));
             field.appendChild(XmlUtil.createElement(doc, "data-type", "Integer"));
             
             return field;
