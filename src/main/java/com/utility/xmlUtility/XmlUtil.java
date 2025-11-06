@@ -468,6 +468,13 @@ public class XmlUtil {
     }
     
     public static void replaceChildValue(Element parent, String tagName, String newValue) {
+        // Ensure is-active and is-mandatory always have values, default to "yes" if empty
+        if ("is-active".equals(tagName) && (newValue == null || newValue.trim().isEmpty())) {
+            newValue = "yes";
+        } else if ("is-mandatory".equals(tagName) && (newValue == null || newValue.trim().isEmpty())) {
+            newValue = "yes";
+        }
+        
         NodeList nodes = parent.getElementsByTagName(tagName);
         if (nodes.getLength() > 0) {
             nodes.item(0).setTextContent(newValue);
@@ -475,6 +482,13 @@ public class XmlUtil {
     }
     
     public static void replaceOrInsertChild(Element parent, String tagName, String value) {
+        // Ensure is-active and is-mandatory always have values, default to "yes" if empty
+        if ("is-active".equals(tagName) && (value == null || value.trim().isEmpty())) {
+            value = "yes";
+        } else if ("is-mandatory".equals(tagName) && (value == null || value.trim().isEmpty())) {
+            value = "yes";
+        }
+        
         NodeList nodes = parent.getElementsByTagName(tagName);
         if (nodes.getLength() > 0) {
             nodes.item(0).setTextContent(value);
@@ -926,28 +940,29 @@ public class XmlUtil {
             for (String fieldName : pendingFields) {
                 String newField = "_" + fieldName;
                 query.append(System.lineSeparator());
-                query.append("UPDATE SUMMARY_DISPLAY SET FIELD_NAME = REPLACE(FIELD_NAME, '" + fieldName + "', '" + newField + "');");
+                query.append("UPDATE SUMMARY_DISPLAY SET FIELD_NAME = REPLACE(FIELD_NAME, '" + fieldName + "', '" + newField + "') WHERE FIELD_NAME NOT LIKE '\\_%' ESCAPE '\\';");
                 query.append(System.lineSeparator());
-                query.append("UPDATE SUMMARY_DISPLAY SET CUSTOM_FIELD_NAME = REPLACE(CUSTOM_FIELD_NAME, '" + fieldName + "', '" + newField + "');");
+                query.append("UPDATE SUMMARY_DISPLAY SET CUSTOM_FIELD_NAME = REPLACE(CUSTOM_FIELD_NAME, '" + fieldName + "', '" + newField + "') WHERE CUSTOM_FIELD_NAME NOT LIKE '\\_%' ESCAPE '\\';");
                 query.append(System.lineSeparator());
-                query.append("UPDATE FORM_FIELD_ACCESS_MAPPING SET FIELD_NAME = REPLACE(FIELD_NAME, '" + fieldName + "', '" + newField + "');");
+                query.append("UPDATE FORM_FIELD_ACCESS_MAPPING SET FIELD_NAME = REPLACE(FIELD_NAME, '" + fieldName + "', '" + newField + "') WHERE FIELD_NAME NOT LIKE '\\_%' ESCAPE '\\';");
                 query.append(System.lineSeparator());
-                query.append("UPDATE FIM_BUILDER_MASTER_DATA SET FIELD_NAME = REPLACE(FIELD_NAME, '" + fieldName + "', '" + newField + "');");
+                query.append("UPDATE FIM_BUILDER_MASTER_DATA SET FIELD_NAME = REPLACE(FIELD_NAME, '" + fieldName + "', '" + newField + "') WHERE FIELD_NAME NOT LIKE '\\_%' ESCAPE '\\';");
                 query.append(System.lineSeparator());
-                query.append("UPDATE TRIGGER_EVENT SET FIELD_NAME = REPLACE(FIELD_NAME, '" + fieldName + "', '" + newField + "');");
+                query.append("UPDATE TRIGGER_EVENT SET FIELD_NAME = REPLACE(FIELD_NAME, '" + fieldName + "', '" + newField + "') WHERE FIELD_NAME NOT LIKE '\\_%' ESCAPE '\\';");
                 query.append(System.lineSeparator());
-                query.append("UPDATE TRIGGER_EVENT SET DB_FIELD_NAME = REPLACE(DB_FIELD_NAME, '" + fieldName.toUpperCase() + "', '" + newField.toUpperCase() + "');");
+                query.append("UPDATE TRIGGER_EVENT SET DB_FIELD_NAME = REPLACE(DB_FIELD_NAME, '" + fieldName.toUpperCase() + "', '" + newField.toUpperCase() + "') WHERE DB_FIELD_NAME NOT LIKE '\\_%' ESCAPE '\\';");
                 query.append(System.lineSeparator());
-                query.append("UPDATE TABULAR_SECTION_DISPLAY_COLUMN SET FIELD_NAME = REPLACE(FIELD_NAME, '" + fieldName + "', '" + newField + "') WHERE TABLE_NAME LIKE '%" + xmlKey + "%';");
+                query.append("UPDATE TABULAR_SECTION_DISPLAY_COLUMN SET FIELD_NAME = REPLACE(FIELD_NAME, '" + fieldName + "', '" + newField + "') WHERE TABLE_NAME LIKE '%" + xmlKey + "%' AND FIELD_NAME NOT LIKE '\\_%' ESCAPE '\\';");
                 query.append(System.lineSeparator());
-                query.append("UPDATE TABULAR_SECTION_DISPLAY_COLUMN SET DISPLAY_VALUE = REPLACE(DISPLAY_VALUE, '" + fieldName.toUpperCase() + "', '" + newField.toUpperCase() + "') WHERE TABLE_NAME LIKE '%" + xmlKey + "%';");
+                query.append("UPDATE TABULAR_SECTION_DISPLAY_COLUMN SET DISPLAY_VALUE = REPLACE(DISPLAY_VALUE, '" + fieldName.toUpperCase() + "', '" + newField.toUpperCase() + "') WHERE TABLE_NAME LIKE '%" + xmlKey + "%' AND DISPLAY_VALUE NOT LIKE '\\_%' ESCAPE '\\';");
                 query.append(System.lineSeparator());
-                query.append("UPDATE SMART_GROUP_CRITERIA SET FIELD_NAME = REPLACE(FIELD_NAME, '" + fieldName + "', '" + newField + "');");
+                query.append("UPDATE SMART_GROUP_CRITERIA SET FIELD_NAME = REPLACE(FIELD_NAME, '" + fieldName + "', '" + newField + "') WHERE FIELD_NAME NOT LIKE '\\_%' ESCAPE '\\';");
                 query.append(System.lineSeparator());
                 query.append("UPDATE CUSTOM_REPORT SET");
                 query.append("  CUSTOM_REPORT_SELECT_FIELDS = REPLACE(CUSTOM_REPORT_SELECT_FIELDS, '" + fieldName + "', '" + newField + "'),");
                 query.append("  CUSTOM_REPORT_WHERE_FIELDS = REPLACE(CUSTOM_REPORT_WHERE_FIELDS, '" + fieldName + "', '" + newField + "'),");
-                query.append("  CUSTOM_REPORT_SELECT_FIELDS_WITH_TABLES = REPLACE(CUSTOM_REPORT_SELECT_FIELDS_WITH_TABLES, '#####" + fieldName + "', '#####" + newField + "');");
+                query.append("  CUSTOM_REPORT_SELECT_FIELDS_WITH_TABLES = REPLACE(CUSTOM_REPORT_SELECT_FIELDS_WITH_TABLES, '#####" + fieldName + "', '#####" + newField + "')");
+                query.append(" WHERE CUSTOM_REPORT_SELECT_FIELDS NOT LIKE '\\_%' ESCAPE '\\' AND CUSTOM_REPORT_WHERE_FIELDS NOT LIKE '\\_%' ESCAPE '\\' AND CUSTOM_REPORT_SELECT_FIELDS_WITH_TABLES NOT LIKE '\\_%' ESCAPE '\\';");
 
                 processedUnderscoreFields.add(fieldName);
             }

@@ -586,8 +586,17 @@ public class XmlService {
                 XmlUtil.replaceChildValue(clonedTemplate, "db-field", XmlUtil.getValue(sourceField, "db-field"));
                 XmlUtil.replaceChildValue(clonedTemplate, "data-type", XmlUtil.getValue(sourceField, "data-type"));
                 XmlUtil.replaceChildValue(clonedTemplate, "section", XmlUtil.getValue(sourceField, "section"));
-                XmlUtil.replaceChildValue(clonedTemplate, "is-active", XmlUtil.getValue(sourceField, "is-active"));
-                XmlUtil.replaceChildValue(clonedTemplate, "is-mandatory", XmlUtil.getValue(sourceField, "is-mandatory"));
+                String isActiveValue = XmlUtil.getValue(sourceField, "is-active");
+                if (isActiveValue == null || isActiveValue.trim().isEmpty()) {
+                    isActiveValue = "yes";
+                }
+                XmlUtil.replaceOrInsertChild(clonedTemplate, "is-active", isActiveValue);
+                
+                String isMandatoryValue = XmlUtil.getValue(sourceField, "is-mandatory");
+                if (isMandatoryValue == null || isMandatoryValue.trim().isEmpty()) {
+                    isMandatoryValue = "yes";
+                }
+                XmlUtil.replaceOrInsertChild(clonedTemplate, "is-mandatory", isMandatoryValue);
                 XmlUtil.replaceChildValue(clonedTemplate, "order-by", String.valueOf(nextOrderBy));
 
                 // Special handling for Combo display-type
