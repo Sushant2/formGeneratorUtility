@@ -74,6 +74,19 @@ public class XmlUtil {
         return "";
     }
 
+    // Find the parent header element of a field by traversing up the DOM tree
+    public static Element findParentHeader(Element fieldElement) {
+        Node parent = fieldElement.getParentNode();
+        while (parent != null && parent.getNodeType() == Node.ELEMENT_NODE) {
+            Element parentElement = (Element) parent;
+            if ("header".equals(parentElement.getTagName())) {
+                return parentElement;
+            }
+            parent = parent.getParentNode();
+        }
+        return null;
+    }
+
     public static Element findHeaderByName(Document doc, String headerName) {
         NodeList headers = doc.getElementsByTagName("header");
     
@@ -129,6 +142,18 @@ public class XmlUtil {
             }
         }
         return null; // No matching field found
+    }
+
+    public static Element findFieldByFieldName(Document doc, String fieldName) {
+        NodeList fields = doc.getElementsByTagName("field");
+        for (int i = 0; i < fields.getLength(); i++) {
+            Element field = (Element) fields.item(i);
+            String fieldNameValue = XmlUtil.getValue(field, "field-name").trim();
+            if (fieldNameValue.equals(fieldName)) {
+                return field; // Found the field with matching field-name, return it
+            }
+        }
+        return null; // Field not found
     }
     
 
@@ -510,7 +535,7 @@ public class XmlUtil {
         return null; // No direct child with the given tagName found
     }
 
-    public static void updateTagsIfDiff(Element sourceField, Map<String, Element> targetFieldMap) {
+    public static void updateTagsIfDiff(Element sourceField, Map<String, Element> targetFieldMap, Map<String, String> updatedHeaders, Document sourceDoc, Document targetDoc) {
         String sourceDbField = XmlUtil.getValue(sourceField, "db-field").trim().toUpperCase();
         String sourceDisplayName = XmlUtil.getValue(sourceField, "display-name").trim();
         String sourceIsMandatory = XmlUtil.getValue(sourceField, "is-mandatory").trim().toLowerCase();
@@ -532,8 +557,30 @@ public class XmlUtil {
                 
                 // Add section tag
                 if (!sourceSection.isEmpty()) {
-                    XmlUtil.replaceOrInsertChild(targetField, "section", sourceSection);
-                    System.out.println("Added section '" + sourceSection + "' to db-field '" + sourceDbField + "'");
+                    // Get section from sourceField, find header name in source doc, check updatedHeaders map,
+                    // then find header in target doc and get its section to update targetField
+                    
+                    // Step 1: Find header name in source document that has the sourceSection
+                    String sourceHeaderName = XmlUtil.getHeaderNameBySection(sourceDoc, sourceSection);
+                    if (!sourceHeaderName.isEmpty()) {
+                        // Step 2: Check if header name exists in updatedHeaders map, use mapped value if available
+                        String targetHeaderName = sourceHeaderName;
+                        if (updatedHeaders != null && updatedHeaders.containsKey(sourceHeaderName)) {
+                            targetHeaderName = updatedHeaders.get(sourceHeaderName);
+                        }
+                        
+                        // Step 3: Find header in target document by name
+                        Element targetHeader = XmlUtil.findHeaderByName(targetDoc, targetHeaderName);
+                        if (targetHeader != null) {
+                            // Step 4: Get section from target header (e.g., "bSec_additionalInformation1350065")
+                            String targetSection = XmlUtil.getSection(targetHeader);
+                            if (!targetSection.isEmpty()) {
+                                // Step 5: Update targetField with target section
+                                XmlUtil.replaceOrInsertChild(targetField, "section", targetSection);
+                                System.out.println("Updated section '" + targetSection + "' in target field '" + sourceDbField + "' (header: '" + targetHeaderName + "')");
+                            }
+                        }
+                    }
                 }
                 
                 // Add order-by tag
@@ -556,8 +603,8 @@ public class XmlUtil {
                 }
                 
                 // Add active tag (using is-active value)
-                XmlUtil.replaceOrInsertChild(targetField, "active", "yes");
-                System.out.println("Added active yes to db-field '" + sourceDbField + "'");
+                XmlUtil.replaceOrInsertChild(targetField, "is-active", "yes");
+                System.out.println("Added is-active yes to db-field '" + sourceDbField + "'");
                 
                 // Add build-field tag
                 if (!sourceBuildField.isEmpty()) {
@@ -621,6 +668,15 @@ public class XmlUtil {
                     else {
                         XmlUtil.replaceOrInsertChild(targetField, "is-active", sourceIsActive);
                         System.out.println("Updated is-active of db-field '" + sourceDbField + "' from '" + targetIsActive + "' to → '" + sourceIsActive + "'");
+                    }
+                }
+
+                // Special handling for ST_ID - always set is-active to "yes"
+                if ("ST_ID".equals(sourceDbField)) {
+                    String currentIsActive = XmlUtil.getValue(targetField, "is-active").trim().toLowerCase();
+                    if (!"yes".equals(currentIsActive)) {
+                        XmlUtil.replaceOrInsertChild(targetField, "is-active", "yes");
+                        System.out.println("Set is-active element with value 'yes' to ST_ID field (special handling for ST_ID)");
                     }
                 }
 

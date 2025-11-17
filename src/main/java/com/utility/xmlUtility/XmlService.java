@@ -251,6 +251,16 @@ public class XmlService {
                                 System.out.println("Updated is-mandatory element with value 'false' to TERRITORY_ID field");
                             }
                         }
+                        // Special handling for FIM_CB_CURRENT_STATUS - set as mandatory
+                        if(elementValue.equals("FIM_CB_CURRENT_STATUS")){
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "is-mandatory", "true");
+                            System.out.println("Set is-mandatory element with value 'true' to FIM_CB_CURRENT_STATUS field");
+                        }
+                        // Special handling for RE_OPENING_DATE & STORE_RE_OPENING_DATE as inactive
+                        if(elementValue.equals("RE_OPENING_DATE") || elementValue.equals("STORE_RE_OPENING_DATE")){
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "is-active", "no");
+                            System.out.println("Set is-active element with value 'no' to RE_OPENING_DATE & STORE_RE_OPENING_DATE fields");
+                        }
                     }
 
                     if(sourcePath != null && (sourcePath.contains("testTabqqqqq1117944734.xml") || sourcePath.contains("testTabqqqqq1117944734_copy.xml"))){
@@ -501,7 +511,13 @@ public class XmlService {
                 //if targetElements contains elementValue, then update the tags if mismatch
                 if (attribute.equals("db-field")) {
                     // db-field exists, so just update display-name if mismatch
-                    XmlUtil.updateTagsIfDiff(clonedSourceField, targetFieldMap);
+                    XmlUtil.updateTagsIfDiff(clonedSourceField, targetFieldMap, updatedHeaders, sourceDoc, targetDoc);
+                    
+                    // Fix sync and sync-with tags for existing fields
+                    Element targetField = targetFieldMap.get(elementValue);
+                    if (targetField != null) {
+                        fixSyncTagsForField(targetField, underscoreFieldsSet, targetDoc);
+                    }
                     changesMade = true;
                 } else if ("header".equals(elementTag)) {
                     // Handle document elements for existing headers
@@ -617,8 +633,17 @@ public class XmlService {
                 if (syncNode != null) {
                     Node importedSync = targetDoc.importNode(syncNode, true);
                     clonedTemplate.appendChild(importedSync);
-                    System.out.println("Added sync tag for field: " + XmlUtil.getValue(sourceField, "db-field"));
+                    // If field has sync tag, ensure it's active
+                    XmlUtil.replaceOrInsertChild(clonedTemplate, "is-active", "yes");
+                    System.out.println("Added sync tag for field: " + XmlUtil.getValue(sourceField, "db-field") + " and set is-active to yes");
                 }else if (syncWithNode != null) {
+                    // Fix sync-with field name to include underscore if needed
+                    String syncWithValue = syncWithNode.getTextContent().trim();
+                    String fixedSyncWithValue = fixSyncWithFieldName(syncWithValue, underscoreFieldsSet);
+                    if (!syncWithValue.equals(fixedSyncWithValue)) {
+                        syncWithNode.setTextContent(fixedSyncWithValue);
+                        System.out.println("Fixed sync-with field name from: " + syncWithValue + " to: " + fixedSyncWithValue);
+                    }
                     Node importedSyncWith = targetDoc.importNode(syncWithNode, true);
                     clonedTemplate.appendChild(importedSyncWith);
                     System.out.println("Added sync-with tag for field: " + XmlUtil.getValue(sourceField, "db-field"));
@@ -900,6 +925,82 @@ public class XmlService {
         }
         catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Fixes sync-with field name to include underscore prefix if the field should have underscore.
+     * Format: tableName##fieldName##otherField
+     * Logic:
+     * 1. If fieldName already has underscore, keep it as is
+     * 2. If fieldName (without underscore) is in underscoreFieldsSet, it means when this field was added,
+     *    it got an underscore prefix, so the actual field in parent table likely has underscore
+     * 3. Add underscore prefix if needed
+     */
+    private static String fixSyncWithFieldName(String syncWithValue, Set<String> underscoreFieldsSet) {
+        if (syncWithValue == null || syncWithValue.trim().isEmpty()) {
+            return syncWithValue;
+        }
+        
+        // Parse sync-with format: tableName##fieldName##otherField
+        String[] parts = syncWithValue.split("##");
+        if (parts.length < 2) {
+            return syncWithValue; // Invalid format, return as is
+        }
+        
+        String tableName = parts[0];
+        String fieldName = parts[1];
+        String otherField = parts.length > 2 ? parts[2] : "false";
+        
+        // If field name already has underscore, no need to fix
+        if (fieldName.startsWith("_")) {
+            return syncWithValue;
+        }
+        
+        // Check if field name (without underscore) is in underscoreFieldsSet
+        // underscoreFieldsSet contains field names that should have underscore when added
+        // So if a field name is in this set, the actual field in parent table likely has underscore
+        if (underscoreFieldsSet.contains(fieldName)) {
+            // Add underscore prefix
+            fieldName = "_" + fieldName;
+            System.out.println("Adding underscore to sync-with field name: " + fieldName + " (field was in underscoreFieldsSet)");
+        }
+        
+        // Reconstruct the sync-with value
+        return tableName + "##" + fieldName + "##" + otherField;
+    }
+
+    /**
+     * Fixes sync and sync-with tags for an existing field:
+     * 1. If field has sync tag, ensure it's active
+     * 2. If field has sync-with tag, fix the field name to include underscore if needed
+     */
+    private static void fixSyncTagsForField(Element field, Set<String> underscoreFieldsSet, Document targetDoc) {
+        if (field == null) {
+            return;
+        }
+        
+        // Check for sync tag
+        Node syncNode = XmlUtil.getDirectChildNode(field, "sync");
+        if (syncNode != null) {
+            // If field has sync tag, ensure it's active
+            String currentIsActive = XmlUtil.getValue(field, "is-active");
+            if (!"yes".equals(currentIsActive)) {
+                XmlUtil.replaceOrInsertChild(field, "is-active", "yes");
+                System.out.println("Set is-active to yes for field with sync tag: " + XmlUtil.getValue(field, "db-field"));
+            }
+        }
+        
+        // Check for sync-with tag
+        Node syncWithNode = XmlUtil.getDirectChildNode(field, "sync-with");
+        if (syncWithNode != null) {
+            String syncWithValue = syncWithNode.getTextContent().trim();
+            String fixedSyncWithValue = fixSyncWithFieldName(syncWithValue, underscoreFieldsSet);
+            if (!syncWithValue.equals(fixedSyncWithValue)) {
+                syncWithNode.setTextContent(fixedSyncWithValue);
+                System.out.println("Fixed sync-with field name in existing field: " + XmlUtil.getValue(field, "db-field") + 
+                                   " from: " + syncWithValue + " to: " + fixedSyncWithValue);
+            }
         }
     }
 }
