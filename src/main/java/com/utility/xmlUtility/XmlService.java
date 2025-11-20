@@ -270,17 +270,24 @@ public class XmlService {
                             System.out.println("Updated id-field element to: centerTermsID");
                         }
                         
-                        // Check if idField already exists in target before adding
-                        Element existingIdField = XmlUtil.findFieldByDbField(targetDoc, "ID_FIELD");
-                        if(existingIdField == null){
+                        // Check if CENTER_TERMS_ID field already exists in target before adding
+                        Element existingCenterTermsIdField = XmlUtil.findFieldByDbField(targetDoc, "CENTER_TERMS_ID");
+                        if(existingCenterTermsIdField == null){
                             Node idFieldNewNode = getIdField();
                             if(idFieldNewNode != null){
                                 Node adopted = targetDoc.importNode(idFieldNewNode, true);
                                 targetDoc.getDocumentElement().appendChild(adopted);
-                                System.out.println("Added idField element to target: " + elementValue);
+                                changesMade = true;
+                                System.out.println("Added centerTermsID field element to target: CENTER_TERMS_ID");
                             }
                         } else {
-                            System.out.println("idField already exists in target, skipping addition");
+                            System.out.println("centerTermsID field already exists in target, skipping addition");
+                        }
+                        
+                        // Skip processing if this is the CENTER_TERMS_ID field to avoid duplicates
+                        if(elementValue.equals("CENTER_TERMS_ID")){
+                            System.out.println("Skipping CENTER_TERMS_ID field processing to avoid duplicates");
+                            continue;
                         }
                     }
 
