@@ -186,7 +186,7 @@ public class XmlService {
                         }
                     }
 
-                    // Special handling for franchisees.xml
+                    // Fields handling for franchisees.xml
                     if(sourcePath != null && (sourcePath.contains("franchisees.xml") || sourcePath.contains("franchisees_copy.xml"))){
                         // Check if franchise fee field already exists before adding it
                         Element existingFranchiseFeeField = XmlUtil.findFieldByDbField(targetDoc, "_FRANCHISE_FEE_1181443611");
@@ -235,21 +235,13 @@ public class XmlService {
                         }
                         // Special handling for REGION_ID field - set as not mandatory
                         if(elementValue.equals("REGION_ID")){
-                            NodeList isMandatoryNodes = clonedSourceField.getElementsByTagName("is-mandatory");
-                            if (isMandatoryNodes.getLength() > 0) {
-                                Element isMandatoryElement = (Element) isMandatoryNodes.item(0);
-                                isMandatoryElement.setTextContent("false");
-                                System.out.println("Updated is-mandatory element with value 'false' to REGION_ID field");
-                            }
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "is-mandatory", "false");
+                            System.out.println("Updated is-mandatory element with value 'false' to REGION_ID field");
                         }
                         // Special handling for territoryId field - set as not mandatory
                         if(elementValue.equals("TERRITORY_ID")){
-                            NodeList isMandatoryNodes = clonedSourceField.getElementsByTagName("is-mandatory");
-                            if (isMandatoryNodes.getLength() > 0) {
-                                Element isMandatoryElement = (Element) isMandatoryNodes.item(0);
-                                isMandatoryElement.setTextContent("false");
-                                System.out.println("Updated is-mandatory element with value 'false' to TERRITORY_ID field");
-                            }
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "is-mandatory", "false");
+                            System.out.println("Updated is-mandatory element with value 'false' to TERRITORY_ID field");
                         }
                         // Special handling for FIM_CB_CURRENT_STATUS - set as mandatory
                         if(elementValue.equals("FIM_CB_CURRENT_STATUS")){
@@ -260,6 +252,16 @@ public class XmlService {
                         if(elementValue.equals("RE_OPENING_DATE") || elementValue.equals("STORE_RE_OPENING_DATE")){
                             XmlUtil.replaceOrInsertChild(clonedSourceField, "is-active", "no");
                             System.out.println("Set is-active element with value 'no' to RE_OPENING_DATE & STORE_RE_OPENING_DATE fields");
+                        }
+                        // Special handling for STORE_OPENING_DATE as inactive
+                        if(elementValue.equals("STORE_OPENING_DATE")){
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "is-active", "no");
+                            System.out.println("Set is-active element with value 'no' to STORE_OPENING_DATE field");
+                        }
+                        // Special handling for OPENING_DATE as active
+                        if(elementValue.equals("OPENING_DATE")){
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "is-active", "yes");
+                            System.out.println("Set is-active element with value 'yes' to OPENING_DATE field");
                         }
                     }
 
