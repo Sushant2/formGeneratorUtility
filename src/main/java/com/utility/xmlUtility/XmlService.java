@@ -253,16 +253,6 @@ public class XmlService {
                             XmlUtil.replaceOrInsertChild(clonedSourceField, "is-active", "no");
                             System.out.println("Set is-active element with value 'no' to RE_OPENING_DATE & STORE_RE_OPENING_DATE fields");
                         }
-                        // Special handling for STORE_OPENING_DATE as inactive
-                        if(elementValue.equals("STORE_OPENING_DATE")){
-                            XmlUtil.replaceOrInsertChild(clonedSourceField, "is-active", "no");
-                            System.out.println("Set is-active element with value 'no' to STORE_OPENING_DATE field");
-                        }
-                        // Special handling for OPENING_DATE as active
-                        if(elementValue.equals("OPENING_DATE")){
-                            XmlUtil.replaceOrInsertChild(clonedSourceField, "is-active", "yes");
-                            System.out.println("Set is-active element with value 'yes' to OPENING_DATE field");
-                        }
                     }
 
                     if(sourcePath != null && (sourcePath.contains("testTabqqqqq1117944734.xml") || sourcePath.contains("testTabqqqqq1117944734_copy.xml"))){
@@ -520,7 +510,7 @@ public class XmlService {
                 //if targetElements contains elementValue, then update the tags if mismatch
                 if (attribute.equals("db-field")) {
                     // db-field exists, so just update display-name if mismatch
-                    XmlUtil.updateTagsIfDiff(clonedSourceField, targetFieldMap, updatedHeaders, sourceDoc, targetDoc);
+                    XmlUtil.updateTagsIfDiff(clonedSourceField, targetFieldMap, updatedHeaders, sourceDoc, targetDoc, sourcePath);
                     
                     // Fix sync and sync-with tags for existing fields
                     Element targetField = targetFieldMap.get(elementValue);

@@ -535,7 +535,7 @@ public class XmlUtil {
         return null; // No direct child with the given tagName found
     }
 
-    public static void updateTagsIfDiff(Element sourceField, Map<String, Element> targetFieldMap, Map<String, String> updatedHeaders, Document sourceDoc, Document targetDoc) {
+    public static void updateTagsIfDiff(Element sourceField, Map<String, Element> targetFieldMap, Map<String, String> updatedHeaders, Document sourceDoc, Document targetDoc, String sourcePath) {
         String sourceDbField = XmlUtil.getValue(sourceField, "db-field").trim().toUpperCase();
         String sourceDisplayName = XmlUtil.getValue(sourceField, "display-name").trim();
         String sourceIsMandatory = XmlUtil.getValue(sourceField, "is-mandatory").trim().toLowerCase();
@@ -606,10 +606,20 @@ public class XmlUtil {
                 XmlUtil.replaceOrInsertChild(targetField, "is-active", "yes");
                 System.out.println("Added is-active yes to db-field '" + sourceDbField + "'");
 
+                if(sourcePath != null && (sourcePath.contains("fimTransfer.xml") || sourcePath.contains("fimTransfer_copy.xml"))){
                 // Special handling for Buyer Details - set is-active to "no" for fimTransfer.xml
-                if("BUYER_EXISTING_OR_NEW_FRANCHISEE".equals(sourceDbField) || "FIRST_NAME".equals(sourceDbField) || "LAST_NAME".equals(sourceDbField) || "FRANCHISE_OWNER_ID".equals(sourceDbField)){
-                    XmlUtil.replaceOrInsertChild(targetField, "is-active", "no");
-                    System.out.println("Updated is-active element to 'no' for field: " + sourceDbField);
+                    if("BUYER_EXISTING_OR_NEW_FRANCHISEE".equals(sourceDbField) || "FIRST_NAME".equals(sourceDbField) || "LAST_NAME".equals(sourceDbField) || "FRANCHISE_OWNER_ID".equals(sourceDbField)){
+                        XmlUtil.replaceOrInsertChild(targetField, "is-active", "no");
+                        System.out.println("Updated is-active element to 'no' for field: " + sourceDbField);
+                    }
+                }
+
+                if(sourcePath != null && (sourcePath.contains("franchisees.xml") || sourcePath.contains("franchisees_copy.xml"))){
+                    // Special handling for STORE_OPENING_DATE as inactive
+                    if("STORE_OPENING_DATE".equals(sourceDbField)){
+                        XmlUtil.replaceOrInsertChild(targetField, "is-active", "no");
+                        System.out.println("Set is-active element with value 'no' to STORE_OPENING_DATE field");
+                    }
                 }
                 
                 // Add build-field tag
@@ -674,6 +684,14 @@ public class XmlUtil {
                     else {
                         XmlUtil.replaceOrInsertChild(targetField, "is-active", sourceIsActive);
                         System.out.println("Updated is-active of db-field '" + sourceDbField + "' from '" + targetIsActive + "' to → '" + sourceIsActive + "'");
+                    }
+                }
+            
+                if(sourcePath != null && (sourcePath.contains("franchisees.xml") || sourcePath.contains("franchisees_copy.xml"))){
+                    // Special handling for OPENING_DATE as active
+                    if("OPENING_DATE".equals(sourceDbField)){
+                        XmlUtil.replaceOrInsertChild(targetField, "is-active", "yes");
+                        System.out.println("Set is-active element with value 'yes' to OPENING_DATE field");
                     }
                 }
 
