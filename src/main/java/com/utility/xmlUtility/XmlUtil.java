@@ -605,6 +605,12 @@ public class XmlUtil {
                 // Add active tag (using is-active value)
                 XmlUtil.replaceOrInsertChild(targetField, "is-active", "yes");
                 System.out.println("Added is-active yes to db-field '" + sourceDbField + "'");
+
+                // Special handling for Buyer Details - set is-active to "no" for fimTransfer.xml
+                if("BUYER_EXISTING_OR_NEW_FRANCHISEE".equals(sourceDbField) || "FIRST_NAME".equals(sourceDbField) || "LAST_NAME".equals(sourceDbField) || "FRANCHISE_OWNER_ID".equals(sourceDbField)){
+                    XmlUtil.replaceOrInsertChild(targetField, "is-active", "no");
+                    System.out.println("Updated is-active element to 'no' for field: " + sourceDbField);
+                }
                 
                 // Add build-field tag
                 if (!sourceBuildField.isEmpty()) {
