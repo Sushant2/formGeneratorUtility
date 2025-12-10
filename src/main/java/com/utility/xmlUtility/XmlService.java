@@ -219,7 +219,7 @@ public class XmlService {
                             System.out.println("Added is-active element with value 'no' to AF_ID field");
                         }
                         // Special handling for Supervisor field - set as inactive
-                        if(elementValue.equals("SUPERVISOR")){
+                        else if(elementValue.equals("SUPERVISOR")){
                             // Add is-active element with value "no"
                             Element isActiveElement = sourceDoc.createElement("is-active");
                             isActiveElement.setTextContent("no");
@@ -234,24 +234,37 @@ public class XmlService {
                             }
                         }
                         // Special handling for REGION_ID field - set as not mandatory
-                        if(elementValue.equals("REGION_ID")){
+                        else if(elementValue.equals("REGION_ID")){
                             XmlUtil.replaceOrInsertChild(clonedSourceField, "is-mandatory", "false");
                             System.out.println("Updated is-mandatory element with value 'false' to REGION_ID field");
                         }
                         // Special handling for territoryId field - set as not mandatory
-                        if(elementValue.equals("TERRITORY_ID")){
+                        else if(elementValue.equals("TERRITORY_ID")){
                             XmlUtil.replaceOrInsertChild(clonedSourceField, "is-mandatory", "false");
                             System.out.println("Updated is-mandatory element with value 'false' to TERRITORY_ID field");
                         }
                         // Special handling for FIM_CB_CURRENT_STATUS - set as mandatory
-                        if(elementValue.equals("FIM_CB_CURRENT_STATUS")){
+                        else if(elementValue.equals("FIM_CB_CURRENT_STATUS")){
                             XmlUtil.replaceOrInsertChild(clonedSourceField, "is-mandatory", "true");
                             System.out.println("Set is-mandatory element with value 'true' to FIM_CB_CURRENT_STATUS field");
                         }
                         // Special handling for RE_OPENING_DATE & STORE_RE_OPENING_DATE as inactive
-                        if(elementValue.equals("RE_OPENING_DATE") || elementValue.equals("STORE_RE_OPENING_DATE")){
+                        else if(elementValue.equals("RE_OPENING_DATE") || elementValue.equals("STORE_RE_OPENING_DATE")){
                             XmlUtil.replaceOrInsertChild(clonedSourceField, "is-active", "no");
                             System.out.println("Set is-active element with value 'no' to RE_OPENING_DATE & STORE_RE_OPENING_DATE fields");
+                        }
+                        else if (elementValue.equals("GRAND_STORE_OPENING_DATE")){
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "display-name", "Expected Store Opening Date");
+                            System.out.println("Updated display-name of db-field '" + elementValue + "' to → 'Expected Opening Date' (special handling for GRAND_STORE_OPENING_DATE)");
+                        }else if (elementValue.equals("AREA_ID")){
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "display-name", "Area Franchise ID");
+                            System.out.println("Updated display-name of db-field '" + elementValue + "' to → 'Area Franchise ID' (special handling for AREA_ID)");
+                        }else if (elementValue.equals("FBC")){
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "display-name", "Supervisor");
+                            System.out.println("Updated display-name of db-field '" + elementValue + "' to → 'Supervisor' (special handling for FBC)");
+                        }else if (elementValue.equals("STATUS")){
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "display-name", "Type");
+                            System.out.println("Updated display-name of db-field '" + elementValue + "' to → 'Type' (special handling for STATUS)");
                         }
                     }
 
