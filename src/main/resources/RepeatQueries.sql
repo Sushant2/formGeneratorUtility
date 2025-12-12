@@ -32,3 +32,9 @@ UPDATE FRANCHISEE SET AREA_ID = AF_ID;
 UPDATE CLIENT_LANG_PROPS SET PROP_VALUE='Open' WHERE PROP_KEY= 'Active';
 UPDATE CLIENT_XMLS SET DATA = REPLACE(DATA, '<display-name>Current Status</display-name>', '<display-name>Transfer status</display-name>') WHERE XML_KEY IN ('fimTransfer', 'fimTransfer_copy');
 UPDATE CLIENT_XMLS SET DATA = REPLACE(DATA, '<display-name>Current Status</display-name>', '<display-name>Standby / Completed</display-name>') WHERE XML_KEY IN ('fimRenewal', 'fimRenewal_copy');
+
+UPDATE CLIENT_XMLS SET DATA = REPLACE(DATA, '<sync-with sync-module="within">fsLeadDetails##noteForQD##false</sync-with>', '<sync-with sync-module="within">fsLeadDetails##_noteForQD##false</sync-with>') WHERE XML_KEY = 'fsLeadQualificationDetail';
+ 
+UPDATE CLIENT_XMLS SET DATA = REPLACE(DATA, '<sync-with sync-module="within">fsLeadDetails##leadQualificationFrom##false</sync-with>', '<sync-with sync-module="within">fsLeadDetails##_leadQualificationFrom##false</sync-with>') WHERE XML_KEY = 'fsLeadQualificationDetail';
+ 
+UPDATE CLIENT_XMLS SET DATA = REPLACE(DATA, '<sync-with sync-module="within">fsLeadDetails##birthdate##false</sync-with>', '<sync-with sync-module="within">fsLeadDetails##_birthdate##false</sync-with>') WHERE XML_KEY = 'fsLeadQualificationDetail';
