@@ -622,7 +622,7 @@ public class XmlService {
                 
                 String isMandatoryValue = XmlUtil.getValue(sourceField, "is-mandatory");
                 if (isMandatoryValue == null || isMandatoryValue.trim().isEmpty()) {
-                    isMandatoryValue = "yes";
+                    isMandatoryValue = "false";
                 }
                 XmlUtil.replaceOrInsertChild(clonedTemplate, "is-mandatory", isMandatoryValue);
                 XmlUtil.replaceChildValue(clonedTemplate, "order-by", String.valueOf(nextOrderBy));

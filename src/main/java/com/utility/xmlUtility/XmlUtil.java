@@ -497,7 +497,7 @@ public class XmlUtil {
         if ("is-active".equals(tagName) && (newValue == null || newValue.trim().isEmpty())) {
             newValue = "yes";
         } else if ("is-mandatory".equals(tagName) && (newValue == null || newValue.trim().isEmpty())) {
-            newValue = "yes";
+            newValue = "false";
         }
         
         NodeList nodes = parent.getElementsByTagName(tagName);
@@ -511,7 +511,7 @@ public class XmlUtil {
         if ("is-active".equals(tagName) && (value == null || value.trim().isEmpty())) {
             value = "yes";
         } else if ("is-mandatory".equals(tagName) && (value == null || value.trim().isEmpty())) {
-            value = "yes";
+            value = "false";
         }
         
         NodeList nodes = parent.getElementsByTagName(tagName);
