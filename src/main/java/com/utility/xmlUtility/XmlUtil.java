@@ -612,6 +612,17 @@ public class XmlUtil {
                         XmlUtil.replaceOrInsertChild(targetField, "is-active", "no");
                         System.out.println("Updated is-active element to 'no' for field: " + sourceDbField);
                     }
+                    if("TRANSFER_FEE_PD".equals(sourceDbField) || "TRANSFER_FEE_NUMERICAL".equals(sourceDbField)) {
+                        XmlUtil.replaceOrInsertChild(targetField, "is-active", "yes");
+                        System.out.println("Updated is-active element to 'yes' for field: " + sourceDbField);
+                    }
+                }
+
+                if(sourcePath != null && (sourcePath.contains("fimRenewal.xml") || sourcePath.contains("fimRenewal_copy.xml"))){
+                    if("FIM_CB_CURRENT_STATUS".equals(sourceDbField)) {
+                        XmlUtil.replaceOrInsertChild(targetField, "is-active", "yes");
+                        System.out.println("Updated is-active element to 'yes' for field: " + sourceDbField);
+                    }
                 }
 
                 if(sourcePath != null && (sourcePath.contains("franchisees.xml") || sourcePath.contains("franchisees_copy.xml"))){
@@ -692,6 +703,21 @@ public class XmlUtil {
                     if("OPENING_DATE".equals(sourceDbField)){
                         XmlUtil.replaceOrInsertChild(targetField, "is-active", "yes");
                         System.out.println("Set is-active element with value 'yes' to OPENING_DATE field");
+                    }
+                }
+
+                if(sourcePath != null && (sourcePath.contains("fimTransfer.xml") || sourcePath.contains("fimTransfer_copy.xml"))){
+                    // Special handling for TRANSFER_FEE_PD and TRANSFER_FEE_NUMERICAL - always set is-active to "yes"
+                    if("TRANSFER_FEE_PD".equals(sourceDbField) || "TRANSFER_FEE_NUMERICAL".equals(sourceDbField)) {
+                        XmlUtil.replaceOrInsertChild(targetField, "is-active", "yes");
+                        System.out.println("Updated is-active element to 'yes' for field: " + sourceDbField);
+                    }
+                }
+
+                if(sourcePath != null && (sourcePath.contains("fimRenewal.xml") || sourcePath.contains("fimRenewal_copy.xml"))){
+                    if("FIM_CB_CURRENT_STATUS".equals(sourceDbField)) {
+                        XmlUtil.replaceOrInsertChild(targetField, "is-active", "yes");
+                        System.out.println("Updated is-active element to 'yes' for field: " + sourceDbField);
                     }
                 }
 
