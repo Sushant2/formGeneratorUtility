@@ -249,9 +249,9 @@ public class XmlService {
                             System.out.println("Set is-mandatory element with value 'true' to FIM_CB_CURRENT_STATUS field");
                         }
                         // Special handling for RE_OPENING_DATE & STORE_RE_OPENING_DATE as inactive
-                        else if(elementValue.equals("RE_OPENING_DATE") || elementValue.equals("STORE_RE_OPENING_DATE")){
+                        else if(elementValue.equals("RE_OPENING_DATE") || elementValue.equals("STORE_RE_OPENING_DATE") || elementValue.equals("REOPEN_REASON") || elementValue.equals("STORE_RE_OPENING_DATE")){
                             XmlUtil.replaceOrInsertChild(clonedSourceField, "is-active", "no");
-                            System.out.println("Set is-active element with value 'no' to RE_OPENING_DATE & STORE_RE_OPENING_DATE fields");
+                            System.out.println("Set is-active element with value 'no' to RE_OPENING_DATE, STORE_RE_OPENING_DATE, REOPEN_REASON, STORE_RE_OPENING_DATE fields");
                         }
                         else if (elementValue.equals("GRAND_STORE_OPENING_DATE")){
                             XmlUtil.replaceOrInsertChild(clonedSourceField, "display-name", "Expected Store Opening Date");
