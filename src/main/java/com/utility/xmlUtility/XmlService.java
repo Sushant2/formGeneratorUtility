@@ -265,6 +265,9 @@ public class XmlService {
                         }else if (elementValue.equals("STATUS")){
                             XmlUtil.replaceOrInsertChild(clonedSourceField, "display-name", "Type");
                             System.out.println("Updated display-name of db-field '" + elementValue + "' to → 'Type' (special handling for STATUS)");
+                        }else if (elementValue.equals("FINAL_CONTRACT_DATE")){
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "is-mandatory", "true");
+                            System.out.println("Set is-mandatory element with value 'true' to FINAL_CONTRACT_DATE field");
                         }
                     }
 
@@ -822,7 +825,7 @@ public class XmlService {
             
             field.appendChild(XmlUtil.createElement(doc, "section", "1"));
             field.appendChild(XmlUtil.createElement(doc, "is-active", "yes"));
-            field.appendChild(XmlUtil.createElement(doc, "is-mandatory", "false"));
+            field.appendChild(XmlUtil.createElement(doc, "is-mandatory", "true"));
             field.appendChild(XmlUtil.createElement(doc, "build-field", "no"));
             field.appendChild(XmlUtil.createElement(doc, "field-export", "true"));
             field.appendChild(XmlUtil.createElement(doc, "order-by", "31"));

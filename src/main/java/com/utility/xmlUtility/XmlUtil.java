@@ -620,6 +620,7 @@ public class XmlUtil {
 
                 if(sourcePath != null && (sourcePath.contains("fimRenewal.xml") || sourcePath.contains("fimRenewal_copy.xml"))){
                     if("FIM_CB_CURRENT_STATUS".equals(sourceDbField)) {
+                        XmlUtil.replaceOrInsertChild(targetField, "is-mandatory", "true");
                         XmlUtil.replaceOrInsertChild(targetField, "is-active", "yes");
                         System.out.println("Updated is-active element to 'yes' for field: " + sourceDbField);
                     }
