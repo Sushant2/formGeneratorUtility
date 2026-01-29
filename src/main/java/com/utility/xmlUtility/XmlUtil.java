@@ -608,21 +608,30 @@ public class XmlUtil {
 
                 if(sourcePath != null && (sourcePath.contains("fimTransfer.xml") || sourcePath.contains("fimTransfer_copy.xml"))){
                 // Special handling for Buyer Details - set is-active to "no" for fimTransfer.xml
-                    if("BUYER_EXISTING_OR_NEW_FRANCHISEE".equals(sourceDbField) || "FIRST_NAME".equals(sourceDbField) || "LAST_NAME".equals(sourceDbField) || "FRANCHISE_OWNER_ID".equals(sourceDbField)){
+                    if("BUYER_EXISTING_OR_NEW_FRANCHISEE".equals(sourceDbField) || "FIRST_NAME".equals(sourceDbField) || "LAST_NAME".equals(sourceDbField) || "FRANCHISE_OWNER_ID".equals(sourceDbField) || "TRANSFER_FEE_PD".equals(sourceDbField)){
                         XmlUtil.replaceOrInsertChild(targetField, "is-active", "no");
                         System.out.println("Updated is-active element to 'no' for field: " + sourceDbField);
                     }
-                    if("TRANSFER_FEE_PD".equals(sourceDbField) || "TRANSFER_FEE_NUMERICAL".equals(sourceDbField)) {
+                    if("TRANSFER_FEE_NUMERICAL".equals(sourceDbField) || "AS_OF".equals(sourceDbField) || "_DATA_SCADENZA_CONTRATTO_981704876".equals(sourceDbField)) {
                         XmlUtil.replaceOrInsertChild(targetField, "is-active", "yes");
-                        System.out.println("Updated is-active element to 'yes' for field: " + sourceDbField);
+                        XmlUtil.replaceOrInsertChild(targetField, "is-mandatory", "true");
+                        System.out.println("Updated is-active and is-mandatory element to 'yes' and 'true' for field: " + sourceDbField);
+                    }
+                    if("AS_OF".equals(sourceDbField)){
+                        XmlUtil.replaceOrInsertChild(targetField, "display-name", "As Of Transfer Date");
+                        System.out.println("Updated display-name element to 'As Of Transfer Date' for field: " + sourceDbField);
                     }
                 }
 
                 if(sourcePath != null && (sourcePath.contains("fimRenewal.xml") || sourcePath.contains("fimRenewal_copy.xml"))){
-                    if("FIM_CB_CURRENT_STATUS".equals(sourceDbField)) {
+                    if("FIM_CB_CURRENT_STATUS".equals(sourceDbField) || "FIM_TT_RENEWAL_FEES".equals(sourceDbField) || "FIM_DD_AS_OF".equals(sourceDbField) || "FIM_DD_NEW_EXPIRATION_DATE".equals(sourceDbField)) {
                         XmlUtil.replaceOrInsertChild(targetField, "is-mandatory", "true");
                         XmlUtil.replaceOrInsertChild(targetField, "is-active", "yes");
-                        System.out.println("Updated is-active element to 'yes' for field: " + sourceDbField);
+                        System.out.println("Updated is-mandatory to 'true' and is-active to 'yes' for field: " + sourceDbField + " in fimRenewal.xml");
+                    }
+                    if("FIM_DD_AS_OF".equals(sourceDbField)){
+                        XmlUtil.replaceOrInsertChild(targetField, "display-name", "As Of Renewal Date");
+                        System.out.println("Updated display-name element to 'As Of Renewal Date' for field: " + sourceDbField);
                     }
                 }
 
@@ -631,6 +640,10 @@ public class XmlUtil {
                     if("STORE_OPENING_DATE".equals(sourceDbField)){
                         XmlUtil.replaceOrInsertChild(targetField, "is-active", "no");
                         System.out.println("Set is-active element with value 'no' to STORE_OPENING_DATE field");
+                    }
+                    if("LONGITUDE".equals(sourceBuildField) || "LATITUDE".equals(sourceBuildField)){
+                        XmlUtil.replaceOrInsertChild(targetField, "is-mandatory", "false");
+                        System.out.println("Set is-mandatory element with value 'false' to LONGITUDE and LATITUDE fields");
                     }
                 }
                 
@@ -705,20 +718,38 @@ public class XmlUtil {
                         XmlUtil.replaceOrInsertChild(targetField, "is-active", "yes");
                         System.out.println("Set is-active element with value 'yes' to OPENING_DATE field");
                     }
+                    if("LONGITUDE".equals(sourceDbField) || "LATITUDE".equals(sourceDbField)){
+                        XmlUtil.replaceOrInsertChild(targetField, "is-mandatory", "false");
+                        System.out.println("Set is-mandatory element with value 'false' to LONGITUDE and LATITUDE fields");
+                    }
                 }
 
                 if(sourcePath != null && (sourcePath.contains("fimTransfer.xml") || sourcePath.contains("fimTransfer_copy.xml"))){
                     // Special handling for TRANSFER_FEE_PD and TRANSFER_FEE_NUMERICAL - always set is-active to "yes"
-                    if("TRANSFER_FEE_PD".equals(sourceDbField) || "TRANSFER_FEE_NUMERICAL".equals(sourceDbField)) {
+                    if("TRANSFER_FEE_NUMERICAL".equals(sourceDbField) || "AS_OF".equals(sourceDbField) || "_DATA_SCADENZA_CONTRATTO_981704876".equals(sourceDbField)) {
+                        XmlUtil.replaceOrInsertChild(targetField, "is-active", "yes");
+                        XmlUtil.replaceOrInsertChild(targetField, "is-mandatory", "true");
+                        System.out.println("Updated is-active and is-mandatory element to 'yes' and 'true' for field: " + sourceDbField);
+                    }
+                    if("AS_OF".equals(sourceDbField)){
+                        XmlUtil.replaceOrInsertChild(targetField, "display-name", "As Of Transfer Date");
+                        System.out.println("Updated display-name element to 'As Of Transfer Date' for field: " + sourceDbField);
+                    }
+                    if("TRANSFER_FEE_PD".equals(sourceDbField)){
                         XmlUtil.replaceOrInsertChild(targetField, "is-active", "yes");
                         System.out.println("Updated is-active element to 'yes' for field: " + sourceDbField);
                     }
                 }
 
                 if(sourcePath != null && (sourcePath.contains("fimRenewal.xml") || sourcePath.contains("fimRenewal_copy.xml"))){
-                    if("FIM_CB_CURRENT_STATUS".equals(sourceDbField)) {
+                    if("FIM_CB_CURRENT_STATUS".equals(sourceDbField) || "FIM_TT_RENEWAL_FEES".equals(sourceDbField) || "FIM_DD_AS_OF".equals(sourceDbField) || "FIM_DD_NEW_EXPIRATION_DATE".equals(sourceDbField)) {
+                        XmlUtil.replaceOrInsertChild(targetField, "is-mandatory", "true");
                         XmlUtil.replaceOrInsertChild(targetField, "is-active", "yes");
-                        System.out.println("Updated is-active element to 'yes' for field: " + sourceDbField);
+                        System.out.println("Updated is-mandatory to 'true' and is-active to 'yes' for field: " + sourceDbField + " in fimRenewal.xml");
+                    }
+                    if("FIM_DD_AS_OF".equals(sourceDbField)){
+                        XmlUtil.replaceOrInsertChild(targetField, "display-name", "As Of Renewal Date");
+                        System.out.println("Updated display-name element to 'As Of Renewal Date' for field: " + sourceDbField);
                     }
                 }
 

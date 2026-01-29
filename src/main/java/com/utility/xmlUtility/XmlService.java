@@ -244,9 +244,9 @@ public class XmlService {
                             System.out.println("Updated is-mandatory element with value 'false' to TERRITORY_ID field");
                         }
                         // Special handling for FIM_CB_CURRENT_STATUS - set as mandatory
-                        else if(elementValue.equals("FIM_CB_CURRENT_STATUS")){
+                        else if(elementValue.equals("FIM_CB_CURRENT_STATUS") || elementValue.equals("FIM_TT_RENEWAL_FEES") || elementValue.equals("FIM_DD_AS_OF") || elementValue.equals("FIM_DD_NEW_EXPIRATION_DATE")){
                             XmlUtil.replaceOrInsertChild(clonedSourceField, "is-mandatory", "true");
-                            System.out.println("Set is-mandatory element with value 'true' to FIM_CB_CURRENT_STATUS field");
+                            System.out.println("Set is-mandatory element with value 'true' to FIM_CB_CURRENT_STATUS, FIM_TT_RENEWAL_FEES, FIM_DD_AS_OF, FIM_DD_NEW_EXPIRATION_DATE fields");
                         }
                         // Special handling for RE_OPENING_DATE & STORE_RE_OPENING_DATE as inactive
                         else if(elementValue.equals("RE_OPENING_DATE") || elementValue.equals("STORE_RE_OPENING_DATE") || elementValue.equals("REOPEN_REASON") || elementValue.equals("STORE_RE_OPENING_DATE")){
@@ -268,6 +268,19 @@ public class XmlService {
                         }else if (elementValue.equals("FINAL_CONTRACT_DATE")){
                             XmlUtil.replaceOrInsertChild(clonedSourceField, "is-mandatory", "true");
                             System.out.println("Set is-mandatory element with value 'true' to FINAL_CONTRACT_DATE field");
+                        }else if(elementValue.equals("LATITUDE") || elementValue.equals("LONGITUDE")){
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "is-mandatory", "false");
+                            System.out.println("Set is-mandatory element with value 'false' to LATITUDE and LONGITUDE fields");
+                        }
+                    }
+
+                    // Fields handling for fimRenewal.xml
+                    if(sourcePath != null && (sourcePath.contains("fimRenewal.xml") || sourcePath.contains("fimRenewal_copy.xml"))){
+                        // Special handling for FIM_CB_CURRENT_STATUS - set as mandatory and active
+                        if(elementValue.equals("FIM_CB_CURRENT_STATUS") || elementValue.equals("FIM_TT_RENEWAL_FEES") || elementValue.equals("FIM_DD_AS_OF") || elementValue.equals("FIM_DD_NEW_EXPIRATION_DATE")){
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "is-mandatory", "true");
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "is-active", "yes");
+                            System.out.println("Set is-mandatory element with value 'true' and is-active to 'yes' for FIM_CB_CURRENT_STATUS, FIM_TT_RENEWAL_FEES, FIM_DD_AS_OF, FIM_DD_NEW_EXPIRATION_DATE fields in fimRenewal.xml");
                         }
                     }
 
