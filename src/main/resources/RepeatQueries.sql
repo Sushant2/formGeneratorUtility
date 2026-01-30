@@ -38,3 +38,5 @@ UPDATE CLIENT_XMLS SET DATA = REPLACE(DATA, '<sync-with sync-module="within">fsL
 UPDATE CLIENT_XMLS SET DATA = REPLACE(DATA, '<sync-with sync-module="within">fsLeadDetails##leadQualificationFrom##false</sync-with>', '<sync-with sync-module="within">fsLeadDetails##_leadQualificationFrom##false</sync-with>') WHERE XML_KEY = 'fsLeadQualificationDetail';
  
 UPDATE CLIENT_XMLS SET DATA = REPLACE(DATA, '<sync-with sync-module="within">fsLeadDetails##birthdate##false</sync-with>', '<sync-with sync-module="within">fsLeadDetails##_birthdate##false</sync-with>') WHERE XML_KEY = 'fsLeadQualificationDetail';
+
+UPDATE CLIENT_XMLS SET DATA = REPLACE(DATA, '<display-name>FBC</display-name>', '<display-name>Supervisor</display-name>') WHERE XML_KEY IN ('franchisees', 'franchisees_copy');
