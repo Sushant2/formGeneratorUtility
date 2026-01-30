@@ -735,6 +735,10 @@ public class XmlUtil {
                         XmlUtil.replaceOrInsertChild(targetField, "display-name", "As Of Transfer Date");
                         System.out.println("Updated display-name element to 'As Of Transfer Date' for field: " + sourceDbField);
                     }
+                    if("TRANSFER_DATE".equals(sourceDbField)){
+                        XmlUtil.replaceOrInsertChild(targetField, "display-name", "Transfer Completion Date");
+                        System.out.println("Updated display-name element to 'Transfer Completion Date' for field: " + sourceDbField);
+                    }
                     if("TRANSFER_FEE_PD".equals(sourceDbField)){
                         XmlUtil.replaceOrInsertChild(targetField, "is-active", "yes");
                         System.out.println("Updated is-active element to 'yes' for field: " + sourceDbField);
