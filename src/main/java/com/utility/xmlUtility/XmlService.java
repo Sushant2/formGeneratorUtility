@@ -204,34 +204,15 @@ public class XmlService {
                         }
                         // Special handling for AF_ID field - change display name and set as inactive
                         if(elementValue.equals("AF_ID")){
-                            // Change display name to "Area Franchise ID Old"
-                            NodeList displayNameNodes = clonedSourceField.getElementsByTagName("display-name");
-                            if (displayNameNodes.getLength() > 0) {
-                                Element displayNameElement = (Element) displayNameNodes.item(0);
-                                displayNameElement.setTextContent("Area Franchise ID Old");
-                                System.out.println("Updated AF_ID display name to: Area Franchise ID Old");
-                            }
-                            
-                            // Add is-active element with value "no"
-                            Element isActiveElement = sourceDoc.createElement("is-active");
-                            isActiveElement.setTextContent("no");
-                            clonedSourceField.appendChild(isActiveElement);
-                            System.out.println("Added is-active element with value 'no' to AF_ID field");
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "display-name", "Area Franchise ID Old");
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "is-active", "no");
+                            System.out.println("Updated AF_ID display name to: Area Franchise ID Old and is-active to 'no'");
                         }
                         // Special handling for Supervisor field - set as inactive
                         else if(elementValue.equals("SUPERVISOR")){
-                            // Add is-active element with value "no"
-                            Element isActiveElement = sourceDoc.createElement("is-active");
-                            isActiveElement.setTextContent("no");
-                            clonedSourceField.appendChild(isActiveElement);
-                            System.out.println("Added is-active element with value 'no' to SUPERVISOR field");
-                            // Change display name to "Area Franchise ID Old"
-                            NodeList displayNameNodes = clonedSourceField.getElementsByTagName("display-name");
-                            if (displayNameNodes.getLength() > 0) {
-                                Element displayNameElement = (Element) displayNameNodes.item(0);
-                                displayNameElement.setTextContent("Supervisor Old");
-                                System.out.println("Updated SUPERVISOR display name to: Supervisor Old");
-                            }
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "display-name", "Supervisor Old");
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "is-active", "no");
+                            System.out.println("Updated SUPERVISOR display name to: Supervisor Old and is-active to 'no'");
                         }
                         // Special handling for REGION_ID field - set as not mandatory
                         else if(elementValue.equals("REGION_ID")){
@@ -281,6 +262,40 @@ public class XmlService {
                             XmlUtil.replaceOrInsertChild(clonedSourceField, "is-mandatory", "true");
                             XmlUtil.replaceOrInsertChild(clonedSourceField, "is-active", "yes");
                             System.out.println("Set is-mandatory element with value 'true' and is-active to 'yes' for FIM_CB_CURRENT_STATUS, FIM_TT_RENEWAL_FEES, FIM_DD_AS_OF, FIM_DD_NEW_EXPIRATION_DATE fields in fimRenewal.xml");
+                        }
+                        if("FIM_CB_CURRENT_STATUS".equals(elementValue)){
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "display-name", "Renewal Current Status");
+                            System.out.println("Updated display-name element to 'Renewal Current Status' for field: " + elementValue);
+                        }
+                    }
+
+                    // Fields handling for fimTransfer.xml
+                    if(sourcePath != null && (sourcePath.contains("fimTransfer.xml") || sourcePath.contains("fimTransfer_copy.xml"))){
+                        // Special handling for TRANSFER_FEE_PD and TRANSFER_FEE_NUMERICAL - always set is-active to "yes"
+                        if("TRANSFER_FEE_NUMERICAL".equals(elementValue) || "AS_OF".equals(elementValue) || "_DATA_SCADENZA_CONTRATTO_981704876".equals(elementValue)) {
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "is-active", "yes");
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "is-mandatory", "true");
+                            System.out.println("Updated is-active and is-mandatory element to 'yes' and 'true' for field: " + elementValue);
+                        }
+                        if("AS_OF".equals(elementValue)){
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "display-name", "As Of Transfer Date");
+                            System.out.println("Updated display-name element to 'As Of Transfer Date' for field: " + elementValue);
+                        }
+                        if("TRANSFER_DATE".equals(elementValue)){
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "display-name", "Transfer Completion Date");
+                            System.out.println("Updated display-name element to 'Transfer Completion Date' for field: " + elementValue);
+                        }
+                        if("TRANSFER_FEE_PD".equals(elementValue)){
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "is-active", "yes");
+                            System.out.println("Updated is-active element to 'yes' for field: " + elementValue);
+                        }
+                        if("CURRENT_STATUS".equals(elementValue)){
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "display-name", "Transfer Current Status");
+                            System.out.println("Updated display-name element to 'Transfer Current Status' for field: " + elementValue);
+                        }
+                        if("TRANSFER_FEE".equals(elementValue)){
+                            XmlUtil.replaceOrInsertChild(clonedSourceField, "is-active", "no");
+                            System.out.println("Updated is-active element to 'no' for field: " + elementValue);
                         }
                     }
 

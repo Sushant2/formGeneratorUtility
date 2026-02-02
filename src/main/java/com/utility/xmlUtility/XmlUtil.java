@@ -621,6 +621,14 @@ public class XmlUtil {
                         XmlUtil.replaceOrInsertChild(targetField, "display-name", "As Of Transfer Date");
                         System.out.println("Updated display-name element to 'As Of Transfer Date' for field: " + sourceDbField);
                     }
+                    if("CURRENT_STATUS".equals(sourceDbField)){
+                        XmlUtil.replaceOrInsertChild(targetField, "display-name", "Transfer Current Status");
+                        System.out.println("Updated display-name element to 'Transfer Current Status' for field: " + sourceDbField);
+                    }
+                    if("TRANSFER_FEE".equals(sourceDbField)){
+                        XmlUtil.replaceOrInsertChild(targetField, "is-active", "no");
+                        System.out.println("Updated is-active element to 'no' for field: " + sourceDbField);
+                    }
                 }
 
                 if(sourcePath != null && (sourcePath.contains("fimRenewal.xml") || sourcePath.contains("fimRenewal_copy.xml"))){
@@ -628,6 +636,10 @@ public class XmlUtil {
                         XmlUtil.replaceOrInsertChild(targetField, "is-mandatory", "true");
                         XmlUtil.replaceOrInsertChild(targetField, "is-active", "yes");
                         System.out.println("Updated is-mandatory to 'true' and is-active to 'yes' for field: " + sourceDbField + " in fimRenewal.xml");
+                    }
+                    if("FIM_CB_CURRENT_STATUS".equals(sourceDbField)){
+                        XmlUtil.replaceOrInsertChild(targetField, "display-name", "Renewal Current Status");
+                        System.out.println("Updated display-name element to 'Renewal Current Status' for field: " + sourceDbField);
                     }
                     if("FIM_DD_AS_OF".equals(sourceDbField)){
                         XmlUtil.replaceOrInsertChild(targetField, "display-name", "As Of Renewal Date");
@@ -743,6 +755,14 @@ public class XmlUtil {
                         XmlUtil.replaceOrInsertChild(targetField, "is-active", "yes");
                         System.out.println("Updated is-active element to 'yes' for field: " + sourceDbField);
                     }
+                    if("CURRENT_STATUS".equals(sourceDbField)){
+                        XmlUtil.replaceOrInsertChild(targetField, "display-name", "Transfer Current Status");
+                        System.out.println("Updated display-name element to 'Transfer Current Status' for field: " + sourceDbField);
+                    }
+                    if("TRANSFER_FEE".equals(sourceDbField)){
+                        XmlUtil.replaceOrInsertChild(targetField, "is-active", "no");
+                        System.out.println("Updated is-active element to 'no' for field: " + sourceDbField);
+                    }
                 }
 
                 if(sourcePath != null && (sourcePath.contains("fimRenewal.xml") || sourcePath.contains("fimRenewal_copy.xml"))){
@@ -750,6 +770,10 @@ public class XmlUtil {
                         XmlUtil.replaceOrInsertChild(targetField, "is-mandatory", "true");
                         XmlUtil.replaceOrInsertChild(targetField, "is-active", "yes");
                         System.out.println("Updated is-mandatory to 'true' and is-active to 'yes' for field: " + sourceDbField + " in fimRenewal.xml");
+                    }
+                    if("FIM_CB_CURRENT_STATUS".equals(sourceDbField)){
+                        XmlUtil.replaceOrInsertChild(targetField, "display-name", "Renewal Current Status");
+                        System.out.println("Updated display-name element to 'Renewal Current Status' for field: " + sourceDbField);
                     }
                     if("FIM_DD_AS_OF".equals(sourceDbField)){
                         XmlUtil.replaceOrInsertChild(targetField, "display-name", "As Of Renewal Date");
