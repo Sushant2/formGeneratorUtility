@@ -658,6 +658,14 @@ public class XmlUtil {
                         System.out.println("Set is-mandatory element with value 'false' to LONGITUDE and LATITUDE fields");
                     }
                 }
+
+                if(sourcePath != null && (sourcePath.contains("fimTermination.xml") || sourcePath.contains("fimTermination_copy.xml"))){
+                    if("FIM_DD_APPROVED_DATE".equals(sourceDbField) || "FIM_DD_TERMINATED_DATE".equals(sourceDbField)) {
+                        XmlUtil.replaceOrInsertChild(targetField, "is-mandatory", "true");
+                        XmlUtil.replaceOrInsertChild(targetField, "is-active", "yes");
+                        System.out.println("Updated is-mandatory to 'true' and is-active to 'yes' for field: " + sourceDbField + " in fimRenewal.xml");
+                    }
+                }
                 
                 // Add build-field tag
                 if (!sourceBuildField.isEmpty()) {
@@ -778,6 +786,14 @@ public class XmlUtil {
                     if("FIM_DD_AS_OF".equals(sourceDbField)){
                         XmlUtil.replaceOrInsertChild(targetField, "display-name", "As Of Renewal Date");
                         System.out.println("Updated display-name element to 'As Of Renewal Date' for field: " + sourceDbField);
+                    }
+                }
+
+                if(sourcePath != null && (sourcePath.contains("fimTermination.xml") || sourcePath.contains("fimTermination_copy.xml"))){
+                    if("FIM_DD_APPROVED_DATE".equals(sourceDbField) || "FIM_DD_TERMINATED_DATE".equals(sourceDbField)) {
+                        XmlUtil.replaceOrInsertChild(targetField, "is-mandatory", "true");
+                        XmlUtil.replaceOrInsertChild(targetField, "is-active", "yes");
+                        System.out.println("Updated is-mandatory to 'true' and is-active to 'yes' for field: " + sourceDbField + " in fimRenewal.xml");
                     }
                 }
 
