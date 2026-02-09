@@ -653,9 +653,13 @@ public class XmlUtil {
                         XmlUtil.replaceOrInsertChild(targetField, "is-active", "no");
                         System.out.println("Set is-active element with value 'no' to STORE_OPENING_DATE field");
                     }
-                    if("LONGITUDE".equals(sourceBuildField) || "LATITUDE".equals(sourceBuildField) || "GRAND_STORE_OPENING_DATE".equals(sourceBuildField)){
+                    if("LONGITUDE".equals(sourceBuildField) || "LATITUDE".equals(sourceBuildField)){
                         XmlUtil.replaceOrInsertChild(targetField, "is-mandatory", "false");
-                        System.out.println("Set is-mandatory element with value 'false' to LONGITUDE, LATITUDE and GRAND_STORE_OPENING_DATE fields");
+                        System.out.println("Set is-mandatory element with value 'false' to LONGITUDE and LATITUDE fields");
+                    }
+                    if("GRAND_STORE_OPENING_DATE".equals(sourceBuildField)){
+                        XmlUtil.replaceOrInsertChild(targetField, "is-mandatory", "true");
+                        System.out.println("Set is-mandatory element with value 'true' to GRAND_STORE_OPENING_DATE field");
                     }
                 }
 
@@ -740,7 +744,11 @@ public class XmlUtil {
                     }
                     if("LONGITUDE".equals(sourceDbField) || "LATITUDE".equals(sourceDbField) || "GRAND_STORE_OPENING_DATE".equals(sourceDbField)){
                         XmlUtil.replaceOrInsertChild(targetField, "is-mandatory", "false");
-                        System.out.println("Set is-mandatory element with value 'false' to LONGITUDE, LATITUDE and GRAND_STORE_OPENING_DATE fields");
+                        System.out.println("Set is-mandatory element with value 'false' to LONGITUDE and LATITUDE fields");
+                    }
+                    if("GRAND_STORE_OPENING_DATE".equals(sourceDbField)){
+                        XmlUtil.replaceOrInsertChild(targetField, "is-mandatory", "true");
+                        System.out.println("Set is-mandatory element with value 'true' to GRAND_STORE_OPENING_DATE field");
                     }
                 }
 
