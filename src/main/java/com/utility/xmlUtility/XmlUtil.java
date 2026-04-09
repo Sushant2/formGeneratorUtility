@@ -502,6 +502,9 @@ public class XmlUtil {
 
                 // Only put if both are non-empty
                 if (!tableAnchor.isEmpty() && !fileLocation.isEmpty()) {
+                    if(fileLocation.startsWith("/")) {
+                        fileLocation = fileLocation.substring(1);
+                    }
                     tableMappings.put(tableAnchor, fileLocation);
                 }
             }

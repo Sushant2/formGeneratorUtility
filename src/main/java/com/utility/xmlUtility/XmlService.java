@@ -113,13 +113,15 @@ public class XmlService {
                     String displayName = XmlUtil.getValue(sourceField, "display-name");
                     String displayType1 = XmlUtil.getValue(sourceField, "display-type");
                     String buildField = XmlUtil.getValue(sourceField, "build-field");
+                    String dbFieldKey = XmlUtil.extractDbFieldValue(sourceField).trim().toUpperCase();
                     NodeList tableDisplayNameNode = sourceDoc.getElementsByTagName("table-display-name");
                     String tableDisplayName = "";
                     if (tableDisplayNameNode.getLength() > 0) {
                         tableDisplayName =  tableDisplayNameNode.item(0).getTextContent().trim();
                     }
-
-                    if((buildField.equals("no") || buildField.isEmpty()) && !displayType1.equals("htmlcheck") && !displayType1.equals("File") && (fieldName.charAt(0) != '_')) {
+                    boolean isBuildField = buildField.equals("no")
+                            || (buildField.isEmpty() && !targetElements.contains(dbFieldKey));
+                    if (isBuildField && !displayType1.equals("htmlcheck") && !displayType1.equals("File") && (fieldName.charAt(0) != '_')) {
                         // Update the name 'Sales' to 'Info Manager' for fim
                             String customFieldName = "Sales," + tableDisplayName + ',' + displayType1 + ',' + displayName + ',' + fieldName + ",_" + fieldName;
                             XmlUtil.appendToCustomFieldsCSV(customFieldName);
