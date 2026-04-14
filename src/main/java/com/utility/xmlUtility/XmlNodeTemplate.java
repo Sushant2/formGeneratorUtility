@@ -57,6 +57,7 @@ public class XmlNodeTemplate {
         field.appendChild(createSimpleElement(doc, "field-export", "true"));
         field.appendChild(createSimpleElement(doc, "order-by", "0"));
         field.appendChild(createSimpleElement(doc, "pii-enabled", "false"));
+        field.appendChild(createSimpleElement(doc, "isCurreny", "false"));
 
         /*Element mailmerge = doc.createElement("mailmerge");
         mailmerge.setAttribute("is-active", "true");

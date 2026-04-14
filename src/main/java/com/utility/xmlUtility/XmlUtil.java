@@ -10,6 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -20,16 +22,65 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 public class XmlUtil {
 
-    // Tracks which fields already produced UPDATE statements to avoid duplicates.
-    private static final Set<String> processedUnderscoreFields = new HashSet<>();
+    /** HTML5-style doctype is not allowed inside element content in XML; MBE exports embed it in {@code display-name}. */
+    private static final Pattern EMBEDDED_HTML_DOCTYPE = Pattern.compile("<!DOCTYPE\\s+html\\b[^>]*>", Pattern.CASE_INSENSITIVE);
+
+    private static final Pattern DISPLAY_NAME_BLOCK = Pattern.compile("<display-name>\\s*(.*?)\\s*</display-name>", Pattern.DOTALL);
+
+    private static final Pattern NUMERIC_CHAR_REF_DECIMAL = Pattern.compile("&#([0-9]{1,7});");
+
+    private static final Pattern NUMERIC_CHAR_REF_HEX = Pattern.compile("&#x([0-9a-fA-F]{1,6});");
+
+    private static final Pattern NAMED_HTML_ENTITY = Pattern.compile("&([a-zA-Z][a-zA-Z0-9]*);");
+
+    /**
+     * {@code display-name} sometimes stores HTML as a single text node (e.g. after {@code &lt;...&gt;} is parsed),
+     * so there are no child elements — only this pattern can recover the label.
+     */
+    private static final Pattern STRONG_IN_DISPLAY_NAME_TEXT =
+            Pattern.compile("<strong\\b[^>]*>(.*?)</strong>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+
+    /** HTML 4 named entities often found in MBE labels (XML has no DTD for these). */
+    private static final Map<String, String> HTML_NAMED_ENTITIES_TO_CHAR = new HashMap<>();
+
+    static {
+        Object[][] pairs = new Object[][] {
+            { "nbsp", "\u00A0" }, { "iexcl", "\u00A1" }, { "cent", "\u00A2" }, { "pound", "\u00A3" }, { "curren", "\u00A4" },
+            { "yen", "\u00A5" }, { "brvbar", "\u00A6" }, { "sect", "\u00A7" }, { "uml", "\u00A8" }, { "copy", "\u00A9" },
+            { "ordf", "\u00AA" }, { "laquo", "\u00AB" }, { "not", "\u00AC" }, { "shy", "\u00AD" }, { "reg", "\u00AE" },
+            { "macr", "\u00AF" }, { "deg", "\u00B0" }, { "plusmn", "\u00B1" }, { "sup2", "\u00B2" }, { "sup3", "\u00B3" },
+            { "acute", "\u00B4" }, { "micro", "\u00B5" }, { "para", "\u00B6" }, { "middot", "\u00B7" }, { "cedil", "\u00B8" },
+            { "sup1", "\u00B9" }, { "ordm", "\u00BA" }, { "raquo", "\u00BB" }, { "frac14", "\u00BC" }, { "frac12", "\u00BD" },
+            { "frac34", "\u00BE" }, { "iquest", "\u00BF" }, { "Agrave", "\u00C0" }, { "Aacute", "\u00C1" }, { "Acirc", "\u00C2" },
+            { "Atilde", "\u00C3" }, { "Auml", "\u00C4" }, { "Aring", "\u00C5" }, { "AElig", "\u00C6" }, { "Ccedil", "\u00C7" },
+            { "Egrave", "\u00C8" }, { "Eacute", "\u00C9" }, { "Ecirc", "\u00CA" }, { "Euml", "\u00CB" }, { "Igrave", "\u00CC" },
+            { "Iacute", "\u00CD" }, { "Icirc", "\u00CE" }, { "Iuml", "\u00CF" }, { "ETH", "\u00D0" }, { "Ntilde", "\u00D1" },
+            { "Ograve", "\u00D2" }, { "Oacute", "\u00D3" }, { "Ocirc", "\u00D4" }, { "Otilde", "\u00D5" }, { "Ouml", "\u00D6" },
+            { "times", "\u00D7" }, { "Oslash", "\u00D8" }, { "Ugrave", "\u00D9" }, { "Uacute", "\u00DA" }, { "Ucirc", "\u00DB" },
+            { "Uuml", "\u00DC" }, { "Yacute", "\u00DD" }, { "THORN", "\u00DE" }, { "szlig", "\u00DF" }, { "agrave", "\u00E0" },
+            { "aacute", "\u00E1" }, { "acirc", "\u00E2" }, { "atilde", "\u00E3" }, { "auml", "\u00E4" }, { "aring", "\u00E5" },
+            { "aelig", "\u00E6" }, { "ccedil", "\u00E7" }, { "egrave", "\u00E8" }, { "eacute", "\u00E9" }, { "ecirc", "\u00EA" },
+            { "euml", "\u00EB" }, { "igrave", "\u00EC" }, { "iacute", "\u00ED" }, { "icirc", "\u00EE" }, { "iuml", "\u00EF" },
+            { "eth", "\u00F0" }, { "ntilde", "\u00F1" }, { "ograve", "\u00F2" }, { "oacute", "\u00F3" }, { "ocirc", "\u00F4" },
+            { "otilde", "\u00F5" }, { "ouml", "\u00F6" }, { "divide", "\u00F7" }, { "oslash", "\u00F8" }, { "ugrave", "\u00F9" },
+            { "uacute", "\u00FA" }, { "ucirc", "\u00FB" }, { "uuml", "\u00FC" }, { "yacute", "\u00FD" }, { "thorn", "\u00FE" },
+            { "yuml", "\u00FF" },
+        };
+        for (Object[] p : pairs) {
+            HTML_NAMED_ENTITIES_TO_CHAR.put((String) p[0], (String) p[1]);
+        }
+    }
+    
     public static String elementToString(Element element) {
         try {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -300,10 +351,80 @@ public class XmlUtil {
         return doc;
     }
 
+    private static String codePointToString(int code) {
+        if (code < 0 || code > Character.MAX_CODE_POINT) {
+            return "\uFFFD";
+        }
+        return code <= 0xFFFF ? String.valueOf((char) code) : new String(Character.toChars(code));
+    }
+
+    private static String unescapeHtmlInDisplayNameInner(String inner) {
+        if (inner == null || inner.isEmpty()) {
+            return inner;
+        }
+        Matcher dec = NUMERIC_CHAR_REF_DECIMAL.matcher(inner);
+        StringBuffer sb1 = new StringBuffer();
+        while (dec.find()) {
+            int code = Integer.parseInt(dec.group(1));
+            dec.appendReplacement(sb1, Matcher.quoteReplacement(codePointToString(code)));
+        }
+        dec.appendTail(sb1);
+        inner = sb1.toString();
+
+        Matcher hex = NUMERIC_CHAR_REF_HEX.matcher(inner);
+        StringBuffer sb2 = new StringBuffer();
+        while (hex.find()) {
+            int code = Integer.parseInt(hex.group(1), 16);
+            hex.appendReplacement(sb2, Matcher.quoteReplacement(codePointToString(code)));
+        }
+        hex.appendTail(sb2);
+        inner = sb2.toString();
+
+        Matcher named = NAMED_HTML_ENTITY.matcher(inner);
+        StringBuffer sb3 = new StringBuffer();
+        while (named.find()) {
+            String name = named.group(1);
+            if ("amp".equals(name) || "lt".equals(name) || "gt".equals(name) || "apos".equals(name) || "quot".equals(name)) {
+                named.appendReplacement(sb3, Matcher.quoteReplacement(named.group(0)));
+                continue;
+            }
+            String ch = HTML_NAMED_ENTITIES_TO_CHAR.get(name);
+            if (ch == null) {
+                named.appendReplacement(sb3, Matcher.quoteReplacement(named.group(0)));
+            } else {
+                named.appendReplacement(sb3, Matcher.quoteReplacement(ch));
+            }
+        }
+        named.appendTail(sb3);
+        return sb3.toString();
+    }
+
+    /**
+     * MBE (and similar) table XML often contains invalid XML: {@code <!DOCTYPE html>} inside {@code display-name}
+     * and HTML named entities ({@code &egrave;}) without a DTD. Sanitize so the JDK parser can load the document.
+     */
+    public static String sanitizeTableXmlForParsing(String raw) {
+        if (raw == null || raw.isEmpty()) {
+            return raw;
+        }
+        String withoutDoctype = EMBEDDED_HTML_DOCTYPE.matcher(raw).replaceAll("");
+        Matcher m = DISPLAY_NAME_BLOCK.matcher(withoutDoctype);
+        StringBuffer sb = new StringBuffer();
+        while (m.find()) {
+            String inner = unescapeHtmlInDisplayNameInner(m.group(1));
+            String replacement = "<display-name>" + inner + "</display-name>";
+            m.appendReplacement(sb, Matcher.quoteReplacement(replacement));
+        }
+        m.appendTail(sb);
+        return sb.toString();
+    }
+
     public static Document loadXmlDocument(String filePath) throws Exception {
+        String raw = Files.readString(Paths.get(filePath), StandardCharsets.UTF_8);
+        String sanitized = sanitizeTableXmlForParsing(raw);
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
-        return builder.parse(new File(filePath));
+        return builder.parse(new InputSource(new StringReader(sanitized)));
     }
 
     public static void saveXmlDocument(Document doc, String filePath) throws TransformerException {
@@ -535,9 +656,364 @@ public class XmlUtil {
         return null; // No direct child with the given tagName found
     }
 
+    /**
+     * Builder / form-generated columns use a leading underscore in {@code db-field}; system columns (e.g. {@code FRANCHISEE_NO}) do not.
+     */
+    public static boolean isBuilderStyleDbField(String dbField) {
+        if (dbField == null) {
+            return false;
+        }
+        String t = dbField.trim();
+        return !t.isEmpty() && t.charAt(0) == '_';
+    }
+
+    public static void removeDirectChildTag(Element parent, String tagName) {
+        if (parent == null) {
+            return;
+        }
+        Element child = getDirectChildNode(parent, tagName);
+        if (child != null) {
+            parent.removeChild(child);
+        }
+    }
+
+    /**
+     * System {@code db-field} values must not carry {@code build-field}; removes the element if present.
+     */
+    public static void removeBuildFieldForSystemDbField(Element field, String dbFieldValue) {
+        if (field == null || isBuilderStyleDbField(dbFieldValue)) {
+            return;
+        }
+        removeDirectChildTag(field, "build-field");
+    }
+
+    /**
+     * Copies {@code <jScriptFunct .../>} from the source {@code field} when present (replaces any existing on target).
+     */
+    /**
+     * Undo SQL-style doubled single-quotes in JS attribute values (e.g. {@code getSourceDetails(''x'',null)}).
+     */
+    private static void normalizeJScriptFunctQuotedStrings(Element jScriptEl) {
+        if (jScriptEl == null || !jScriptEl.hasAttributes()) {
+            return;
+        }
+        NamedNodeMap attrs = jScriptEl.getAttributes();
+        for (int i = 0; i < attrs.getLength(); i++) {
+            Node a = attrs.item(i);
+            if (a.getNodeType() != Node.ATTRIBUTE_NODE) {
+                continue;
+            }
+            String v = a.getNodeValue();
+            if (v != null && v.contains("''")) {
+                ((Attr) a).setValue(v.replace("''", "'"));
+            }
+        }
+    }
+
+    /**
+     * Franchisee / store combo on external forms: {@code <source-field>true</source-field>}.
+     */
+    public static void syncSourceFieldForExternalForm(Element sourceField, Element targetField) {
+        if (sourceField == null || targetField == null) {
+            return;
+        }
+        Element src = getDirectChildNode(sourceField, "source-field");
+        if (src != null) {
+            replaceOrInsertChild(targetField, "source-field", src.getTextContent().trim());
+            return;
+        }
+        String db = getValue(sourceField, "db-field").trim().toUpperCase(Locale.ROOT);
+        String displayType = getDisplayType(sourceField);
+        if ("FRANCHISEE_NO".equals(db) && "Combo".equalsIgnoreCase(displayType)) {
+            replaceOrInsertChild(targetField, "source-field", "true");
+        }
+    }
+
+    public static void syncJScriptFunctFromSource(Element sourceField, Element targetField, Document targetDoc) {
+        if (sourceField == null || targetField == null || targetDoc == null) {
+            return;
+        }
+        Element src = getDirectChildNode(sourceField, "jScriptFunct");
+        if (src == null) {
+            return;
+        }
+        removeDirectChildTag(targetField, "jScriptFunct");
+        Element imported = (Element) targetDoc.importNode(src, true);
+        normalizeJScriptFunctQuotedStrings(imported);
+        targetField.appendChild(imported);
+    }
+
+    /**
+     * First {@code display-name} under a field (direct child preferred).
+     */
+    public static Element getFirstDisplayNameElement(Element field) {
+        if (field == null) {
+            return null;
+        }
+        Element direct = getDirectChildNode(field, "display-name");
+        if (direct != null) {
+            return direct;
+        }
+        NodeList nl = field.getElementsByTagName("display-name");
+        if (nl.getLength() > 0) {
+            return (Element) nl.item(0);
+        }
+        return null;
+    }
+
+    /** Nearest ancestor {@code <table>} of a field, or null. */
+    public static Element findAncestorTableElement(Element el) {
+        Node n = el;
+        while (n != null) {
+            if (n.getNodeType() == Node.ELEMENT_NODE) {
+                Element e = (Element) n;
+                if ("table".equals(e.getNodeName())) {
+                    return e;
+                }
+            }
+            n = n.getParentNode();
+        }
+        return null;
+    }
+
+    /**
+     * Store / franchisee id column: should not get a default {@code triggerFormName} (matches external-form exports).
+     */
+    public static boolean isPrimaryTableIdField(Element field, Element tableEl) {
+        if (field == null) {
+            return false;
+        }
+        String db = getValue(field, "db-field").trim().toUpperCase(Locale.ROOT);
+        if ("FRANCHISEE_NO".equals(db)) {
+            return true;
+        }
+        if (tableEl == null) {
+            return false;
+        }
+        String idField = getValue(tableEl, "id-field").trim();
+        if (idField.isEmpty()) {
+            return false;
+        }
+        String fn = getValue(field, "field-name").trim();
+        if (fn.isEmpty()) {
+            return false;
+        }
+        String fnNorm = fn.startsWith("_") ? fn.substring(1) : fn;
+        return idField.equals(fn) || idField.equals(fnNorm);
+    }
+
+    /**
+     * Default for {@code triggerFormName} when not set on a field: optional {@code <trigger-form-name>} on the table
+     * (must match the form builder / palette name in FC), else {@code table-display-name}.
+     */
+    public static String getDefaultTriggerFormNameForTable(Element tableEl) {
+        if (tableEl == null) {
+            return "";
+        }
+        String explicit = getValue(tableEl, "trigger-form-name").trim();
+        if (!explicit.isEmpty()) {
+            return explicit;
+        }
+        return getValue(tableEl, "table-display-name").trim();
+    }
+
+    /**
+     * Keeps {@code summary} / {@code triggerFormName} on {@code targetField} in sync with {@code sourceField}.
+     * When {@code triggerFormName} is omitted on the source but {@code summary="true"}, sets it from
+     * {@link #getDefaultTriggerFormNameForTable} (except for the primary id field).
+     */
+    public static void syncSummaryAndTriggerFormAttributes(Element sourceField, Element targetField) {
+        if (sourceField == null || targetField == null) {
+            return;
+        }
+        Element tableEl = findAncestorTableElement(sourceField);
+        if (sourceField.hasAttribute("summary")) {
+            targetField.setAttribute("summary", sourceField.getAttribute("summary"));
+        }
+        boolean summaryTrue = "true".equalsIgnoreCase(targetField.getAttribute("summary"));
+        if (sourceField.hasAttribute("triggerFormName")) {
+            targetField.setAttribute("triggerFormName", sourceField.getAttribute("triggerFormName"));
+        } else if (summaryTrue && !isPrimaryTableIdField(sourceField, tableEl)) {
+            String tdn = getDefaultTriggerFormNameForTable(tableEl);
+            if (!tdn.isEmpty()) {
+                targetField.setAttribute("triggerFormName", tdn);
+            } else {
+                targetField.removeAttribute("triggerFormName");
+            }
+        } else {
+            targetField.removeAttribute("triggerFormName");
+        }
+    }
+
+    /**
+     * Keeps {@code isCurreny} in sync (platform spelling). Defaults to {@code false} when the source omits the tag.
+     */
+    public static void syncIsCurrenyFromSource(Element sourceField, Element targetField) {
+        if (sourceField == null || targetField == null) {
+            return;
+        }
+        String v = getValue(sourceField, "isCurreny").trim();
+        if (v.isEmpty()) {
+            v = "false";
+        }
+        replaceOrInsertChild(targetField, "isCurreny", v);
+    }
+
+    private static String stripXmlLikeTagsToSingleLine(String s) {
+        if (s == null || s.isEmpty()) {
+            return "";
+        }
+        return s.replaceAll("(?s)<[^>]+>", " ").replaceAll("\\s+", " ").trim();
+    }
+
+    /**
+     * True when {@code display-name} text is HTML stored as character data (e.g. {@code &lt;html&gt;...} in the file),
+     * not as real XML child elements.
+     */
+    private static boolean displayNameTextLooksLikeEmbeddedHtml(String text) {
+        if (text == null || text.isEmpty()) {
+            return false;
+        }
+        String t = text.trim();
+        String lower = t.toLowerCase(Locale.ROOT);
+        return lower.contains("<strong") || lower.startsWith("<html") || lower.startsWith("<!doctype");
+    }
+
+    private static String getPlainLabelFromHtmlishDisplayNameText(String text) {
+        Matcher sm = STRONG_IN_DISPLAY_NAME_TEXT.matcher(text);
+        if (sm.find()) {
+            return stripXmlLikeTagsToSingleLine(sm.group(1)).trim();
+        }
+        if (displayNameTextLooksLikeEmbeddedHtml(text)) {
+            return stripXmlLikeTagsToSingleLine(text);
+        }
+        return text.trim();
+    }
+
+    private static String getDescriptionFromHtmlishDisplayNameText(String full) {
+        Matcher sm = STRONG_IN_DISPLAY_NAME_TEXT.matcher(full);
+        if (!sm.find()) {
+            return "undefined";
+        }
+        String titlePlain = stripXmlLikeTagsToSingleLine(sm.group(1)).trim();
+        String after = full.substring(sm.end());
+        String restPlain = stripXmlLikeTagsToSingleLine(after).trim();
+        if (restPlain.isEmpty()) {
+            return "undefined";
+        }
+        String fullPlain = stripXmlLikeTagsToSingleLine(full).trim();
+        if (fullPlain.equals(titlePlain)) {
+            return "undefined";
+        }
+        return restPlain;
+    }
+
+    private static boolean displayNameElementHasMarkup(Element displayNameEl) {
+        if (displayNameEl == null) {
+            return false;
+        }
+        NodeList children = displayNameEl.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            short t = children.item(i).getNodeType();
+            if (t == Node.ELEMENT_NODE || t == Node.DOCUMENT_TYPE_NODE) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Plain label text from a {@code display-name} element (e.g. first {@code strong}, or full text if HTML wrapper only).
+     */
+    public static String getPlainDisplayNameFromDisplayNameElement(Element displayNameEl) {
+        if (displayNameEl == null) {
+            return "";
+        }
+        NodeList strongs = displayNameEl.getElementsByTagName("strong");
+        if (strongs.getLength() > 0) {
+            return strongs.item(0).getTextContent().trim();
+        }
+        if (displayNameElementHasMarkup(displayNameEl)) {
+            return displayNameEl.getTextContent().trim().replaceAll("\\s+", " ");
+        }
+        String rawText = displayNameEl.getTextContent().trim();
+        if (displayNameTextLooksLikeEmbeddedHtml(rawText)) {
+            return getPlainLabelFromHtmlishDisplayNameText(rawText);
+        }
+        return rawText;
+    }
+
+    /**
+     * Helper / secondary text from HTML {@code display-name} (text beyond the first {@code strong}), or {@code undefined}.
+     */
+    public static String getDisplayDescriptionFromDisplayNameElement(Element displayNameEl) {
+        if (displayNameEl == null) {
+            return "undefined";
+        }
+        if (!displayNameElementHasMarkup(displayNameEl)) {
+            String rawText = displayNameEl.getTextContent().trim();
+            if (displayNameTextLooksLikeEmbeddedHtml(rawText)) {
+                return getDescriptionFromHtmlishDisplayNameText(rawText);
+            }
+            return "undefined";
+        }
+        NodeList strongs = displayNameEl.getElementsByTagName("strong");
+        String full = displayNameEl.getTextContent().trim().replaceAll("\\s+", " ");
+        if (strongs.getLength() > 0) {
+            String title = strongs.item(0).getTextContent().trim().replaceAll("\\s+", " ");
+            if (full.equals(title)) {
+                return "undefined";
+            }
+            if (full.startsWith(title)) {
+                String rest = full.substring(title.length()).trim();
+                return rest.isEmpty() ? "undefined" : rest;
+            }
+            int idx = full.indexOf(title);
+            if (idx >= 0) {
+                String rest = (full.substring(0, idx) + full.substring(idx + title.length())).trim().replaceAll("\\s+", " ");
+                return rest.isEmpty() ? "undefined" : rest;
+            }
+        }
+        return "undefined";
+    }
+
+    public static String getPlainDisplayName(Element field) {
+        return getPlainDisplayNameFromDisplayNameElement(getFirstDisplayNameElement(field));
+    }
+
+    public static String getDisplayDescriptionFromField(Element field) {
+        return getDisplayDescriptionFromDisplayNameElement(getFirstDisplayNameElement(field));
+    }
+
+    /**
+     * Replaces HTML {@code display-name} with plain text and adds {@code display-description} (for source-style MBE XML).
+     */
+    public static void normalizeDisplayNameOnFieldElement(Element field) {
+        if (field == null) {
+            return;
+        }
+        Element dn = getFirstDisplayNameElement(field);
+        if (dn != null && (displayNameElementHasMarkup(dn)
+                || displayNameTextLooksLikeEmbeddedHtml(dn.getTextContent()))) {
+            String plain = getPlainDisplayNameFromDisplayNameElement(dn);
+            String desc = getDisplayDescriptionFromDisplayNameElement(dn);
+            replaceOrInsertChild(field, "display-name", plain);
+            replaceOrInsertChild(field, "display-description", desc);
+        }
+        removeBuildFieldForSystemDbField(field, getValue(field, "db-field"));
+    }
+
+    public static void syncDisplayDescriptionIfSourceHadMarkup(Element sourceField, Element targetField) {
+        Element dn = getFirstDisplayNameElement(sourceField);
+        if (dn != null && (displayNameElementHasMarkup(dn)
+                || displayNameTextLooksLikeEmbeddedHtml(dn.getTextContent()))) {
+            replaceOrInsertChild(targetField, "display-description", getDisplayDescriptionFromDisplayNameElement(dn));
+        }
+    }
+
     public static void updateTagsIfDiff(Element sourceField, Map<String, Element> targetFieldMap, Map<String, String> updatedHeaders, Document sourceDoc, Document targetDoc, String sourcePath) {
         String sourceDbField = XmlUtil.getValue(sourceField, "db-field").trim().toUpperCase();
-        String sourceDisplayName = XmlUtil.getValue(sourceField, "display-name").trim();
+        String sourceDisplayName = XmlUtil.getPlainDisplayName(sourceField).trim();
         String sourceIsMandatory = XmlUtil.getValue(sourceField, "is-mandatory").trim().toLowerCase();
         String sourceIsActive = XmlUtil.getValue(sourceField, "is-active").trim().toLowerCase();
 
@@ -671,8 +1147,8 @@ public class XmlUtil {
                     }
                 }
                 
-                // Add build-field tag
-                if (!sourceBuildField.isEmpty()) {
+                // Add build-field tag (builder columns only; system db-fields such as FRANCHISEE_NO omit it)
+                if (!sourceBuildField.isEmpty() && XmlUtil.isBuilderStyleDbField(sourceDbField)) {
                     XmlUtil.replaceOrInsertChild(targetField, "build-field", sourceBuildField);
                     System.out.println("Added build-field '" + sourceBuildField + "' to db-field '" + sourceDbField + "'");
                 }
@@ -820,6 +1296,13 @@ public class XmlUtil {
                     System.out.println("Added is-non-editable 'true' to db-field '" + sourceDbField + "' (special handling for STORE_STATUS)");
                 }
             }
+
+            XmlUtil.syncJScriptFunctFromSource(sourceField, targetField, targetDoc);
+            XmlUtil.syncSourceFieldForExternalForm(sourceField, targetField);
+            XmlUtil.removeBuildFieldForSystemDbField(targetField, sourceDbField);
+            XmlUtil.syncDisplayDescriptionIfSourceHadMarkup(sourceField, targetField);
+            XmlUtil.syncSummaryAndTriggerFormAttributes(sourceField, targetField);
+            XmlUtil.syncIsCurrenyFromSource(sourceField, targetField);
         }
     }    
 
@@ -1034,6 +1517,52 @@ public class XmlUtil {
         return true;
     }
 
+    /**
+     * Ensures {@code form-meta-data} on the target table matches the source (tabs, audit id, etc.).
+     * Needed when the target file already existed: {@link #copyTableContent} only runs for brand-new targets.
+     *
+     * @return true if the target document was modified
+     */
+    public static boolean syncFormMetaDataFromSource(Document sourceDoc, Document targetDoc) {
+        Element sourceTable = (Element) sourceDoc.getElementsByTagName("table").item(0);
+        Element targetTable = (Element) targetDoc.getElementsByTagName("table").item(0);
+        if (sourceTable == null || targetTable == null) {
+            return false;
+        }
+        Element sourceMeta = getDirectChildNode(sourceTable, "form-meta-data");
+        if (sourceMeta == null) {
+            return false;
+        }
+        Element existingMeta = getDirectChildNode(targetTable, "form-meta-data");
+        if (existingMeta != null) {
+            targetTable.removeChild(existingMeta);
+        }
+        Node imported = targetDoc.importNode(sourceMeta, true);
+        Element insertBeforeAnchor = getDirectChildNode(targetTable, "table-header-map");
+        if (insertBeforeAnchor == null) {
+            insertBeforeAnchor = getDirectChildNode(targetTable, "foreign-tables");
+        }
+        if (insertBeforeAnchor == null) {
+            insertBeforeAnchor = getDirectChildNode(targetTable, "id-field");
+        }
+        if (insertBeforeAnchor == null) {
+            NodeList children = targetTable.getChildNodes();
+            for (int i = 0; i < children.getLength(); i++) {
+                Node n = children.item(i);
+                if (n.getNodeType() == Node.ELEMENT_NODE && "field".equals(n.getNodeName())) {
+                    insertBeforeAnchor = (Element) n;
+                    break;
+                }
+            }
+        }
+        if (insertBeforeAnchor != null) {
+            targetTable.insertBefore(imported, insertBeforeAnchor);
+        } else {
+            targetTable.appendChild(imported);
+        }
+        return true;
+    }
+
     public static void copyTableContent(Document sourceDoc, Document targetDoc) {
         // Get the <table> element from the source
         Element sourceTable = (Element) sourceDoc.getElementsByTagName("table").item(0);
@@ -1061,7 +1590,7 @@ public class XmlUtil {
         }
     }
 
-    public static String generateInsertQuery(String targetKeyPath, String filePath, String module, Set<String> underscoreFieldsSet) throws Exception {
+    public static String generateInsertQuery(String targetKeyPath, String filePath, String module) throws Exception {
         // Generate query
         try {
             String xmlFilename = new File(targetKeyPath).getName(); // e.g. "franchiseesky.xml"

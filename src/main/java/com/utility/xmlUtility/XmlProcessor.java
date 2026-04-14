@@ -30,11 +30,6 @@ public class XmlProcessor implements CommandLineRunner {
     /** Relative to {@link #BASE_PATH} and {@link #TARGET_BASE}. */
     private static final String EXTERNAL_FORMS_REL_PATH = "tables/externalFormBuilder/externalForms";
 
-    /** CLIENT_XMLS-style path prefix + {@link #EXTERNAL_FORMS_REL_PATH} (leading slash). */
-    private static final String EXTERNAL_FORMS_DB_PATH_PREFIX = "/" + EXTERNAL_FORMS_REL_PATH;
-
-    private static final String EXTERNAL_FORMS_SQL_FILE = "externalForms.sql";
-
     public static void main(String[] args) {
         SpringApplication.run(XmlProcessor.class, args);
     }
@@ -98,14 +93,14 @@ public class XmlProcessor implements CommandLineRunner {
                 if (index != -1) {
                     filePath = targetKeyPath.substring(index);
                 }
-                String query = XmlUtil.generateInsertQuery(targetKeyPath, filePath, null, underscoreFieldsSet);
+                String query = XmlUtil.generateInsertQuery(targetKeyPath, filePath, null);
                 queryList.add(query);
                 XmlUtil.writeToFile("src/main/resources/externalWebForms.sql", queryList);
             }
 
         } catch (Exception e) {
-            System.err.println("Error processing xml files");
+            System.err.println("Error processing xml files: " + e.getMessage());
             e.printStackTrace();
-        }
+        }   
     }
 }

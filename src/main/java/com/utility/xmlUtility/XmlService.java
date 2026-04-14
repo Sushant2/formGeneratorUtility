@@ -69,6 +69,11 @@ public class XmlService {
                 XmlUtil.saveXmlDocument(targetDoc, targetPath); // Save immediately after creating empty
             }
 
+            boolean formMetaSynced = XmlUtil.syncFormMetaDataFromSource(sourceDoc, targetDoc);
+            if (formMetaSynced) {
+                XmlUtil.saveXmlDocument(targetDoc, targetPath);
+            }
+
             // Extract existing elements from target XML
             Set<String> targetHeaders = XmlUtil.extractElements(targetDoc, "header", "name");
             Set<String> targetForeignTables = XmlUtil.extractElements(targetDoc, "foreign-table", "name");
@@ -337,6 +342,7 @@ public class XmlService {
                     
                     if (isSystemField) {
                         System.out.println("Adding system field without section: " + elementValue + " (field-name: " + fieldName + ")");
+                        XmlUtil.normalizeDisplayNameOnFieldElement(clonedSourceField);
                         targetParent.appendChild(targetDoc.importNode(clonedSourceField, true));
                         changesMade = true;
                         continue;
@@ -364,6 +370,7 @@ public class XmlService {
                     if (headerInTarget == null) {
                         // Handling if "tabModules" : targetElements is empty
                         if(targetElements.isEmpty()){
+                            XmlUtil.normalizeDisplayNameOnFieldElement(clonedSourceField);
                             targetParent.appendChild(targetDoc.importNode(clonedSourceField, true));
                             changesMade = true;
                             System.out.println("Added missing element to target: " + elementValue);
@@ -638,10 +645,14 @@ public class XmlService {
 
                 // Replace key attributes
                 String fieldName = XmlUtil.getValue(sourceField, "field-name");
-                if(!fieldName.startsWith("_")) 
+                if (!fieldName.startsWith("_")) {
                     underscoreFieldsSet.add(fieldName);
-                XmlUtil.replaceChildValue(clonedTemplate, "field-name", fieldName.startsWith("_") ? fieldName : "_" + fieldName);
-                XmlUtil.replaceChildValue(clonedTemplate, "display-name", XmlUtil.getValue(sourceField, "display-name"));
+                }
+                boolean summaryField = "true".equalsIgnoreCase(sourceField.getAttribute("summary"));
+                String outFieldName = summaryField ? fieldName : (fieldName.startsWith("_") ? fieldName : "_" + fieldName);
+                XmlUtil.replaceChildValue(clonedTemplate, "field-name", outFieldName);
+                XmlUtil.replaceChildValue(clonedTemplate, "display-name", XmlUtil.getPlainDisplayName(sourceField));
+                XmlUtil.replaceOrInsertChild(clonedTemplate, "display-description", XmlUtil.getDisplayDescriptionFromField(sourceField));
                 XmlUtil.replaceChildValue(clonedTemplate, "db-field", XmlUtil.getValue(sourceField, "db-field"));
                 XmlUtil.replaceChildValue(clonedTemplate, "data-type", XmlUtil.getValue(sourceField, "data-type"));
                 XmlUtil.replaceChildValue(clonedTemplate, "section", XmlUtil.getValue(sourceField, "section"));
@@ -704,6 +715,14 @@ public class XmlService {
                     clonedTemplate.appendChild(importedDependentParent);
                     System.out.println("Added dependent-parent tag for field: " + XmlUtil.getValue(sourceField, "db-field"));
                 }
+
+                XmlUtil.syncJScriptFunctFromSource(sourceField, clonedTemplate, targetDoc);
+                XmlUtil.syncSourceFieldForExternalForm(sourceField, clonedTemplate);
+
+                XmlUtil.removeBuildFieldForSystemDbField(clonedTemplate, XmlUtil.getValue(sourceField, "db-field"));
+
+                XmlUtil.syncSummaryAndTriggerFormAttributes(sourceField, clonedTemplate);
+                XmlUtil.syncIsCurrenyFromSource(sourceField, clonedTemplate);
 
                 System.out.println("Field modified from template: " + XmlUtil.getValue(sourceField, "db-field"));
 
