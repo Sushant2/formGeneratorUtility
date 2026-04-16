@@ -206,7 +206,161 @@ public class XmlUtil {
         }
         return null; // Field not found
     }
-    
+
+    /** Text of {@code <module>} inside {@code <form-meta-data>}, or empty when absent. */
+    public static String getFormModule(Document doc) {
+        Element table = (Element) doc.getElementsByTagName("table").item(0);
+        if (table == null) {
+            return "";
+        }
+        Element meta = getDirectChildNode(table, "form-meta-data");
+        if (meta == null) {
+            return "";
+        }
+        Element moduleEl = getDirectChildNode(meta, "module");
+        if (moduleEl == null) {
+            return "";
+        }
+        return moduleEl.getTextContent().trim();
+    }
+
+    /**
+     * Inserts FS external-form fields from the sky.xml reference (LEAD_ID plus hidden lead metadata) when missing.
+     * Fields are added immediately before the first {@code <field>} after {@code <id-field>}, or appended when none.
+     */
+    public static boolean ensureFsModuleCanonicalExternalFormFields(Document targetDoc) {
+        Element root = (Element) targetDoc.getElementsByTagName("table").item(0);
+        if (root == null) {
+            return false;
+        }
+        String[] canonicalDbOrder = {
+            "LEAD_ID",
+            "LEAD_STATUS_ID",
+            "LEAD_OWNER_ID",
+            "CAMPAIGN_ID",
+            "LEAD_SOURCE2_ID",
+            "LEAD_SOURCE3_ID",
+            "BRAND_ID",
+        };
+        Node insertBeforeAnchor = findFirstFieldNodeAfterIdField(root);
+        boolean changed = false;
+        for (String dbCol : canonicalDbOrder) {
+            if (findFieldByDbField(targetDoc, dbCol) != null) {
+                continue;
+            }
+            Element field = createFsCanonicalFieldByDbColumn(targetDoc, dbCol);
+            if (field == null) {
+                continue;
+            }
+            if (insertBeforeAnchor != null) {
+                root.insertBefore(field, insertBeforeAnchor);
+            } else {
+                root.appendChild(field);
+            }
+            changed = true;
+            System.out.println("Added FS canonical field to target: " + dbCol);
+        }
+        return changed;
+    }
+
+    private static Node findFirstFieldNodeAfterIdField(Element table) {
+        NodeList children = table.getChildNodes();
+        boolean afterIdField = false;
+        for (int i = 0; i < children.getLength(); i++) {
+            Node n = children.item(i);
+            if (n.getNodeType() != Node.ELEMENT_NODE) {
+                continue;
+            }
+            Element el = (Element) n;
+            String tag = el.getTagName();
+            if ("id-field".equals(tag)) {
+                afterIdField = true;
+                continue;
+            }
+            if ("field".equals(tag) && afterIdField) {
+                return n;
+            }
+        }
+        for (int i = 0; i < children.getLength(); i++) {
+            Node n = children.item(i);
+            if (n.getNodeType() == Node.ELEMENT_NODE && "field".equals(((Element) n).getTagName())) {
+                return n;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Canonical FS external-form field definitions (same structure as {@code testData/sky.xml}).
+     */
+    private static Element createFsCanonicalFieldByDbColumn(Document doc, String dbFieldUpper) {
+        Element field = doc.createElement("field");
+        field.setAttribute("summary", "true");
+        switch (dbFieldUpper) {
+            case "LEAD_ID":
+                field.appendChild(createElement(doc, "field-name", "leadID"));
+                field.appendChild(createElement(doc, "display-name", "Lead ID"));
+                field.appendChild(createElement(doc, "db-field", "LEAD_ID"));
+                field.appendChild(createElement(doc, "data-type", "Integer"));
+                return field;
+            case "LEAD_STATUS_ID":
+                field.appendChild(createElement(doc, "field-name", "leadStatusID"));
+                field.appendChild(createElement(doc, "db-field", "LEAD_STATUS_ID"));
+                field.appendChild(createElement(doc, "display-name", "Lead Status"));
+                field.appendChild(createElement(doc, "is-mandatory", "false"));
+                field.appendChild(createElement(doc, "display-type", "hidden"));
+                appendJScriptFunctValue(doc, field, "1");
+                return field;
+            case "LEAD_OWNER_ID":
+                field.appendChild(createElement(doc, "field-name", "leadOwnerID"));
+                field.appendChild(createElement(doc, "db-field", "LEAD_OWNER_ID"));
+                field.appendChild(createElement(doc, "display-name", "Owner"));
+                field.appendChild(createElement(doc, "is-mandatory", "true"));
+                field.appendChild(createElement(doc, "display-type", "hidden"));
+                appendJScriptFunctValue(doc, field, "automatic");
+                return field;
+            case "CAMPAIGN_ID":
+                field.appendChild(createElement(doc, "field-name", "campaignID"));
+                field.appendChild(createElement(doc, "db-field", "CAMPAIGN_ID"));
+                field.appendChild(createElement(doc, "display-name", "Campaign Name"));
+                field.appendChild(createElement(doc, "is-mandatory", "false"));
+                field.appendChild(createElement(doc, "display-type", "hidden"));
+                appendJScriptFunctValue(doc, field, "-1");
+                return field;
+            case "LEAD_SOURCE2_ID":
+                field.appendChild(createElement(doc, "field-name", "leadSource2ID"));
+                field.appendChild(createElement(doc, "db-field", "LEAD_SOURCE2_ID"));
+                field.appendChild(createElement(doc, "display-name", "Lead Source Category"));
+                field.appendChild(createElement(doc, "is-mandatory", "true"));
+                field.appendChild(createElement(doc, "display-type", "hidden"));
+                appendJScriptFunctValue(doc, field, "-1");
+                return field;
+            case "LEAD_SOURCE3_ID":
+                field.appendChild(createElement(doc, "field-name", "leadSource3ID"));
+                field.appendChild(createElement(doc, "db-field", "LEAD_SOURCE3_ID"));
+                field.appendChild(createElement(doc, "display-name", "Lead Source Details"));
+                field.appendChild(createElement(doc, "is-mandatory", "true"));
+                field.appendChild(createElement(doc, "display-type", "hidden"));
+                appendJScriptFunctValue(doc, field, "-1");
+                return field;
+            case "BRAND_ID":
+                field.appendChild(createElement(doc, "field-name", "brandID"));
+                field.appendChild(createElement(doc, "db-field", "BRAND_ID"));
+                field.appendChild(createElement(doc, "display-name", "Division"));
+                field.appendChild(createElement(doc, "is-mandatory", "false"));
+                field.appendChild(createElement(doc, "display-type", "hidden"));
+                appendJScriptFunctValue(doc, field, "-1");
+                return field;
+            default:
+                return null;
+        }
+    }
+
+    private static void appendJScriptFunctValue(Document doc, Element field, String valueAttr) {
+        Element j = doc.createElement("jScriptFunct");
+        j.setAttribute("value", valueAttr);
+        field.appendChild(j);
+    }
 
     // Get the last order-by value in a section
     /*public static int getLastOrderBy(Document doc, String sectionValue) {
@@ -624,6 +778,24 @@ public class XmlUtil {
         NodeList nodes = parent.getElementsByTagName(tagName);
         if (nodes.getLength() > 0) {
             nodes.item(0).setTextContent(newValue);
+        }
+    }
+
+    /**
+     * When {@code _<digits>} is immediately followed by a custom field name from {@code customFIeldsList.csv}
+     * without a separating underscore, inserts that underscore into {@code <field-name>}.
+     */
+    public static void normalizeFieldNameAfterRowIndex(Element fieldElement) {
+        if (fieldElement == null) {
+            return;
+        }
+        String fieldName = getValue(fieldElement, "field-name");
+        if (fieldName.isEmpty()) {
+            return;
+        }
+        String normalized = CustomFieldNamesRegistry.normalizeFieldNameAfterRowIndex(fieldName);
+        if (!fieldName.equals(normalized)) {
+            replaceChildValue(fieldElement, "field-name", normalized);
         }
     }
     
@@ -1615,11 +1787,11 @@ public class XmlUtil {
 
             StringBuilder query = new StringBuilder();
             // delete query for xmlkey
-            query.append("DELETE FROM CLIENT_XMLS WHERE XML_KEY = '").append(xmlKey).append("';");
+            query.append("DELETE FROM CLIENT_XMLS WHERE MODULE = '").append(moduleName).append("' AND XML_KEY = '").append(xmlKey).append("';");
             query.append(System.lineSeparator());
 
             // delete query for xmlkey_copy
-            query.append("DELETE FROM CLIENT_XMLS WHERE XML_KEY = '").append(xmlKey).append("_copy").append("';");
+            query.append("DELETE FROM CLIENT_XMLS WHERE MODULE = '").append(moduleName).append("' AND XML_KEY = '").append(xmlKey).append("_copy").append("';");
 
             query.append(System.lineSeparator());
 

@@ -101,6 +101,14 @@ public class XmlService {
                 XmlUtil.saveXmlDocument(targetDoc, targetPath);
             }
 
+            if ("fs".equalsIgnoreCase(XmlUtil.getFormModule(sourceDoc))) {
+                boolean fsCanonicalAdded = XmlUtil.ensureFsModuleCanonicalExternalFormFields(targetDoc);
+                if (fsCanonicalAdded) {
+                    XmlUtil.fixOrderByPerSection(targetDoc);
+                    XmlUtil.saveXmlDocument(targetDoc, targetPath);
+                }
+            }
+
             System.out.println("Processing completed. Missing elements saved in target XML.");
 
         } catch (Exception e) {
@@ -117,6 +125,9 @@ public class XmlService {
         for (int i = 0; i < sourceElements.getLength(); i++) {
             Element sourceField = (Element) sourceElements.item(i);
             Element clonedSourceField = (Element) sourceField.cloneNode(true);
+            if ("field".equals(elementTag)) {
+                XmlUtil.normalizeFieldNameAfterRowIndex(clonedSourceField);
+            }
 
             String elementValue = XmlUtil.getElementAttributeOrText(clonedSourceField, attribute);
             if (attribute.equals("db-field")) {
